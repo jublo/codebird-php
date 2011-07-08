@@ -327,9 +327,9 @@ class Codebird
             $a, true);
     }
 
-    public static function Oauth_RequestToken()
+    public static function Oauth_RequestToken($a)
     {
-        return Codebird::CallApiGet('oauth/request_token', array(), false);
+        return Codebird::CallApiGet('oauth/request_token', $a, false);
     }
 
     public static function Oauth_Authorize()
