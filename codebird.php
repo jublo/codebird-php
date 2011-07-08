@@ -181,19 +181,19 @@ class Codebird
     public static function Blocks_Create($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('blocks/create/' . intval($a['id']), $a, true);
+        return Codebird::CallApiPost('blocks/create/' . $a['id'], $a, true);
     }
 
     public static function Blocks_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('blocks/destroy/' . intval($a['id']), $a, true);
+        return Codebird::CallApiPost('blocks/destroy/' . $a['id'], $a, true);
     }
 
     public static function Blocks_Exists($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('blocks/exists/' . intval($a['id']), $a, true);
+        return Codebird::CallApiGet('blocks/exists/' . $a['id'], $a, true);
     }
 
     public static function DirectMessages($a)
@@ -204,8 +204,7 @@ class Codebird
     public static function DirectMessages_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('direct_messages/destroy/' . intval($a['id']),
-            $a, true);
+        return Codebird::CallApiPost('direct_messages/destroy/' . $a['id'], $a, true);
     }
 
     public static function DirectMessages_New($a)
@@ -226,13 +225,13 @@ class Codebird
     public static function Favorites_Create($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('favorites/create/' . intval($a['id']), $a, true);
+        return Codebird::CallApiPost('favorites/create/' . $a['id'], $a, true);
     }
 
     public static function Favorites_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('favorites/destroy/' . intval($a['id']), $a, true);
+        return Codebird::CallApiPost('favorites/destroy/' . $a['id'], $a, true);
     }
     public static function Followers_Ids($a)
     {
@@ -247,14 +246,13 @@ class Codebird
     public static function Friendships_Create($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('friendships/create/' . intval($a['id']), $a, true);
+        return Codebird::CallApiPost('friendships/create/' . $a['id'], $a, true);
     }
 
     public static function Friendships_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('friendships/destroy/' . intval($a['id']),
-            $a, true);
+        return Codebird::CallApiPost('friendships/destroy/' . $a['id'], $a, true);
     }
 
     public static function Friendships_Exists($a)
@@ -270,7 +268,7 @@ class Codebird
     public static function Geo_Id($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('geo/id/' . intval($a['id']), $a, true);
+        return Codebird::CallApiGet('geo/id/' . $a['id'], $a, true);
     }
 
     public static function Geo_NearbyPlaces($a)
@@ -316,15 +314,13 @@ class Codebird
     public static function Notifications_Follow($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('notifications/follow/' . intval($a['id']),
-            $a, true);
+        return Codebird::CallApiPost('notifications/follow/' . $a['id'], $a, true);
     }
 
     public static function Notifications_Leave($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('notifications/leave/' . intval($a['id']),
-            $a, true);
+        return Codebird::CallApiPost('notifications/leave/' . $a['id'], $a, true);
     }
 
     public static function Oauth_RequestToken($a)
@@ -334,8 +330,8 @@ class Codebird
 
     public static function Oauth_Authorize()
     {
-        return 'https://api.twitter.com/oauth/authorize?oauth_token=' .
-            Codebird::Url(Codebird::$token['k']);
+        return 'https://api.twitter.com/oauth/authorize?oauth_token=' . Codebird::
+            Url(Codebird::$token['k']);
     }
 
     public static function Oauth_AccessToken($a)
@@ -361,22 +357,20 @@ class Codebird
     public static function SavedSearches_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('saved_searches/destroy/' . intval($a['id']),
-            array(), true);
+        return Codebird::CallApiPost('saved_searches/destroy/' . $a['id'], array
+            (), true);
     }
 
     public static function SavedSearches_Show($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('saved_searches/show/' . intval($a['id']),
-            $a, true);
+        return Codebird::CallApiPost('saved_searches/show/' . $a['id'], $a, true);
     }
 
     public static function Statuses_Destroy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('statuses/destroy/' . intval($a['id']),
-            array(), true);
+        return Codebird::CallApiPost('statuses/destroy/' . $a['id'], array(), true);
     }
 
     public static function Statuses_Followers($a)
@@ -402,15 +396,14 @@ class Codebird
     public static function Statuses_RetweetedBy($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('statuses/' . intval($a['id']) .
-            '/retweeted_by', $a, true);
+        return Codebird::CallApiGet('statuses/' . $a['id'] . '/retweeted_by', $a, true);
     }
 
     public static function Statuses_RetweetedBy_Ids($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('statuses/' . intval($a['id']) .
-            '/retweeted_by/ids', $a, true);
+        return Codebird::CallApiGet('statuses/' . $a['id'] . '/retweeted_by/ids',
+            $a, true);
     }
 
     public static function Statuses_Mentions($a)
@@ -436,14 +429,13 @@ class Codebird
     public static function Statuses_Retweet($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiPost('statuses/retweet/' . intval($a['id']),
-            array(), true);
+        return Codebird::CallApiPost('statuses/retweet/' . $a['id'], array(), true);
     }
 
     public static function Statuses_Retweets($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('statuses/retweets/' . intval($a['id']), $a, true);
+        return Codebird::CallApiGet('statuses/retweets/' . $a['id'], $a, true);
     }
 
     public static function Statuses_RetweetedByMe($a)
@@ -464,7 +456,7 @@ class Codebird
     public static function Statuses_Show($a)
     {
         if (!isset($a['id'])) throw new Exception('Missing parameter id.');
-        return Codebird::CallApiGet('statuses/show/' . intval($a['id']), $a, true);
+        return Codebird::CallApiGet('statuses/show/' . $a['id'], $a, true);
     }
 
     public static function Statuses_Update($a)
@@ -480,7 +472,7 @@ class Codebird
     public static function Trends($a)
     {
         if (!isset($a['woeid'])) throw new Exception('Missing parameter woeid.');
-        return Codebird::CallApiGet('trends/' . intval($a['id']), $a, true);
+        return Codebird::CallApiGet('trends/' . $a['id'], $a, true);
     }
 
     public static function Trends_Available($a)
@@ -641,7 +633,8 @@ class Codebird
     public static function Users_ProfileImage($a)
     {
         if (!isset($a['screen_name'])) throw new Exception('Missing parameter screen_name.');
-        return Codebird::CallApiGet('users/profile_image/' . $a['screen_name'], $a, true);
+        return Codebird::CallApiGet('users/profile_image/' . $a['screen_name'],
+            $a, true);
     }
 
     public static function Users_Search($a)
