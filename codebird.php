@@ -334,7 +334,7 @@ class Codebird
 
     public static function Oauth_Authorize()
     {
-        return 'https://twitter.com/oauth/authorize?oauth_token=' .
+        return 'https://api.twitter.com/oauth/authorize?oauth_token=' .
             Codebird::Url(Codebird::$token['k']);
     }
 
