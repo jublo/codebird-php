@@ -334,9 +334,8 @@ class Codebird
 
     public static function Oauth_Authorize()
     {
-        header('Location: https://twitter.com/oauth/authorize?oauth_token=' .
-            Codebird::Url(Codebird::$token['k']));
-        die();
+        return 'https://twitter.com/oauth/authorize?oauth_token=' .
+            Codebird::Url(Codebird::$token['k']);
     }
 
     public static function Oauth_AccessToken()
