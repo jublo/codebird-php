@@ -30,7 +30,6 @@ class Codebird
     {
         Codebird::$ReturnFormat = Codebird::$ReturnFormats['Object'];
     }
-    ;
 
     public static function Url($a)
     {
