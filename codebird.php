@@ -338,9 +338,9 @@ class Codebird
             Codebird::Url(Codebird::$token['k']);
     }
 
-    public static function Oauth_AccessToken()
+    public static function Oauth_AccessToken($a)
     {
-        return Codebird::CallApiPost('oauth/access_token', array(), true);
+        return Codebird::CallApiPost('oauth/access_token', $a, true);
     }
 
     public static function ReportSpam($a)
