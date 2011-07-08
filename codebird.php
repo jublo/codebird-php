@@ -21,8 +21,8 @@ class Codebird
 {
     public static $_version = "1.1.2816.2016";
     public static $endpoint = "https://api.twitter.com/1/";
-    public static $key = array();
-    public static $token = array();
+    public static $key = array('k' => '', 's' => '');
+    public static $token = array('k' => '', 's' => '');
     public static $ReturnFormats = array('Object' => 1, 'String' => 2);
     public static $ReturnFormat = null;
 
@@ -114,8 +114,13 @@ class Codebird
             if ($a) {
                 $a = explode('&', $a);
                 for ($c = 0; $c < count($a); $c++) {
-                    $d = explode('=', $a[$c]);
-                    $b[$d[0]] = $d[1];
+                    if (stristr($a[$c], '=')) {
+                        $d = explode('=', $a[$c]);
+                        $b[$d[0]] = $d[1];
+                    }
+                    else {
+                        $b['message'] = $a[$c];
+                    }
                 }
             }
         }
