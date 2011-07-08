@@ -110,6 +110,9 @@ class Codebird
     public static function ParseApiReply($a)
     {
         $b = array();
+        if ($a == '[]') {
+            return $b;
+        }
         if (!$b = json_decode($a, true)) {
             if ($a) {
                 $a = explode('&', $a);
