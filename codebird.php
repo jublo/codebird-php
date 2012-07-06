@@ -46,6 +46,16 @@ class Codebird
     private static $_instance = null;
 
     /**
+     * The OAuth consumer key of your registered app
+     */
+    private static $_oauth_consumer_key = null;
+
+    /**
+     * The corresponding consumer secret
+     */
+    private static $_oauth_consumer_secret = null;
+
+    /**
      * The API endpoint to use
      */
     private $_endpoint = 'https://api.twitter.com/1/';
@@ -60,16 +70,6 @@ class Codebird
      * see https://dev.twitter.com/discussions/1059
      */
     private $_endpoint_upload = 'https://upload.twitter.com/1/';
-
-    /**
-     * The OAuth consumer key of your registered app
-     */
-    private $_oauth_consumer_key = null;
-
-    /**
-     * The corresponding consumer secret
-     */
-    private $_oauth_consumer_secret = null;
 
     /**
      * The Request or access token. Used to sign requests
@@ -92,9 +92,14 @@ class Codebird
     private $_statuses_public_timeline_cache = array('timestamp' => false, 'data' => false);
 
     /**
+     * The file formats that Twitter accepts as image uploads
+     */
+    private $_supported_media_files = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+
+    /**
      * The current Codebird version
      */
-    private $_version = '2.0.3006.2126';
+    private $_version = '2.1.3007.0006';
 
     /**
      * Returns singleton class instance
@@ -111,16 +116,6 @@ class Codebird
     }
 
     /**
-     * Gets the current Codebird version
-     *
-     * @return string The version number
-     */
-    public function getVersion()
-    {
-        return $this->_version;
-    }
-
-    /**
      * Sets the OAuth consumer key and secret (App key)
      *
      * @param string $key    OAuth consumer key
@@ -128,10 +123,20 @@ class Codebird
      *
      * @return void
      */
-    public function setConsumerKey($key, $secret)
+    public static function setConsumerKey($key, $secret)
     {
-        $this->_oauth_consumer_key    = $key;
-        $this->_oauth_consumer_secret = $secret;
+        self::$_oauth_consumer_key    = $key;
+        self::$_oauth_consumer_secret = $secret;
+    }
+
+    /**
+     * Gets the current Codebird version
+     *
+     * @return string The version number
+     */
+    public function getVersion()
+    {
+        return $this->_version;
     }
 
     /**
@@ -220,6 +225,9 @@ class Codebird
         $httpmethod = $this->_detectMethod($method2);
         $sign       = $this->_detectSign($method2);
         $multipart  = $this->_detectMultipart($method2);
+
+        // geek-geek: Now allowing to specify filenames as params
+        $this->_detectFilenames($method2, $apiparams);
 
         return $this->_callApi($httpmethod, $method, $apiparams, $sign, $multipart);
     }
@@ -325,13 +333,13 @@ class Codebird
      */
     private function _sha1($data)
     {
-        if ($this->_oauth_consumer_secret == null) {
+        if (self::$_oauth_consumer_secret == null) {
             throw new Exception('To generate a hash, the consumer secret must be set.');
         }
         if (!function_exists('hash_hmac')) {
             throw new Exception('To generate a hash, the PHP hash extension must be available.');
         }
-        return base64_encode(hash_hmac('sha1', $data, $this->_oauth_consumer_secret . '&'
+        return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&'
             . ($this->_oauth_token_secret != null ? $this->_oauth_token_secret : ''), true));
     }
 
@@ -363,11 +371,11 @@ class Codebird
      */
     private function _sign($httpmethod, $method, $params = array(), $multipart = false)
     {
-        if ($this->_oauth_consumer_key == null) {
+        if (self::$_oauth_consumer_key == null) {
             throw new Exception('To generate a signature, the consumer key must be set.');
         }
         $sign_params      = array(
-            'consumer_key' => $this->_oauth_consumer_key,
+            'consumer_key' => self::$_oauth_consumer_key,
             'version' => '1.0',
             'timestamp' => time(),
             'nonce' => $this->_nonce(),
@@ -505,6 +513,7 @@ class Codebird
             'statuses/destroy/:id',
             'statuses/retweet/:id',
             'statuses/update',
+            'statuses/update_with_media',
             // Direct Messages
             'direct_messages/new',
             // Friends & Followers
@@ -597,6 +606,73 @@ class Codebird
         );
         return in_array($method, $multiparts);
     }
+
+    /**
+     * Detects filenames in upload parameters
+     *
+     * @param       string $method  The API method to call
+     * @param byref array  $params  The parameters to send along
+     *
+     * @return void
+     */
+    private function _detectFilenames($method, &$params)
+    {
+        // well, files will only work in multipart methods
+        if (! $this->_detectMultipart($method)) {
+            return;
+        }
+
+        // only check specific parameters
+        $possible_files = array(
+            // Tweets
+            'statuses/update_with_media' => 'media[]',
+            // Accounts
+            'account/update_profile_background_image' => 'image',
+            'account/update_profile_image' => 'image'
+        );
+        // method might have files?
+        if (! in_array($method, array_keys($possible_files))) {
+            return;
+        }
+
+        // check for filenames
+        $possible_files = explode(' ', $possible_files[$method]);
+        foreach ($possible_files as $possible_file) {
+            // is this parameter set currently?
+            if (! isset($params[$possible_file])) {
+                continue;
+            }
+            // is it an array?
+            if (is_array($params[$possible_file])) {
+                throw new Exception('Using URL-encoded parameters is not supported for uploading media.');
+                continue;
+            }
+            // is it a file, a readable one?
+            if (! @file_exists($params[$possible_file])
+                || ! @is_readable($params[$possible_file])
+            ) {
+                continue;
+            }
+            // is it a valid image?
+            if (! $data = @getimagesize($params[$possible_file])) {
+                continue;
+            }
+            // is it a supported image format?
+            if (! in_array($data[2], $this->_supported_media_files)) {
+                continue;
+            }
+            // try to read the file
+            ob_start();
+            readfile($params[$possible_file]);
+            $data = ob_get_contents();
+            ob_end_clean();
+            if (strlen($data) == 0) {
+                continue;
+            }
+            $params[$possible_file] = $data;
+        }
+    }
+
 
     /**
      * Builds the complete API endpoint url
