@@ -1,4 +1,7 @@
-codebird-php 
+codebird-php
+============
+A simple wrapper for the Twitter API
+
 Copyright (C) 2010-2012 J.M. <me@mynetx.net>
 
 This program is free software: you can redistribute it and/or modify
