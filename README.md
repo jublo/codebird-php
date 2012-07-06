@@ -92,7 +92,7 @@ $params = array(
 $reply = $cb->users_show($params);
 ```
 
-When uploading files to Twitter, the array syntax is obligatory:
+When **uploading files to Twitter**, the array syntax is obligatory:
 
 ```php
 $params = array(
