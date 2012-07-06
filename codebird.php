@@ -78,6 +78,16 @@ class Codebird
 
     public function __call($fn, $params)
     {
+        // parse parameters
+        $apiparams = array();
+        if (count($params) > 0) {
+            if (is_array($params[0])) {
+                $apiparams = $params[0];
+            } else {
+                parse_str($params[0], $apiparams);
+            }
+        }
+
         // map function name to API method
         $method = '';
 
@@ -90,29 +100,31 @@ class Codebird
             $method .= $path[$i];
         }
 
-        // replace AA by {aa}
+        // replace AA by URL parameters
+        $method2 = $method;
         $match = array();
         if (preg_match('/[A-Z]{2,}/', $method, $match)) {
-            print_r($match);
-            die();
+            foreach ($match as $param) {
+                $param_l = strtolower($param);
+                if (! isset($apiparams[$param_l])) {
+                    throw new Exception('To call the templated method "' . $method
+                        . '", specify the parameter value for "' . $param_l . '".');
+                }
+                $method = str_replace($param, $apiparams[$param_l], $method);
+                $method2 = str_replace($param, ':' . $param_l, $method2);
+                unset($apiparams[$param_l]);
+            }
         }
 
         // replace A-Z by _a-z
         for ($i = 0; $i < 26; $i++) {
             $method = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method);
+            $method2 = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method2);
         }
-        $httpmethod = $this->_detectMethod($method);
-        $sign = $this->_detectSign($method);
-        $multipart = $this->_detectMultipart($method);
 
-        $apiparams = array();
-        if (count($params) > 0) {
-            if (is_array($params[0])) {
-                $apiparams = $params[0];
-            } else {
-                parse_str($params[0], $apiparams);
-            }
-        }
+        $httpmethod = $this->_detectMethod($method2);
+        $sign = $this->_detectSign($method2);
+        $multipart = $this->_detectMultipart($method2);
 
         return $this->_callApi($httpmethod, $method, $apiparams, $sign, $multipart);
     }
@@ -339,7 +351,7 @@ class Codebird
                 return $httpmethod;
             }
         }
-        return null;
+        throw new Exception('Can\'t find HTTP method to use for "' . $method . '".');
     }
 
     /**
