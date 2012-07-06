@@ -99,7 +99,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.1.3007.0006';
+    private $_version = '2.1.3007.0035';
 
     /**
      * Returns singleton class instance
@@ -165,7 +165,7 @@ class Codebird
      */
     public function setReturnFormat($return_format)
     {
-        $this->return_format = $return_format;
+        $this->_return_format = $return_format;
     }
 
     /**
@@ -747,7 +747,11 @@ class Codebird
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($this->_return_format != CODEBIRD_RETURNFORMAT_STRING) {
             $reply             = $this->_parseApiReply($reply);
-            $reply->httpstatus = $httpstatus;
+            if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
+                $reply->httpstatus = $httpstatus;
+            } else {
+                $reply['httpstatus'] = $httpstatus;
+            }
         }
         return $reply;
     }
