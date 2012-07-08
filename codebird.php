@@ -24,7 +24,7 @@
 /**
  * Define constants
  */
-$constants = explode(' ', 'OBJECT ARRAY STRING');
+$constants = explode(' ', 'OBJECT ARRAY');
 foreach ($constants as $i => $id) {
     $id = 'CODEBIRD_RETURNFORMAT_' . $id;
     defined($id) or define($id, $i);
@@ -99,7 +99,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.1.3007.0035';
+    private $_version = '2.2.0';
 
     /**
      * Returns singleton class instance
@@ -159,7 +159,6 @@ class Codebird
      * @param int $return_format One of these:
      *                           CODEBIRD_RETURNFORMAT_OBJECT (default)
      *                           CODEBIRD_RETURNFORMAT_ARRAY
-     *                           CODEBIRD_RETURNFORMAT_STRING
      *
      * @return void
      */
@@ -200,18 +199,31 @@ class Codebird
             }
             $method .= $path[$i];
         }
+        // undo replacement for URL parameters
+        $url_parameters_with_underscore = array('screen_name');
+        foreach ($url_parameters_with_underscore as $param) {
+            $param = strtoupper($param);
+            $replacement_was = str_replace('_', '/', $param);
+            $method = str_replace($replacement_was, $param, $method);
+        }
 
         // replace AA by URL parameters
-        $method2 = $method;
+        $method_template = $method;
         $match   = array();
-        if (preg_match('/[A-Z]{2,}/', $method, $match)) {
+        if (preg_match('/[A-Z_]{2,}/', $method, $match)) {
             foreach ($match as $param) {
                 $param_l = strtolower($param);
+                $method_template = str_replace($param, ':' . $param_l, $method_template);
                 if (!isset($apiparams[$param_l])) {
-                    throw new Exception('To call the templated method "' . $method . '", specify the parameter value for "' . $param_l . '".');
+                    for ($i = 0; $i < 26; $i++) {
+                        $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
+                    }
+                    throw new Exception(
+                        'To call the templated method "' . $method_template
+                        . '", specify the parameter value for "' . $param_l . '".'
+                    );
                 }
                 $method  = str_replace($param, $apiparams[$param_l], $method);
-                $method2 = str_replace($param, ':' . $param_l, $method2);
                 unset($apiparams[$param_l]);
             }
         }
@@ -219,17 +231,17 @@ class Codebird
         // replace A-Z by _a-z
         for ($i = 0; $i < 26; $i++) {
             $method  = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method);
-            $method2 = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method2);
+            $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
         }
 
-        $httpmethod = $this->_detectMethod($method2);
-        $sign       = $this->_detectSign($method2);
-        $multipart  = $this->_detectMultipart($method2);
+        $httpmethod = $this->_detectMethod($method_template);
+        $sign       = $this->_detectSign($method_template);
+        $multipart  = $this->_detectMultipart($method_template);
 
         // geek-geek: Now allowing to specify filenames as params
-        $this->_detectFilenames($method2, $apiparams);
+        $this->_detectFilenames($method_template, $apiparams);
 
-        return $this->_callApi($httpmethod, $method, $apiparams, $sign, $multipart);
+        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $sign, $multipart);
     }
 
     /**
@@ -700,16 +712,17 @@ class Codebird
     /**
      * Calls the API using cURL
      *
-     * @param string          $httpmethod The HTTP method to use for making the request
-     * @param string          $method     The API method to call
-     * @param array  optional $params     The parameters to send along
-     * @param bool   optional $sign       Whether to sign the API call
-     * @param bool   optional $multipart  Whether to use multipart/form-data
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param string          $method_template The templated API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $sign            Whether to sign the API call
+     * @param bool   optional $multipart       Whether to use multipart/form-data
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $params = array(), $sign = true, $multipart = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $sign = true, $multipart = false)
     {
         if ($sign && !isset($this->_oauth_token)) {
             throw new Exception('To make a signed API request, the OAuth token must be set.');
@@ -734,7 +747,7 @@ class Codebird
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         if (isset($authorization)) {
@@ -745,13 +758,11 @@ class Codebird
         }
         $reply      = curl_exec($ch);
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($this->_return_format != CODEBIRD_RETURNFORMAT_STRING) {
-            $reply             = $this->_parseApiReply($reply);
-            if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
-                $reply->httpstatus = $httpstatus;
-            } else {
-                $reply['httpstatus'] = $httpstatus;
-            }
+        $reply = $this->_parseApiReply($method_template, $reply);
+        if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
+            $reply->httpstatus = $httpstatus;
+        } else {
+            $reply['httpstatus'] = $httpstatus;
         }
         return $reply;
     }
@@ -759,18 +770,43 @@ class Codebird
     /**
      * Parses the API reply to encode it in the set return_format
      *
-     * @param string $reply The actual reply, JSON-encoded or URL-encoded
+     * @param string $method The method that has been called
+     * @param string $reply  The actual reply, JSON-encoded or URL-encoded
      *
      * @return array|object The parsed reply
      */
-    private function _parseApiReply($reply)
+    private function _parseApiReply($method, $reply)
     {
+        // split headers and body
+        $headers = array();
+        $reply = explode("\r\n\r\n", $reply, 2);
+        $headers_array = explode("\r\n", $reply[0]);
+        foreach ($headers_array as $header) {
+            $header_array = explode(': ', $header, 2);
+            $key = $header_array[0];
+            $value = '';
+            if (count($header_array) > 1) {
+                $value = $header_array[1];
+            }
+            $headers[$key] = $value;
+        }
+        if (count($reply) > 1) {
+            $reply = $reply[1];
+        } else {
+            $reply = '';
+        }
+
         $need_array = $this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY;
         if ($reply == '[]') {
             return $need_array ? array() : new stdClass;
         }
         $parsed = array();
-        if (!$parsed = json_decode($reply, $need_array)) {
+        if ($method == 'users/profile_image/:screen_name') {
+            // this method returns a 302 redirect, we need to extract the URL
+            if (isset($headers['Location'])) {
+                $parsed = array('profile_image_url_https' => $headers['Location']);
+            }
+        } elseif (!$parsed = json_decode($reply, $need_array)) {
             if ($reply) {
                 $reply = explode('&', $reply);
                 foreach ($reply as $element) {

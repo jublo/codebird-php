@@ -119,7 +119,10 @@ map to Codebird function calls. The general rules are:
 3. For each parameter template in method, use UPPERCASE in the Codebird function.
     Also don’t forget to include the parameter in your parameter list.
 
-    Example: ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
+    Examples:
+    - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
+    - ```users/profile_image/:screen_name``` maps to
+      ```Codebird::users_profileImage_SCREEN_NAME('screen_name=mynetx')```.
 
 HTTP methods (GET, POST, DELETE etc.)
 -------------------------------------
@@ -150,12 +153,6 @@ Upon your choice, you may also get PHP arrays directly:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_ARRAY);
 ```
 
-Finally, if you prefer seeing an URL-encoded string as reply, use this:
-
-```php
-$cb->setReturnFormat(CODEBIRD_RETURNFORMAT_STRING);
-```
-
 Using multiple Codebird instances
 ---------------------------------
 
@@ -180,3 +177,32 @@ $cb2 = new Codebird;
 Please note that your OAuth consumer key and secret is shared within
 multiple Codebird instances, while the OAuth request and access tokens with their
 secrets are *not* shared.
+
+Specialities
+============
+
+Accessing a user’s profile image
+--------------------------------
+
+The Twitter API usually contains data in either JSON or XML. However, the
+templated method ```users/profile_image/:screen_name``` uses a HTTP 302 redirect
+to send you to the requested image file URL.
+
+Codebird intercepts this HTTP redirect and extracts the profile image URL instead.
+Thus, the following API call:
+
+```php
+$reply = $cb->users_profileImage_SCREEN_NAME('screen_name=mynetx&size=mini');
+```
+
+returns an object with the following contents:
+```
+stdClass Object
+(
+    [profile_image_url_https] => https://si0.twimg.com/profile_images/1417135246/Blue_Purple.96_mini.png
+    [httpstatus] => 302
+)
+```
+
+You can find out how to build the Codebird method name, in the section
+‘Mapping API methods to Codebird function calls.’
