@@ -58,7 +58,7 @@ class Codebird
     /**
      * The API endpoint to use
      */
-    private $_endpoint = 'https://api.twitter.com/1/';
+    private $_endpoint = 'https://api.twitter.com/1.1/';
 
     /**
      * The API endpoint to use for OAuth requests
@@ -69,7 +69,7 @@ class Codebird
      * The API endpoint to use for uploading tweets with media
      * see https://dev.twitter.com/discussions/1059
      */
-    private $_endpoint_upload = 'https://upload.twitter.com/1/';
+    private $_endpoint_upload = 'https://upload.twitter.com/1.1/';
 
     /**
      * The Request or access token. Used to sign requests
@@ -99,7 +99,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.2.0';
+    private $_version = '2.2.1';
 
     /**
      * Returns singleton class instance
@@ -235,13 +235,12 @@ class Codebird
         }
 
         $httpmethod = $this->_detectMethod($method_template);
-        $sign       = $this->_detectSign($method_template);
         $multipart  = $this->_detectMultipart($method_template);
 
         // geek-geek: Now allowing to specify filenames as params
         $this->_detectFilenames($method_template, $apiparams);
 
-        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $sign, $multipart);
+        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $multipart);
     }
 
     /**
@@ -585,22 +584,6 @@ class Codebird
     }
 
     /**
-     * Detects if API call should be signed
-     *
-     * @param string $method The API method to call
-     *
-     * @return bool Whether the API call should be signed
-     */
-    private function _detectSign($method)
-    {
-        $unsignedmethods = array(
-            // OAuth
-            'oauth/request_token'
-        );
-        return !in_array($method, $unsignedmethods);
-    }
-
-    /**
      * Detects if API call should use multipart/form-data
      *
      * @param string $method The API method to call
@@ -716,15 +699,14 @@ class Codebird
      * @param string          $method          The API method to call
      * @param string          $method_template The templated API method to call
      * @param array  optional $params          The parameters to send along
-     * @param bool   optional $sign            Whether to sign the API call
      * @param bool   optional $multipart       Whether to use multipart/form-data
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $sign = true, $multipart = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
     {
-        if ($sign && !isset($this->_oauth_token)) {
+        if (!isset($this->_oauth_token)) {
             throw new Exception('To make a signed API request, the OAuth token must be set.');
         }
         if (! function_exists('curl_init')) {
