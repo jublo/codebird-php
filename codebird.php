@@ -547,6 +547,8 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
+            'account/update_profile_banner',
+            'account/remove_profile_banner',
             'account/settings',
             // Notifications
             'notifications/follow',
@@ -597,7 +599,8 @@ class Codebird
             'statuses/update_with_media',
             // Accounts
             'account/update_profile_background_image',
-            'account/update_profile_image'
+            'account/update_profile_image',
+            'account/update_profile_banner'
         );
         return in_array($method, $multiparts);
     }
@@ -623,7 +626,8 @@ class Codebird
             'statuses/update_with_media' => 'media[]',
             // Accounts
             'account/update_profile_background_image' => 'image',
-            'account/update_profile_image' => 'image'
+            'account/update_profile_image' => 'image',
+            'account/update_profile_banner' => 'banner'
         );
         // method might have files?
         if (! in_array($method, array_keys($possible_files))) {
