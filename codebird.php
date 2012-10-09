@@ -66,12 +66,6 @@ class Codebird
     private $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
-     * The API endpoint to use for uploading tweets with media
-     * see https://dev.twitter.com/discussions/1059
-     */
-    private $_endpoint_upload = 'https://upload.twitter.com/1.1/';
-
-    /**
      * The Request or access token. Used to sign requests
      */
     private $_oauth_token = null;
@@ -682,14 +676,8 @@ class Codebird
      */
     private function _getEndpoint($method)
     {
-        $upload_methods = array(
-            // Tweets
-            'statuses/update_with_media'
-        );
         if (substr($method, 0, 6) == 'oauth/') {
             $url = $this->_endpoint_oauth . $method;
-        } elseif (in_array($method, $upload_methods)) {
-            $url = $this->_endpoint_upload . $method . '.json';
         } else {
             $url = $this->_endpoint . $method . '.json';
         }
