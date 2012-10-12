@@ -698,9 +698,6 @@ class Codebird
 
     private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
     {
-        if (!isset($this->_oauth_token)) {
-            throw new Exception('To make a signed API request, the OAuth token must be set.');
-        }
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
         }
@@ -730,7 +727,7 @@ class Codebird
                 'Expect:'
             ));
         }
-        $reply      = curl_exec($ch);
+        $reply      = curl_exec($ch);die($reply);
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
