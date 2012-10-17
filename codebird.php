@@ -66,6 +66,11 @@ class Codebird
     private $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
+     * The API endpoint to use for untransitioned methods
+     */
+    private $_endpoint_old = 'https://api.twitter.com/1/';
+
+    /**
      * The API endpoint to use for internal requests
      */
     private $_endpoint_internal = 'https://api.twitter.com/i/';
@@ -477,6 +482,7 @@ class Codebird
             'users/search',
             'users/contributees',
             'users/contributors',
+            'users/recommendations',
 
             // Suggested Users
             'users/suggestions/:slug',
@@ -527,10 +533,11 @@ class Codebird
             'activity/about_me',
             'activity/by_friends',
             'search/typeahead',
-            'statuses/:id/activity/summary'
-// Not authorized as of 2012-10-17
-//            'discovery',
-//            'resolve'
+            'statuses/:id/activity/summary',
+
+            // Not authorized as of 2012-10-17
+            'discovery',
+            'resolve'
         );
         $httpmethods['POST'] = array(
             // Tweets
@@ -555,9 +562,8 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-// not supported in 1.1 as of 2012-10-17
-//            'account/update_profile_banner',
-//            'account/remove_profile_banner',
+            'account/update_profile_banner',
+            'account/remove_profile_banner',
             'blocks/create',
             'blocks/destroy',
 
@@ -617,6 +623,24 @@ class Codebird
             'account/update_profile_banner'
         );
         return in_array($method, $multiparts);
+    }
+
+    /**
+     * Detects if API call should use the old endpoint
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined in old API
+     */
+    private function _detectOld($method)
+    {
+        $olds = array(
+            // Users
+            'account/update_profile_banner',
+            'account/remove_profile_banner',
+            'users/recommendations'
+        );
+        return in_array($method, $olds);
     }
 
     /**
@@ -720,6 +744,8 @@ class Codebird
     {
         if (substr($method, 0, 6) == 'oauth/') {
             $url = $this->_endpoint_oauth . $method;
+        } elseif ($this->_detectOld($method_template)) {
+            $url = $this->_endpoint_old . $method . '.json';
         } elseif ($this->_detectInternal($method_template)) {
             $url = $this->_endpoint_internal . $method . '.json';
         } else {
