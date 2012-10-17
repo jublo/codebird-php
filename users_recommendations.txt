@@ -1,0 +1,1382 @@
+stdClass Object
+(
+    [0] => stdClass Object
+        (
+            [connections] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [id] => 352861390
+                            [created_at] => Thu Aug 11 05:18:34 +0000 2011
+                            [is_translator] => 
+                            [statuses_count] => 429
+                            [profile_sidebar_border_color] => C0DEED
+                            [contributors_enabled] => 1
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 1
+                            [location] => Everywhere!
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Moderators
+                            [default_profile_image] => 
+                            [geo_enabled] => 
+                            [lang] => en
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/352861390/1347394537
+                            [friends_count] => 188
+                            [favourites_count] => 22
+                            [protected] => 1
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [profile_background_color] => C0DEED
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [description] => 
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [id_str] => 352861390
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 125
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [screen_name] => Moderators
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => Array
+                                        (
+                                            [0] => 78309820
+                                        )
+
+                                    [favorited] => 
+                                    [possibly_sensitive_editable] => 1
+                                    [created_at] => Tue Oct 09 12:53:07 +0000 2012
+                                    [in_reply_to_status_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [possibly_sensitive] => 
+                                    [place] => 
+                                    [truncated] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5565210949467E+17
+                                    [id_str] => 255652109494673409
+                                    [text] => #WhatIsKavehUpTo? Being interviewed after talking in the Abu Dhabi Media Summit 2012 https://t.co/jap9Ic5 @kavelicious @twitter_ar
+                                )
+
+                            [profile_text_color] => 333333
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [notifications] => 
+                            [url] => http://twitter.com/translate
+                            [listed_count] => 18
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [id] => 259446460
+                            [created_at] => Tue Mar 01 23:01:50 +0000 2011
+                            [profile_background_color] => B2DFDA
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2416999641/i5r93elf9m1dqknjybpg_normal.jpeg
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme13/bg.gif
+                            [utc_offset] => -28800
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme13/bg.gif
+                            [id_str] => 259446460
+                            [location] => San Francisco
+                            [followers_count] => 6736
+                            [profile_link_color] => 93A644
+                            [name] => Monica Quiroz 모니카
+                            [default_profile] => 
+                            [lang] => es
+                            [protected] => 
+                            [profile_use_background_image] => 1
+                            [verified] => 
+                            [profile_text_color] => 333333
+                            [listed_count] => 102
+                            [description] => Mexican descendant. Spanish fascinated. European attracted. Globally aware. American Passport. Citizen of the World.  Spanish Support @Twitter. モニカ مونيكا  
+                            [profile_sidebar_border_color] => FFFFFF
+                            [statuses_count] => 7821
+                            [following] => 1
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2416999641/i5r93elf9m1dqknjybpg_normal.jpeg
+                            [contributors_enabled] => 
+                            [profile_background_tile] => 
+                            [time_zone] => Pacific Time (US & Canada)
+                            [screen_name] => monica
+                            [is_translator] => 1
+                            [profile_sidebar_fill_color] => FFFFFF
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_status_id] => 2.5844188692939E+17
+                                    [in_reply_to_screen_name] => typ
+                                    [in_reply_to_user_id] => 25668422
+                                    [id_str] => 258450174832152576
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 06:11:38 +0000 2012
+                                    [contributors] => 
+                                    [coordinates] => 
+                                    [place] => 
+                                    [geo] => 
+                                    [in_reply_to_status_id_str] => 258441886929387520
+                                    [source] => Twitter for iPhone
+                                    [retweeted] => 
+                                    [retweet_count] => 0
+                                    [id] => 2.5845017483215E+17
+                                    [in_reply_to_user_id_str] => 25668422
+                                    [truncated] => 
+                                    [text] => @typ hola Pablo!!
+                                )
+
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [notifications] => 
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/259446460/1347582454
+                            [url] => 
+                            [favourites_count] => 440
+                            [friends_count] => 631
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [is_translator] => 1
+                            [id] => 18611950
+                            [profile_background_tile] => 
+                            [created_at] => Sun Jan 04 21:22:13 +0000 2009
+                            [time_zone] => London
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [default_profile] => 1
+                            [geo_enabled] => 1
+                            [utc_offset] => 0
+                            [profile_image_url] => http://a0.twimg.com/profile_images/1529546963/Screen_shot_2011-09-05_at_11.00.56_AM_normal.png
+                            [location] => London, UK
+                            [profile_background_color] => C0DEED
+                            [name] => Conrad Oldcorn
+                            [follow_request_sent] => 
+                            [lang] => en
+                            [listed_count] => 117
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/1529546963/Screen_shot_2011-09-05_at_11.00.56_AM_normal.png
+                            [protected] => 
+                            [statuses_count] => 16131
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme1/bg.png
+                            [id_str] => 18611950
+                            [verified] => 
+                            [followers_count] => 7901
+                            [profile_link_color] => 0084B4
+                            [description] => Localisation Project Manager @ Twitter, ex. TweetDeck. Cyclist, violinist. Married to @StephieOldcorn
+                            [profile_use_background_image] => 1
+                            [default_profile_image] => 
+                            [following] => 1
+                            [profile_text_color] => 333333
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/18611950/1347549994
+                            [favourites_count] => 81
+                            [friends_count] => 273
+                            [screen_name] => conradoldcorn
+                            [profile_sidebar_border_color] => C0DEED
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id_str] => 20626359
+                                    [in_reply_to_status_id] => 2.5848306672351E+17
+                                    [id_str] => 258497339428331521
+                                    [in_reply_to_user_id] => 20626359
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 09:19:03 +0000 2012
+                                    [coordinates] => 
+                                    [place] => 
+                                    [geo] => 
+                                    [retweet_count] => 0
+                                    [truncated] => 
+                                    [source] => Twitter for iPhone
+                                    [in_reply_to_status_id_str] => 258483066723512320
+                                    [retweeted] => 
+                                    [id] => 2.5849733942833E+17
+                                    [in_reply_to_screen_name] => VirginAtlantic
+                                    [text] => @VirginAtlantic great, thanks.
+                                )
+
+                            [notifications] => 
+                            [url] => http://www.twitter.com
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme1/bg.png
+                            [contributors_enabled] => 
+                        )
+
+                )
+
+            [user] => stdClass Object
+                (
+                    [id] => 71544125
+                    [created_at] => Fri Sep 04 14:13:28 +0000 2009
+                    [statuses_count] => 18317
+                    [profile_sidebar_border_color] => E2EAEF
+                    [is_translator] => 1
+                    [contributors_enabled] => 
+                    [time_zone] => Riyadh
+                    [utc_offset] => 10800
+                    [profile_background_tile] => 1
+                    [location] => City of Lights, DXB
+                    [profile_sidebar_fill_color] => E2EAEF
+                    [name] => Ms.  David 
+                    [default_profile_image] => 
+                    [geo_enabled] => 1
+                    [lang] => en
+                    [profile_banner_url] => https://si0.twimg.com/profile_banners/71544125/1348170077
+                    [friends_count] => 320
+                    [favourites_count] => 1364
+                    [protected] => 
+                    [profile_image_url] => http://a0.twimg.com/profile_images/2301343267/rczzt38gq0a5c5v4k2j3_normal.jpeg
+                    [profile_background_color] => FFF04D
+                    [follow_request_sent] => 
+                    [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/514393944/cutee.jpg
+                    [description] => Volunteer Arabic Translation Moderator at Twitter (@Twitter_ar) | رعد؛ لبنانيّة منذ أكثر من عشر سنوات.
+                    [profile_background_image_url] => http://a0.twimg.com/profile_background_images/514393944/cutee.jpg
+                    [id_str] => 71544125
+                    [following] => 
+                    [verified] => 
+                    [followers_count] => 2701
+                    [profile_link_color] => 25AD18
+                    [default_profile] => 
+                    [profile_image_url_https] => https://si0.twimg.com/profile_images/2301343267/rczzt38gq0a5c5v4k2j3_normal.jpeg
+                    [screen_name] => RD
+                    [profile_use_background_image] => 1
+                    [status] => stdClass Object
+                        (
+                            [in_reply_to_status_id_str] => 
+                            [in_reply_to_user_id] => 
+                            [retweeted_status] => stdClass Object
+                                (
+                                    [in_reply_to_status_id_str] => 
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [created_at] => Wed Oct 17 09:14:26 +0000 2012
+                                    [coordinates] => 
+                                    [retweet_count] => 1
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => Twitter for BlackBerry®
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5849617953129E+17
+                                    [id_str] => 258496179531292672
+                                    [text] => Sext: Ma3andeesh deroos enaharda ;)
+                                )
+
+                            [contributors] => 
+                            [favorited] => 
+                            [in_reply_to_user_id_str] => 
+                            [created_at] => Wed Oct 17 09:32:48 +0000 2012
+                            [coordinates] => 
+                            [retweet_count] => 1
+                            [place] => 
+                            [truncated] => 
+                            [geo] => 
+                            [retweeted] => 
+                            [in_reply_to_screen_name] => 
+                            [source] => Twitter for iPhone
+                            [in_reply_to_status_id] => 
+                            [id] => 2.5850080268192E+17
+                            [id_str] => 258500802681921536
+                            [text] => RT @Yazibelle: Sext: Ma3andeesh deroos enaharda ;)
+                        )
+
+                    [profile_text_color] => 6C961C
+                    [notifications] => 
+                    [url] => 
+                    [listed_count] => 34
+                )
+
+            [token] => 94
+        )
+
+    [1] => stdClass Object
+        (
+            [connections] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [id] => 352861390
+                            [created_at] => Thu Aug 11 05:18:34 +0000 2011
+                            [is_translator] => 
+                            [statuses_count] => 429
+                            [profile_sidebar_border_color] => C0DEED
+                            [contributors_enabled] => 1
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 1
+                            [location] => Everywhere!
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Moderators
+                            [default_profile_image] => 
+                            [geo_enabled] => 
+                            [lang] => en
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/352861390/1347394537
+                            [friends_count] => 188
+                            [favourites_count] => 22
+                            [protected] => 1
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [profile_background_color] => C0DEED
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [description] => 
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [id_str] => 352861390
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 125
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [screen_name] => Moderators
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => Array
+                                        (
+                                            [0] => 78309820
+                                        )
+
+                                    [favorited] => 
+                                    [possibly_sensitive_editable] => 1
+                                    [created_at] => Tue Oct 09 12:53:07 +0000 2012
+                                    [in_reply_to_status_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [possibly_sensitive] => 
+                                    [place] => 
+                                    [truncated] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5565210949467E+17
+                                    [id_str] => 255652109494673409
+                                    [text] => #WhatIsKavehUpTo? Being interviewed after talking in the Abu Dhabi Media Summit 2012 https://t.co/jap9Ic5 @kavelicious @twitter_ar
+                                )
+
+                            [profile_text_color] => 333333
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [notifications] => 
+                            [url] => http://twitter.com/translate
+                            [listed_count] => 18
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [id] => 134735765
+                            [created_at] => Mon Apr 19 08:52:14 +0000 2010
+                            [profile_sidebar_border_color] => FFFFFF
+                            [contributors_enabled] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/105591238/kavelicious.jpg
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 
+                            [location] => San Francisco
+                            [profile_sidebar_fill_color] => FFFFFF
+                            [name] => Kaveh Gharib
+                            [default_profile] => 
+                            [geo_enabled] => 1
+                            [lang] => en
+                            [protected] => 
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2386310582/54lvxnb8pzn1yjkw3tt8_normal.png
+                            [profile_background_color] => B2DFDA
+                            [listed_count] => 40
+                            [follow_request_sent] => 
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2386310582/54lvxnb8pzn1yjkw3tt8_normal.png
+                            [description] => localization project manager @twitter | specialize on twitter in the Middle East & North Africa (MENA) | کاوه قریب
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/105591238/kavelicious.jpg
+                            [statuses_count] => 400
+                            [id_str] => 134735765
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 8325
+                            [profile_link_color] => 96AB3A
+                            [screen_name] => Kavelicious
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 13:07:39 +0000 2012
+                                    [in_reply_to_status_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [possibly_sensitive] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => Twitter for iPhone
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5855486859008E+17
+                                    [possibly_sensitive_editable] => 1
+                                    [id_str] => 258554868590080001
+                                    [text] => Survey by a psychometric testing company says people with a higher cognitive ability prefer Twitter over LinkedIn. Ha! http://t.co/B7USsnOe
+                                )
+
+                            [default_profile_image] => 
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [is_translator] => 1
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/134735765/1347477786
+                            [url] => http://www.Kavelicious.com
+                            [favourites_count] => 43
+                            [friends_count] => 260
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2284174747/pk3kqrwa7devpuwwv8s3_normal.png
+                            [id] => 54226675
+                            [profile_background_tile] => 1
+                            [created_at] => Mon Jul 06 14:59:33 +0000 2009
+                            [time_zone] => Pacific Time (US & Canada)
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [default_profile_image] => 
+                            [geo_enabled] => 
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/54226675/1347394452
+                            [friends_count] => 103
+                            [favourites_count] => 11
+                            [utc_offset] => -28800
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2284174747/pk3kqrwa7devpuwwv8s3_normal.png
+                            [location] => 
+                            [profile_background_color] => C0DEED
+                            [name] => Translator 
+                            [follow_request_sent] => 
+                            [lang] => en
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656930021/qwztnd9iu549hrvwyt4v.png
+                            [protected] => 
+                            [is_translator] => 
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656930021/qwztnd9iu549hrvwyt4v.png
+                            [id_str] => 54226675
+                            [followers_count] => 519822
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [description] => Twitter's Translator Community. Got questions or found a bug? Fill out this form: http://support.twitter.com/forms/translation
+                            [profile_use_background_image] => 1
+                            [following] => 1
+                            [verified] => 1
+                            [profile_text_color] => 333333
+                            [listed_count] => 2054
+                            [screen_name] => translator
+                            [statuses_count] => 599
+                            [profile_sidebar_border_color] => C0DEED
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [id_str] => 258459529736495104
+                                    [favorited] => 
+                                    [contributors] => Array
+                                        (
+                                            [0] => 17482598
+                                        )
+
+                                    [created_at] => Wed Oct 17 06:48:48 +0000 2012
+                                    [possibly_sensitive_editable] => 1
+                                    [possibly_sensitive] => 
+                                    [coordinates] => 
+                                    [place] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [retweet_count] => 7
+                                    [truncated] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.584595297365E+17
+                                    [in_reply_to_status_id_str] => 
+                                    [in_reply_to_screen_name] => 
+                                    [text] => Some untranslated strings: http://t.co/LlY8q2SM and http://t.co/ONwQGk3W Already done? Others at http://t.co/0wi1ZWcB Thanks, translators!
+                                )
+
+                            [notifications] => 
+                            [url] => http://translate.twttr.com/help#faq
+                            [contributors_enabled] => 1
+                        )
+
+                )
+
+            [user] => stdClass Object
+                (
+                    [id] => 744073
+                    [created_at] => Thu Feb 01 18:17:41 +0000 2007
+                    [statuses_count] => 34969
+                    [profile_sidebar_border_color] => 30343D
+                    [contributors_enabled] => 
+                    [time_zone] => Cairo
+                    [utc_offset] => 7200
+                    [profile_background_tile] => 1
+                    [location] => 31.051511,31.408083
+                    [profile_sidebar_fill_color] => 050505
+                    [name] => Mohamed ElGohary
+                    [default_profile_image] => 
+                    [geo_enabled] => 1
+                    [lang] => ar
+                    [is_translator] => 1
+                    [profile_banner_url] => https://si0.twimg.com/profile_banners/744073/1348795055
+                    [friends_count] => 903
+                    [favourites_count] => 352
+                    [protected] => 
+                    [profile_image_url] => http://a0.twimg.com/profile_images/2530507463/712249ad-ce98-4da3-81bb-9ade3878b8c8_normal.png
+                    [profile_image_url_https] => https://si0.twimg.com/profile_images/2530507463/712249ad-ce98-4da3-81bb-9ade3878b8c8_normal.png
+                    [profile_background_color] => 1A1B1F
+                    [follow_request_sent] => 
+                    [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/14586456/V.jpg
+                    [description] => @TheWorkshopsEG Co-Founder @GlobalVoices Lingua Coordinator, @Advox author and @GVinArabic Editor. @Twitter_Ar moderator. Known as Gohary.
+                    [profile_background_image_url] => http://a0.twimg.com/profile_background_images/14586456/V.jpg
+                    [id_str] => 744073
+                    [following] => 
+                    [verified] => 
+                    [followers_count] => 17419
+                    [profile_link_color] => 2FC2EF
+                    [default_profile] => 
+                    [screen_name] => ircpresident
+                    [profile_use_background_image] => 1
+                    [status] => stdClass Object
+                        (
+                            [in_reply_to_user_id] => 
+                            [retweeted_status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [in_reply_to_status_id_str] => 
+                                    [created_at] => Wed Oct 17 09:09:02 +0000 2012
+                                    [in_reply_to_user_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 5
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => Twitter for iPad
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5849481859708E+17
+                                    [id_str] => 258494818597076992
+                                    [text] => إذا أردت ان تقدر على اسرائيل، اعمل على ان تكون القاهرة عاصمة للسلام والتعدد والديمقراطية وحقوق الإنسان.
+                                )
+
+                            [contributors] => 
+                            [favorited] => 
+                            [in_reply_to_status_id_str] => 
+                            [created_at] => Wed Oct 17 09:28:46 +0000 2012
+                            [in_reply_to_user_id_str] => 
+                            [coordinates] => 
+                            [retweet_count] => 5
+                            [place] => 
+                            [truncated] => 
+                            [geo] => 
+                            [retweeted] => 
+                            [in_reply_to_screen_name] => 
+                            [source] => Twitter for Android
+                            [in_reply_to_status_id] => 
+                            [id] => 2.5849978731223E+17
+                            [id_str] => 258499787312230400
+                            [text] => RT @abu_fajr: إذا أردت ان تقدر على اسرائيل، اعمل على ان تكون القاهرة عاصمة للسلام والتعدد والديمقراطية وحقوق الإنسان.
+                        )
+
+                    [profile_text_color] => F0F0F0
+                    [notifications] => 
+                    [url] => http://ircpresident.com
+                    [listed_count] => 368
+                )
+
+            [token] => 94
+        )
+
+    [2] => stdClass Object
+        (
+            [connections] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [id] => 17874544
+                            [created_at] => Thu Dec 04 18:51:57 +0000 2008
+                            [profile_sidebar_border_color] => C0DEED
+                            [contributors_enabled] => 1
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656929496/y6jd4l68p18hrm52f0ez.png
+                            [time_zone] => Alaska
+                            [utc_offset] => -32400
+                            [profile_background_tile] => 1
+                            [location] => Twitter HQ
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Support
+                            [default_profile] => 
+                            [geo_enabled] => 1
+                            [lang] => en
+                            [protected] => 
+                            [is_translator] => 
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2320882833/2whv6cuhvbal751uss8u_normal.png
+                            [profile_background_color] => C0DEED
+                            [listed_count] => 10949
+                            [follow_request_sent] => 
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2320882833/2whv6cuhvbal751uss8u_normal.png
+                            [description] => Updates from Twitter User Support. We're unable to assist with account suspension/verification.
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656929496/y6jd4l68p18hrm52f0ez.png
+                            [statuses_count] => 2122
+                            [id_str] => 17874544
+                            [following] => 1
+                            [verified] => 1
+                            [followers_count] => 1803997
+                            [profile_link_color] => 0084B4
+                            [screen_name] => Support
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => Array
+                                        (
+                                            [0] => 256103310
+                                        )
+
+                                    [favorited] => 
+                                    [possibly_sensitive_editable] => 1
+                                    [possibly_sensitive] => 
+                                    [created_at] => Mon Oct 15 19:45:00 +0000 2012
+                                    [coordinates] => 
+                                    [retweet_count] => 200
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_status_id_str] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5793008922699E+17
+                                    [in_reply_to_user_id_str] => 
+                                    [id_str] => 257930089226989568
+                                    [text] => Looks like some users are having trouble uploading profile photos. We're on the case! http://t.co/U6CohNA5
+                                )
+
+                            [default_profile_image] => 
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/17874544/1347394418
+                            [url] => http://support.twitter.com
+                            [favourites_count] => 42
+                            [friends_count] => 30
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [id] => 352861390
+                            [created_at] => Thu Aug 11 05:18:34 +0000 2011
+                            [is_translator] => 
+                            [statuses_count] => 429
+                            [profile_sidebar_border_color] => C0DEED
+                            [contributors_enabled] => 1
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 1
+                            [location] => Everywhere!
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Moderators
+                            [default_profile_image] => 
+                            [geo_enabled] => 
+                            [lang] => en
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/352861390/1347394537
+                            [friends_count] => 188
+                            [favourites_count] => 22
+                            [protected] => 1
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [profile_background_color] => C0DEED
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [description] => 
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656931298/e5x7ll57s5nc8s9a8qqs.png
+                            [id_str] => 352861390
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 125
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [screen_name] => Moderators
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => Array
+                                        (
+                                            [0] => 78309820
+                                        )
+
+                                    [favorited] => 
+                                    [possibly_sensitive_editable] => 1
+                                    [created_at] => Tue Oct 09 12:53:07 +0000 2012
+                                    [in_reply_to_status_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [possibly_sensitive] => 
+                                    [place] => 
+                                    [truncated] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5565210949467E+17
+                                    [id_str] => 255652109494673409
+                                    [text] => #WhatIsKavehUpTo? Being interviewed after talking in the Abu Dhabi Media Summit 2012 https://t.co/jap9Ic5 @kavelicious @twitter_ar
+                                )
+
+                            [profile_text_color] => 333333
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2284174546/vz3ae5yin1ds4d6fngwq_normal.png
+                            [notifications] => 
+                            [url] => http://twitter.com/translate
+                            [listed_count] => 18
+                        )
+
+                )
+
+            [user] => stdClass Object
+                (
+                    [id] => 270507573
+                    [profile_background_tile] => 1
+                    [created_at] => Tue Mar 22 19:02:48 +0000 2011
+                    [time_zone] => Pacific Time (US & Canada)
+                    [profile_sidebar_fill_color] => DDEEF6
+                    [is_translator] => 
+                    [default_profile_image] => 
+                    [geo_enabled] => 
+                    [profile_banner_url] => https://si0.twimg.com/profile_banners/270507573/1347394666
+                    [friends_count] => 18
+                    [favourites_count] => 8
+                    [utc_offset] => -28800
+                    [profile_image_url] => http://a0.twimg.com/profile_images/2284174852/q9v3hqfwz1ug30t08yz8_normal.png
+                    [location] => Сан-Франциско, Калифорния
+                    [profile_background_color] => C0DEED
+                    [name] => Твиттер на русском
+                    [follow_request_sent] => 
+                    [lang] => ru
+                    [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/656933154/ikra8t8b1odv6hcbcjcx.png
+                    [protected] => 
+                    [profile_background_image_url] => http://a0.twimg.com/profile_background_images/656933154/ikra8t8b1odv6hcbcjcx.png
+                    [id_str] => 270507573
+                    [followers_count] => 376231
+                    [profile_link_color] => 0084B4
+                    [default_profile] => 
+                    [description] => Приветствуем вас на официальной учётной записи Твиттера на русском языке!
+                    [profile_use_background_image] => 1
+                    [profile_image_url_https] => https://si0.twimg.com/profile_images/2284174852/q9v3hqfwz1ug30t08yz8_normal.png
+                    [following] => 
+                    [verified] => 1
+                    [profile_text_color] => 333333
+                    [listed_count] => 1120
+                    [screen_name] => twitter_ru
+                    [statuses_count] => 70
+                    [profile_sidebar_border_color] => C0DEED
+                    [status] => stdClass Object
+                        (
+                            [in_reply_to_user_id] => 
+                            [id_str] => 205677045961867265
+                            [favorited] => 
+                            [contributors] => Array
+                                (
+                                    [0] => 223636089
+                                )
+
+                            [created_at] => Thu May 24 15:10:03 +0000 2012
+                            [possibly_sensitive] => 
+                            [coordinates] => 
+                            [in_reply_to_status_id_str] => 
+                            [place] => 
+                            [geo] => 
+                            [retweeted] => 
+                            [retweet_count] => 132
+                            [in_reply_to_user_id_str] => 
+                            [truncated] => 
+                            [source] => web
+                            [in_reply_to_status_id] => 
+                            [id] => 2.0567704596187E+17
+                            [in_reply_to_screen_name] => 
+                            [text] => Что вы думаете о переводе http://t.co/fq2lEBEb на русский язык? Мы хотим услышать ваше мнение: https://t.co/NXQ2hcQK
+                        )
+
+                    [notifications] => 
+                    [url] => 
+                    [contributors_enabled] => 1
+                )
+
+            [token] => 94
+        )
+
+    [3] => stdClass Object
+        (
+            [connections] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [id] => 17482598
+                            [profile_background_tile] => 
+                            [created_at] => Wed Nov 19 08:43:26 +0000 2008
+                            [time_zone] => Pacific Time (US & Canada)
+                            [profile_sidebar_fill_color] => EADEAA
+                            [is_translator] => 1
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [friends_count] => 163
+                            [favourites_count] => 38
+                            [utc_offset] => -28800
+                            [profile_image_url] => http://a0.twimg.com/profile_images/719139112/IMG_0194__square__normal.JPG
+                            [location] => the sunny side of the Bay
+                            [profile_background_color] => 8B542B
+                            [name] => Adriana Valencia
+                            [follow_request_sent] => 
+                            [lang] => en
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme8/bg.gif
+                            [protected] => 
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme8/bg.gif
+                            [id_str] => 17482598
+                            [followers_count] => 260
+                            [profile_link_color] => 9D582E
+                            [default_profile] => 
+                            [description] => polyglot, researcher, lover of samosas, Twitter employee in international localization
+                            [profile_use_background_image] => 1
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/719139112/IMG_0194__square__normal.JPG
+                            [following] => 1
+                            [verified] => 
+                            [profile_text_color] => 333333
+                            [listed_count] => 11
+                            [screen_name] => avalenc
+                            [statuses_count] => 249
+                            [profile_sidebar_border_color] => D9B17E
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [id_str] => 258432944908148736
+                                    [favorited] => 
+                                    [retweeted_status] => stdClass Object
+                                        (
+                                            [in_reply_to_user_id] => 
+                                            [id_str] => 258432387686469632
+                                            [favorited] => 
+                                            [contributors] => 
+                                            [created_at] => Wed Oct 17 05:00:57 +0000 2012
+                                            [coordinates] => 
+                                            [in_reply_to_status_id_str] => 
+                                            [place] => 
+                                            [geo] => 
+                                            [retweeted] => 
+                                            [retweet_count] => 4
+                                            [in_reply_to_user_id_str] => 
+                                            [truncated] => 
+                                            [source] => Echofon
+                                            [in_reply_to_status_id] => 
+                                            [id] => 2.5843238768647E+17
+                                            [in_reply_to_screen_name] => 
+                                            [text] => If Romney wins, I'd like to take advantage of this self-deportation he's proposing. #Debates
+                                        )
+
+                                    [contributors] => 
+                                    [created_at] => Wed Oct 17 05:03:10 +0000 2012
+                                    [coordinates] => 
+                                    [in_reply_to_status_id_str] => 
+                                    [place] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [retweet_count] => 4
+                                    [in_reply_to_user_id_str] => 
+                                    [truncated] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5843294490815E+17
+                                    [in_reply_to_screen_name] => 
+                                    [text] => RT @currageous: If Romney wins, I'd like to take advantage of this self-deportation he's proposing. #Debates
+                                )
+
+                            [notifications] => 
+                            [url] => 
+                            [contributors_enabled] => 
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [id] => 78309820
+                            [created_at] => Tue Sep 29 13:36:20 +0000 2009
+                            [statuses_count] => 18077
+                            [profile_sidebar_border_color] => C0DEED
+                            [contributors_enabled] => 
+                            [time_zone] => Jakarta
+                            [utc_offset] => 25200
+                            [profile_background_tile] => 1
+                            [location] => Indonesia
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Michael Simarta
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [lang] => en-ss
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/78309820/1347975644
+                            [friends_count] => 691
+                            [favourites_count] => 80
+                            [protected] => 
+                            [is_translator] => 1
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2614463849/80k4qm22l21adbzvxjc5_normal.jpeg
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2614463849/80k4qm22l21adbzvxjc5_normal.jpeg
+                            [profile_background_color] => C0DEED
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/608957326/kaml1vdvzlj9f9dklo2l.jpeg
+                            [description] => Where's My Water?, Tap Tap Revenge videos in Youtube - taptapmikesimarta wheresmywaterguide wheresmyperryguide | Twitter @Translator @Moderators | @twitter_id
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/608957326/kaml1vdvzlj9f9dklo2l.jpeg
+                            [id_str] => 78309820
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 3603
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [screen_name] => mikesimarta
+                            [profile_use_background_image] => 1
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [possibly_sensitive_editable] => 1
+                                    [possibly_sensitive] => 
+                                    [created_at] => Wed Oct 17 12:42:46 +0000 2012
+                                    [in_reply_to_status_id_str] => 
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [place] => 
+                                    [truncated] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => Tweet Button
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5854860710656E+17
+                                    [id_str] => 258548607106560000
+                                    [text] => The Smartest People Prefer Twitter To LinkedIn And Facebook, Research Shows [STUDY] http://t.co/mHZpi0lL via @alltwtr
+                                )
+
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [url] => http://www.youtube.com/wheresmywaterguide
+                            [listed_count] => 23
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [id] => 88717547
+                            [created_at] => Mon Nov 09 17:48:09 +0000 2009
+                            [statuses_count] => 3413
+                            [profile_sidebar_border_color] => FFFFFF
+                            [contributors_enabled] => 1
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 
+                            [is_translator] => 1
+                            [location] => San Francisco, CA
+                            [profile_sidebar_fill_color] => C0DFEC
+                            [name] => Lena
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [lang] => pt
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/88717547/1349298964
+                            [friends_count] => 222
+                            [favourites_count] => 807
+                            [protected] => 
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2265216451/65uejf6l2fasn4t44d18_normal.jpeg
+                            [profile_background_color] => 022330
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme15/bg.png
+                            [description] => 레나  Twitter localization team. Visit http://translate.twttr.com/ and help us make Twitter available in all languages. Oh, and follow @translator
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme15/bg.png
+                            [id_str] => 88717547
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 10390
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2265216451/65uejf6l2fasn4t44d18_normal.jpeg
+                            [screen_name] => lenazun
+                            [profile_use_background_image] => 
+                            [status] => stdClass Object
+                                (
+                                    [possibly_sensitive] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 04:25:01 +0000 2012
+                                    [coordinates] => 
+                                    [retweet_count] => 1
+                                    [possibly_sensitive_editable] => 1
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => TweetDeck
+                                    [in_reply_to_status_id_str] => 
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5842334355908E+17
+                                    [id_str] => 258423343559081984
+                                    [text] => that binder thing: not even true http://t.co/OLaCu99f
+                                )
+
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [url] => http://translate.twttr.com/user/lenazun
+                            [listed_count] => 116
+                        )
+
+                )
+
+            [user] => stdClass Object
+                (
+                    [id] => 338048283
+                    [created_at] => Tue Jul 19 00:21:48 +0000 2011
+                    [statuses_count] => 1479
+                    [profile_sidebar_border_color] => FFFFFF
+                    [contributors_enabled] => 
+                    [time_zone] => Hawaii
+                    [utc_offset] => -36000
+                    [profile_background_tile] => 
+                    [location] => 9th & Market Street
+                    [profile_sidebar_fill_color] => DDEEF6
+                    [name] => Bon Appetit
+                    [is_translator] => 
+                    [default_profile_image] => 
+                    [geo_enabled] => 1
+                    [lang] => en
+                    [profile_banner_url] => https://si0.twimg.com/profile_banners/338048283/1348611009
+                    [friends_count] => 896
+                    [favourites_count] => 63
+                    [protected] => 
+                    [profile_image_url_https] => https://si0.twimg.com/profile_images/2309263754/r17884vpgmkpq4seu9bv_normal.png
+                    [profile_image_url] => http://a0.twimg.com/profile_images/2309263754/r17884vpgmkpq4seu9bv_normal.png
+                    [profile_background_color] => C0DEED
+                    [follow_request_sent] => 
+                    [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/461952597/Farmers_Market_7-26-2007_003_3.jpg
+                    [description] => Bon Appétit Management Co., on site @Twitter HQ - cooking up delicious, sustainable food from scratch 2 keep U tweeting all day. In 140 ingredients or less!
+                    [profile_background_image_url] => http://a0.twimg.com/profile_background_images/461952597/Farmers_Market_7-26-2007_003_3.jpg
+                    [id_str] => 338048283
+                    [following] => 
+                    [verified] => 
+                    [followers_count] => 1676
+                    [profile_link_color] => 0084B4
+                    [default_profile] => 
+                    [screen_name] => bonappetweet
+                    [profile_use_background_image] => 1
+                    [status] => stdClass Object
+                        (
+                            [in_reply_to_status_id_str] => 
+                            [in_reply_to_user_id] => 
+                            [contributors] => 
+                            [favorited] => 
+                            [in_reply_to_user_id_str] => 
+                            [created_at] => Wed Oct 17 01:49:52 +0000 2012
+                            [coordinates] => 
+                            [retweet_count] => 0
+                            [place] => 
+                            [truncated] => 
+                            [geo] => 
+                            [retweeted] => 
+                            [in_reply_to_screen_name] => 
+                            [source] => Twitter for iPhone
+                            [in_reply_to_status_id] => 
+                            [id] => 2.5838430158916E+17
+                            [id_str] => 258384301589164033
+                            [text] => Dinner 10.16.12
+-Stir Fried Clams
+-Vegetarian Chow Mein
+-Baby Bok Choy
+-Vegetarian and Chicken Egg Rolls
+
+Join us for the Debates
+                        )
+
+                    [profile_text_color] => 333333
+                    [notifications] => 
+                    [url] => http://www.cafebonappetit.com/twitter
+                    [listed_count] => 33
+                )
+
+            [token] => 94
+        )
+
+    [4] => stdClass Object
+        (
+            [connections] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [id] => 88717547
+                            [created_at] => Mon Nov 09 17:48:09 +0000 2009
+                            [statuses_count] => 3413
+                            [profile_sidebar_border_color] => FFFFFF
+                            [contributors_enabled] => 1
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 
+                            [is_translator] => 1
+                            [location] => San Francisco, CA
+                            [profile_sidebar_fill_color] => C0DFEC
+                            [name] => Lena
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [lang] => pt
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/88717547/1349298964
+                            [friends_count] => 222
+                            [favourites_count] => 807
+                            [protected] => 
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2265216451/65uejf6l2fasn4t44d18_normal.jpeg
+                            [profile_background_color] => 022330
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme15/bg.png
+                            [description] => 레나  Twitter localization team. Visit http://translate.twttr.com/ and help us make Twitter available in all languages. Oh, and follow @translator
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme15/bg.png
+                            [id_str] => 88717547
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 10390
+                            [profile_link_color] => 0084B4
+                            [default_profile] => 
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2265216451/65uejf6l2fasn4t44d18_normal.jpeg
+                            [screen_name] => lenazun
+                            [profile_use_background_image] => 
+                            [status] => stdClass Object
+                                (
+                                    [possibly_sensitive] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [in_reply_to_user_id] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 04:25:01 +0000 2012
+                                    [coordinates] => 
+                                    [retweet_count] => 1
+                                    [possibly_sensitive_editable] => 1
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => TweetDeck
+                                    [in_reply_to_status_id_str] => 
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5842334355908E+17
+                                    [id_str] => 258423343559081984
+                                    [text] => that binder thing: not even true http://t.co/OLaCu99f
+                                )
+
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [url] => http://translate.twttr.com/user/lenazun
+                            [listed_count] => 116
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [id] => 259446460
+                            [created_at] => Tue Mar 01 23:01:50 +0000 2011
+                            [profile_background_color] => B2DFDA
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2416999641/i5r93elf9m1dqknjybpg_normal.jpeg
+                            [follow_request_sent] => 
+                            [profile_background_image_url_https] => https://si0.twimg.com/images/themes/theme13/bg.gif
+                            [utc_offset] => -28800
+                            [profile_background_image_url] => http://a0.twimg.com/images/themes/theme13/bg.gif
+                            [id_str] => 259446460
+                            [location] => San Francisco
+                            [followers_count] => 6736
+                            [profile_link_color] => 93A644
+                            [name] => Monica Quiroz 모니카
+                            [default_profile] => 
+                            [lang] => es
+                            [protected] => 
+                            [profile_use_background_image] => 1
+                            [verified] => 
+                            [profile_text_color] => 333333
+                            [listed_count] => 102
+                            [description] => Mexican descendant. Spanish fascinated. European attracted. Globally aware. American Passport. Citizen of the World.  Spanish Support @Twitter. モニカ مونيكا  
+                            [profile_sidebar_border_color] => FFFFFF
+                            [statuses_count] => 7821
+                            [following] => 1
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2416999641/i5r93elf9m1dqknjybpg_normal.jpeg
+                            [contributors_enabled] => 
+                            [profile_background_tile] => 
+                            [time_zone] => Pacific Time (US & Canada)
+                            [screen_name] => monica
+                            [is_translator] => 1
+                            [profile_sidebar_fill_color] => FFFFFF
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_status_id] => 2.5844188692939E+17
+                                    [in_reply_to_screen_name] => typ
+                                    [in_reply_to_user_id] => 25668422
+                                    [id_str] => 258450174832152576
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 06:11:38 +0000 2012
+                                    [contributors] => 
+                                    [coordinates] => 
+                                    [place] => 
+                                    [geo] => 
+                                    [in_reply_to_status_id_str] => 258441886929387520
+                                    [source] => Twitter for iPhone
+                                    [retweeted] => 
+                                    [retweet_count] => 0
+                                    [id] => 2.5845017483215E+17
+                                    [in_reply_to_user_id_str] => 25668422
+                                    [truncated] => 
+                                    [text] => @typ hola Pablo!!
+                                )
+
+                            [default_profile_image] => 
+                            [geo_enabled] => 1
+                            [notifications] => 
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/259446460/1347582454
+                            [url] => 
+                            [favourites_count] => 440
+                            [friends_count] => 631
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [id] => 198684338
+                            [created_at] => Mon Oct 04 23:54:15 +0000 2010
+                            [profile_sidebar_border_color] => C0DEED
+                            [profile_image_url_https] => https://si0.twimg.com/profile_images/2606315600/5ntvksurtqgluskxbcvm_normal.jpeg
+                            [contributors_enabled] => 1
+                            [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/344227882/NestEgg_v3-twoffice.gif
+                            [time_zone] => Pacific Time (US & Canada)
+                            [utc_offset] => -28800
+                            [profile_background_tile] => 
+                            [location] => San Francisco/Berlin
+                            [profile_sidebar_fill_color] => DDEEF6
+                            [name] => Carolina Janssen
+                            [default_profile] => 
+                            [geo_enabled] => 1
+                            [lang] => de
+                            [protected] => 
+                            [is_translator] => 1
+                            [profile_image_url] => http://a0.twimg.com/profile_images/2606315600/5ntvksurtqgluskxbcvm_normal.jpeg
+                            [profile_background_color] => C0DEED
+                            [listed_count] => 276
+                            [follow_request_sent] => 
+                            [description] => Collector of all sorts of things. Mostly im- and ex-pressions. International Market Development @Twitter
+                            [profile_background_image_url] => http://a0.twimg.com/profile_background_images/344227882/NestEgg_v3-twoffice.gif
+                            [statuses_count] => 1535
+                            [id_str] => 198684338
+                            [following] => 1
+                            [verified] => 
+                            [followers_count] => 22132
+                            [profile_link_color] => 0084B4
+                            [screen_name] => lija
+                            [profile_use_background_image] => 
+                            [status] => stdClass Object
+                                (
+                                    [in_reply_to_user_id] => 
+                                    [in_reply_to_user_id_str] => 
+                                    [contributors] => 
+                                    [favorited] => 
+                                    [created_at] => Wed Oct 17 11:48:18 +0000 2012
+                                    [possibly_sensitive_editable] => 1
+                                    [coordinates] => 
+                                    [retweet_count] => 0
+                                    [place] => 
+                                    [truncated] => 
+                                    [geo] => 
+                                    [retweeted] => 
+                                    [possibly_sensitive] => 
+                                    [in_reply_to_screen_name] => 
+                                    [source] => web
+                                    [in_reply_to_status_id] => 
+                                    [id] => 2.5853489993236E+17
+                                    [in_reply_to_status_id_str] => 
+                                    [id_str] => 258534899932356609
+                                    [text] => I like @fabsnonfire 's "Stories of a Journeyman". A lot. http://t.co/lvIU2oWc
+                                )
+
+                            [default_profile_image] => 
+                            [profile_text_color] => 333333
+                            [notifications] => 
+                            [profile_banner_url] => https://si0.twimg.com/profile_banners/198684338/1350054576
+                            [url] => 
+                            [favourites_count] => 80
+                            [friends_count] => 495
+                        )
+
+                )
+
+            [user] => stdClass Object
+                (
+                    [id] => 15603374
+                    [created_at] => Fri Jul 25 20:36:15 +0000 2008
+                    [profile_background_color] => 022330
+                    [profile_image_url] => http://a0.twimg.com/profile_images/2600585650/26swlj56e0e0y9ug86pp_normal.png
+                    [follow_request_sent] => 
+                    [profile_background_image_url_https] => https://si0.twimg.com/profile_background_images/676284596/ab71778b5bfed0351123c9009d2b82cd.jpeg
+                    [utc_offset] => -28800
+                    [profile_background_image_url] => http://a0.twimg.com/profile_background_images/676284596/ab71778b5bfed0351123c9009d2b82cd.jpeg
+                    [id_str] => 15603374
+                    [location] => San Francisco
+                    [followers_count] => 2828
+                    [profile_link_color] => 0084B4
+                    [name] => Ian Padgham 
+                    [default_profile] => 
+                    [lang] => en
+                    [protected] => 
+                    [profile_use_background_image] => 1
+                    [verified] => 
+                    [profile_text_color] => 333333
+                    [is_translator] => 
+                    [listed_count] => 94
+                    [profile_image_url_https] => https://si0.twimg.com/profile_images/2600585650/26swlj56e0e0y9ug86pp_normal.png
+                    [description] => Twitter's illustrator and video animator.
+                    [profile_sidebar_border_color] => 000000
+                    [statuses_count] => 1131
+                    [following] => 
+                    [contributors_enabled] => 
+                    [profile_background_tile] => 1
+                    [time_zone] => Pacific Time (US & Canada)
+                    [screen_name] => origiful
+                    [profile_sidebar_fill_color] => C0DFEC
+                    [status] => stdClass Object
+                        (
+                            [in_reply_to_status_id] => 
+                            [in_reply_to_user_id_str] => 
+                            [in_reply_to_screen_name] => 
+                            [in_reply_to_user_id] => 
+                            [possibly_sensitive] => 
+                            [id_str] => 258393765335670787
+                            [favorited] => 
+                            [created_at] => Wed Oct 17 02:27:29 +0000 2012
+                            [contributors] => 
+                            [coordinates] => 
+                            [place] => 
+                            [geo] => 
+                            [source] => Photos on iOS
+                            [retweeted] => 
+                            [retweet_count] => 0
+                            [id] => 2.5839376533567E+17
+                            [in_reply_to_status_id_str] => 
+                            [truncated] => 
+                            [text] => Until you've ridden over the hills of SF in a limo, you haven't been on a Twitter offsite. #jointhflock @briggles http://t.co/VgVRtzzf
+                        )
+
+                    [default_profile_image] => 
+                    [geo_enabled] => 1
+                    [notifications] => 
+                    [profile_banner_url] => https://si0.twimg.com/profile_banners/15603374/1347402592
+                    [url] => http://www.origiful.com
+                    [favourites_count] => 513
+                    [friends_count] => 179
+                )
+
+            [token] => 94
+        )
+
+    [httpstatus] => 200
+)
