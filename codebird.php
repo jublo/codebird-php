@@ -66,6 +66,11 @@ class Codebird
     private $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
+     * The API endpoint to use for internal requests
+     */
+    private $_endpoint_internal = 'https://api.twitter.com/i/';
+
+    /**
      * The Request or access token. Used to sign requests
      */
     private $_oauth_token = null;
@@ -93,7 +98,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.2.1';
+    private $_version = '2.2.2-internal';
 
     /**
      * Returns singleton class instance
@@ -228,13 +233,14 @@ class Codebird
             $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
         }
 
-        $httpmethod = $this->_detectMethod($method_template);
+        $httpmethod = $this->_detectMethod($method_template, $apiparams);
         $multipart  = $this->_detectMultipart($method_template);
+        $internal   = $this->_detectInternal($method_template);
 
         // geek-geek: Now allowing to specify filenames as params
         $this->_detectFilenames($method_template, $apiparams);
 
-        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $multipart);
+        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $multipart, $internal);
     }
 
     /**
@@ -424,152 +430,165 @@ class Codebird
      *
      * @return string The HTTP method that should be used
      */
-    private function _detectMethod($method)
+    private function _detectMethod($method, $params)
     {
-        $httpmethods           = array();
-        $httpmethods['GET']    = array(
-            // Timeline
-            'statuses/home_timeline',
-            'statuses/mentions',
-            'statuses/retweeted_by_me',
-            'statuses/retweeted_to_me',
-            'statuses/retweets_of_me',
+        // multi-HTTP method endpoints
+        switch($method) {
+            case 'account/settings':
+                $method = count($params) > 0 ? $method .= '__post' : $method;
+                break;
+        }
+
+        $httpmethods         = array();
+        $httpmethods['GET']  = array(
+            // Timelines
+            'statuses/mentions_timeline',
             'statuses/user_timeline',
-            'statuses/retweeted_to_user',
-            'statuses/retweeted_by_user',
+            'statuses/home_timeline',
+
             // Tweets
-            'statuses/:id/retweeted_by',
-            'statuses/:id/retweeted_by/ids',
             'statuses/retweets/:id',
             'statuses/show/:id',
             'statuses/oembed',
+
+            // Search
+            'search/tweets',
+
             // Direct Messages
             'direct_messages',
             'direct_messages/sent',
-            'direct_messages/show/:id',
+            'direct_messages/show',
+
             // Friends & Followers
-            'followers/ids',
             'friends/ids',
-            'friendships/exists',
+            'followers/ids',
+            'friendships/lookup',
             'friendships/incoming',
             'friendships/outgoing',
             'friendships/show',
-            'friendships/lookup',
-            'friendships/no_retweet_ids',
+
             // Users
+            'account/settings',
+            'account/verify_credentials',
+            'blocks/list',
+            'blocks/ids',
             'users/lookup',
-            'users/profile_image/:screen_name',
-            'users/search',
             'users/show',
+            'users/search',
             'users/contributees',
             'users/contributors',
+
             // Suggested Users
-            'users/suggestions',
             'users/suggestions/:slug',
+            'users/suggestions',
             'users/suggestions/:slug/members',
+
             // Favorites
-            'favorites',
+            'favorites/list',
+
             // Lists
-            'lists/all',
+            'lists/list',
             'lists/statuses',
             'lists/memberships',
             'lists/subscribers',
             'lists/subscribers/show',
             'lists/members/show',
             'lists/members',
-            'lists',
             'lists/show',
             'lists/subscriptions',
-            // Accounts
-            'account/rate_limit_status',
-            'account/verify_credentials',
-            'account/totals',
-            'account/settings',
+
             // Saved searches
-            'saved_searches',
+            'saved_searches/list',
             'saved_searches/show/:id',
+
             // Places & Geo
             'geo/id/:place_id',
             'geo/reverse_geocode',
             'geo/search',
             'geo/similar_places',
+
             // Trends
-            'trends/:woeid',
+            'trends/place',
             'trends/available',
-            'trends/daily',
-            'trends/weekly',
-            // Block
-            'blocks/blocking',
-            'blocks/blocking/ids',
-            'blocks/exists',
+            'trends/closest',
+
             // OAuth
             'oauth/authenticate',
             'oauth/authorize',
+
             // Help
-            'help/test',
             'help/configuration',
             'help/languages',
-            // Legal
-            'legal/privacy',
-            'legal/tos'
+            'help/privacy',
+            'help/tos',
+            'application/rate_limit_status',
+
+            // Internal
+            'activity/about_me',
+            'activity/by_friends',
+            'search/typeahead',
+            'statuses/:id/activity/summary'
+// Not authorized as of 2012-10-17
+//            'discovery',
+//            'resolve'
         );
-        $httpmethods['POST']   = array(
-            // Timeline
+        $httpmethods['POST'] = array(
+            // Tweets
             'statuses/destroy/:id',
-            'statuses/retweet/:id',
             'statuses/update',
+            'statuses/retweet/:id',
             'statuses/update_with_media',
+
             // Direct Messages
+            'direct_messages/destroy',
             'direct_messages/new',
+
             // Friends & Followers
             'friendships/create',
+            'friendships/destroy',
             'friendships/update',
-            // Favorites
-            'favorites/create/:id',
-            // Lists
-            'lists/destroy',
-            'lists/update',
-            'lists/create',
-            'lists/members/destroy',
-            'lists/members/create_all',
-            'lists/members/create',
-            'lists/subscribers/create',
-            'lists/subscribers/destroy',
-            // Accounts
-            'account/end_session',
+
+            // Users
+            'account/settings__post',
+            'account/update_delivery_device',
             'account/update_profile',
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-            'account/update_profile_banner',
-            'account/remove_profile_banner',
-            'account/settings',
-            // Notifications
-            'notifications/follow',
-            'notifications/leave',
+// not supported in 1.1 as of 2012-10-17
+//            'account/update_profile_banner',
+//            'account/remove_profile_banner',
+            'blocks/create',
+            'blocks/destroy',
+
+            // Favorites
+            'favorites/destroy',
+            'favorites/create',
+
+            // Lists
+            'lists/members/destroy',
+            'lists/subscribers/create',
+            'lists/subscribers/destroy',
+            'lists/members/create_all',
+            'lists/members/create',
+            'lists/destroy',
+            'lists/update',
+            'lists/create',
+            'lists/members/destroy_all',
+
             // Saved Searches
             'saved_searches/create',
+            'saved_searches/destroy/:id',
+
             // Places & Geo
             'geo/place',
-            // Block
-            'blocks/create',
+
             // Spam Reporting
             'report_spam',
+
             // OAuth
             'oauth/access_token',
             'oauth/request_token'
-        );
-        $httpmethods['DELETE'] = array(
-            // Direct Messages
-            'direct_messages/destroy/:id',
-            // Friends & Followers
-            'friendships/destroy',
-            // Favorites
-            'favorites/destroy/:id',
-            // Saved Searches
-            'saved_searches/destroy/:id',
-            // Block
-            'blocks/destroy'
         );
         foreach ($httpmethods as $httpmethod => $methods) {
             if (in_array($method, $methods)) {
@@ -591,12 +610,34 @@ class Codebird
         $multiparts = array(
             // Tweets
             'statuses/update_with_media',
-            // Accounts
+
+            // Users
             'account/update_profile_background_image',
             'account/update_profile_image',
             'account/update_profile_banner'
         );
         return in_array($method, $multiparts);
+    }
+
+    /**
+     * Detects if API call should use internal endpoint
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined in internal API
+     */
+    private function _detectInternal($method)
+    {
+        $internals = array(
+            // Activity
+            'activity/about_me',
+            'activity/by_friends',
+            'discovery',
+            'search/typeahead',
+            'statuses/:id/activity/summary',
+            'resolve'
+        );
+        return in_array($method, $internals);
     }
 
     /**
@@ -670,14 +711,17 @@ class Codebird
     /**
      * Builds the complete API endpoint url
      *
-     * @param string $method The API method to call
+     * @param string $method           The API method to call
+     * @param string $method_template  The API method template to call
      *
      * @return string The URL to send the request to
      */
-    private function _getEndpoint($method)
+    private function _getEndpoint($method, $method_template)
     {
         if (substr($method, 0, 6) == 'oauth/') {
             $url = $this->_endpoint_oauth . $method;
+        } elseif ($this->_detectInternal($method_template)) {
+            $url = $this->_endpoint_internal . $method . '.json';
         } else {
             $url = $this->_endpoint . $method . '.json';
         }
@@ -692,16 +736,21 @@ class Codebird
      * @param string          $method_template The templated API method to call
      * @param array  optional $params          The parameters to send along
      * @param bool   optional $multipart       Whether to use multipart/form-data
+     * @param bool   optional $internal        Whether to use internal API
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $internal = false)
     {
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
         }
-        $url = $this->_getEndpoint($method);
+        if ($internal) {
+            $params['adc'] = 'phone';
+            $params['application_id'] = 333903271;
+        }
+        $url = $this->_getEndpoint($method, $method_template);
         $ch  = false;
         if ($httpmethod == 'GET') {
             $ch = curl_init($this->_sign($httpmethod, $url, $params));
@@ -727,7 +776,7 @@ class Codebird
                 'Expect:'
             ));
         }
-        $reply      = curl_exec($ch);die($reply);
+        $reply      = curl_exec($ch);
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
