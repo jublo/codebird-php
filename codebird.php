@@ -432,6 +432,7 @@ class Codebird
      * Detects HTTP method to use for API call
      *
      * @param string $method The API method to call
+     * @param array  $params The parameters to send along
      *
      * @return string The HTTP method that should be used
      */
