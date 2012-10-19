@@ -440,7 +440,7 @@ class Codebird
         // multi-HTTP method endpoints
         switch($method) {
             case 'account/settings':
-                $method = count($params) > 0 ? $method .= '__post' : $method;
+                $method = count($params) > 0 ? $method . '__post' : $method;
                 break;
         }
 
