@@ -71,11 +71,6 @@ class Codebird
     private $_endpoint_old = 'https://api.twitter.com/1/';
 
     /**
-     * The API endpoint to use for internal requests
-     */
-    private $_endpoint_internal = 'https://api.twitter.com/i/';
-
-    /**
      * The Request or access token. Used to sign requests
      */
     private $_oauth_token = null;
@@ -103,7 +98,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.2.2-internal';
+    private $_version = '2.2.3';
 
     /**
      * Returns singleton class instance
@@ -240,12 +235,11 @@ class Codebird
 
         $httpmethod = $this->_detectMethod($method_template, $apiparams);
         $multipart  = $this->_detectMultipart($method_template);
-        $internal   = $this->_detectInternal($method_template);
 
         // geek-geek: Now allowing to specify filenames as params
         $this->_detectFilenames($method_template, $apiparams);
 
-        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $multipart, $internal);
+        return $this->_callApi($httpmethod, $method, $method_template, $apiparams, $multipart);
     }
 
     /**
@@ -451,6 +445,7 @@ class Codebird
             'statuses/mentions_timeline',
             'statuses/user_timeline',
             'statuses/home_timeline',
+            'statuses/retweets_of_me',
 
             // Tweets
             'statuses/retweets/:id',
@@ -484,6 +479,7 @@ class Codebird
             'users/contributees',
             'users/contributors',
             'users/recommendations',
+            'users/profile_banner',
 
             // Suggested Users
             'users/suggestions/:slug',
@@ -528,17 +524,7 @@ class Codebird
             'help/languages',
             'help/privacy',
             'help/tos',
-            'application/rate_limit_status',
-
-            // Internal
-            'activity/about_me',
-            'activity/by_friends',
-            'search/typeahead',
-            'statuses/:id/activity/summary',
-
-            // Not authorized as of 2012-10-17
-            'discovery',
-            'resolve'
+            'application/rate_limit_status'
         );
         $httpmethods['POST'] = array(
             // Tweets
@@ -563,8 +549,8 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-            'account/update_profile_banner',
             'account/remove_profile_banner',
+            'account/update_profile_banner',
             'blocks/create',
             'blocks/destroy',
 
@@ -637,32 +623,9 @@ class Codebird
     {
         $olds = array(
             // Users
-            'account/update_profile_banner',
-            'account/remove_profile_banner',
             'users/recommendations'
         );
         return in_array($method, $olds);
-    }
-
-    /**
-     * Detects if API call should use internal endpoint
-     *
-     * @param string $method The API method to call
-     *
-     * @return bool Whether the method is defined in internal API
-     */
-    private function _detectInternal($method)
-    {
-        $internals = array(
-            // Activity
-            'activity/about_me',
-            'activity/by_friends',
-            'discovery',
-            'search/typeahead',
-            'statuses/:id/activity/summary',
-            'resolve'
-        );
-        return in_array($method, $internals);
     }
 
     /**
@@ -747,8 +710,6 @@ class Codebird
             $url = $this->_endpoint_oauth . $method;
         } elseif ($this->_detectOld($method_template)) {
             $url = $this->_endpoint_old . $method . '.json';
-        } elseif ($this->_detectInternal($method_template)) {
-            $url = $this->_endpoint_internal . $method . '.json';
         } else {
             $url = $this->_endpoint . $method . '.json';
         }
@@ -763,19 +724,14 @@ class Codebird
      * @param string          $method_template The templated API method to call
      * @param array  optional $params          The parameters to send along
      * @param bool   optional $multipart       Whether to use multipart/form-data
-     * @param bool   optional $internal        Whether to use internal API
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $internal = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
     {
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
-        }
-        if ($internal) {
-            $params['adc'] = 'phone';
-            $params['application_id'] = 333903271;
         }
         $url = $this->_getEndpoint($method, $method_template);
         $ch  = false;
