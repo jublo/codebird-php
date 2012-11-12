@@ -103,7 +103,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.2.2-internal';
+    private $_version = '2.2.3-internal';
 
     /**
      * Returns singleton class instance
@@ -451,6 +451,7 @@ class Codebird
             'statuses/mentions_timeline',
             'statuses/user_timeline',
             'statuses/home_timeline',
+            'statuses/retweets_of_me',
 
             // Tweets
             'statuses/retweets/:id',
@@ -484,6 +485,7 @@ class Codebird
             'users/contributees',
             'users/contributors',
             'users/recommendations',
+            'users/profile_banner',
 
             // Suggested Users
             'users/suggestions/:slug',
@@ -563,8 +565,8 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-            'account/update_profile_banner',
             'account/remove_profile_banner',
+            'account/update_profile_banner',
             'blocks/create',
             'blocks/destroy',
 
@@ -637,8 +639,6 @@ class Codebird
     {
         $olds = array(
             // Users
-            'account/update_profile_banner',
-            'account/remove_profile_banner',
             'users/recommendations'
         );
         return in_array($method, $olds);
@@ -768,7 +768,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $internal = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
     {
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
