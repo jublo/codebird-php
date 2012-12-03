@@ -473,6 +473,8 @@ class Codebird
             'friendships/incoming',
             'friendships/outgoing',
             'friendships/show',
+            'friends/list',
+            'followers/list',
 
             // Users
             'account/settings',
@@ -484,7 +486,6 @@ class Codebird
             'users/search',
             'users/contributees',
             'users/contributors',
-            'users/recommendations',
             'users/profile_banner',
 
             // Suggested Users
@@ -532,6 +533,9 @@ class Codebird
             'help/tos',
             'application/rate_limit_status',
 
+            // Old
+            'users/recommendations',
+
             // Internal
             'activity/about_me',
             'activity/by_friends',
@@ -565,10 +569,10 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-            'account/remove_profile_banner',
-            'account/update_profile_banner',
             'blocks/create',
             'blocks/destroy',
+            'account/update_profile_banner',
+            'account/remove_profile_banner',
 
             // Favorites
             'favorites/destroy',
@@ -593,7 +597,7 @@ class Codebird
             'geo/place',
 
             // Spam Reporting
-            'report_spam',
+            'users/report_spam',
 
             // OAuth
             'oauth/access_token',
@@ -768,7 +772,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
+    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $internal = false)
     {
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
