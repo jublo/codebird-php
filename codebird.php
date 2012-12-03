@@ -467,6 +467,8 @@ class Codebird
             'friendships/incoming',
             'friendships/outgoing',
             'friendships/show',
+            'friends/list',
+            'followers/list',
 
             // Users
             'account/settings',
@@ -478,7 +480,6 @@ class Codebird
             'users/search',
             'users/contributees',
             'users/contributors',
-            'users/recommendations',
             'users/profile_banner',
 
             // Suggested Users
@@ -524,7 +525,10 @@ class Codebird
             'help/languages',
             'help/privacy',
             'help/tos',
-            'application/rate_limit_status'
+            'application/rate_limit_status',
+
+            // Old
+            'users/recommendations'
         );
         $httpmethods['POST'] = array(
             // Tweets
@@ -549,10 +553,10 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_colors',
             'account/update_profile_image',
-            'account/remove_profile_banner',
-            'account/update_profile_banner',
             'blocks/create',
             'blocks/destroy',
+            'account/update_profile_banner',
+            'account/remove_profile_banner',
 
             // Favorites
             'favorites/destroy',
@@ -577,7 +581,7 @@ class Codebird
             'geo/place',
 
             // Spam Reporting
-            'report_spam',
+            'users/report_spam',
 
             // OAuth
             'oauth/access_token',
