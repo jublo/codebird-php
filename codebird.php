@@ -103,7 +103,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    private $_version = '2.2.3-internal';
+    private $_version = '2.2.4-internal';
 
     /**
      * Returns singleton class instance
@@ -537,6 +537,7 @@ class Codebird
             'users/recommendations',
 
             // Internal
+            'account/push_destinations',
             'activity/about_me',
             'activity/by_friends',
             'search/typeahead',
@@ -643,7 +644,10 @@ class Codebird
     {
         $olds = array(
             // Users
-            'users/recommendations'
+            'users/recommendations',
+
+            // Internal
+            'account/push_destinations'
         );
         return in_array($method, $olds);
     }
@@ -659,6 +663,7 @@ class Codebird
     {
         $internals = array(
             // Activity
+            'account/push_destinations',
             'activity/about_me',
             'activity/by_friends',
             'discovery',
