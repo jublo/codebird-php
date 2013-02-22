@@ -206,3 +206,43 @@ stdClass Object
 
 You can find out how to build the Codebird method name, in the section
 ‘Mapping API methods to Codebird function calls.’
+
+How Do I…?
+==========
+
+…get user ID, screen name and more details about the current user?
+------------------------------------------------------------------
+
+When the user returns from the authentication screen, you need to trade
+the obtained request token for an access token, using the OAuth verifier.
+As discussed in the section ‘Usage example,’ you use a call to 
+```oauth/access_token``` to do that.
+
+The API reply to this method call tells you details about the user that just logged in.
+These details contain the **user ID** and the **screen name.**
+
+Take a look at the returned data as follows:
+
+```
+stdClass Object
+(
+    [oauth_token] => 14648265-rPn8EJwfB**********************
+    [oauth_token_secret] => agvf3L3**************************
+    [user_id] => 14648265
+    [screen_name] => mynetx
+    [httpstatus] => 200
+) 
+```
+
+If you need to get more details, such as the user’s latest tweet, 
+you should fetch the complete User Entity.  The simplest way to get the 
+user entity of the currently authenticated user is to use the 
+```account/verify_credentials``` API method.  In Codebird, it works like this:
+
+```php
+$reply = $cb->account_verifyCredentials();
+print_r($reply);
+```
+
+I suggest to cache the User Entity after obtaining it, as the 
+```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes. 
