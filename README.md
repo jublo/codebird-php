@@ -34,7 +34,7 @@ $cb = Codebird::getInstance();
 
 You may either set the OAuth token and secret, if you already have them:
 ```php
-$cb->setToken('YOURTOKEN', 'YOURSECRET');
+$cb->setToken('YOURTOKEN', 'YOURTOKENSECRET');
 ```
 
 Or you authenticate, like this:
