@@ -2,7 +2,7 @@ codebird-php
 ============
 *A simple wrapper for the Twitter API*
 
-Copyright (C) 2010-2012 J.M. <me@mynetx.net>
+Copyright (C) 2010-2013 J.M. <me@mynetx.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@ This is the PHP version of the Codebird library.
 It was forked from the JScript version.
 Please enable the CURL and OPENSSL extensions in your PHP environment.
 
-Usage example
--------------
+1. Authentication
+-----------------
+
+To authenticate your API requests on behalf of a certain Twitter user
+(following OAuth 1.0a), take a look at these steps:
 
 ```php
 require_once ('codebird.php');
@@ -64,14 +67,29 @@ if (! isset($_GET['oauth_verifier'])) {
     $reply = $cb->oauth_accessToken(array(
         'oauth_verifier' => $_GET['oauth_verifier']
     ));
+    // store the authenticated token, which may be different from the request token (!)
     $_SESSION['oauth_token'] = $reply->oauth_token;
     $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
 }
 ```
 
+### 1.1. Application-only auth
+
+Some API methods also support authenticating on a per-application level.
+This is useful for getting data that are not directly related to a specific
+Twitter user, but generic to the Twitter ecosystem (such as ```search/tweets```).
+
+**Codebird does not currently support application-only auth, but will soon.**
+
+
+2. Usage examples
+-----------------
+
 When you have an access token, calling the API is simple:
 
 ```php
+$cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']); // see above
+
 $reply = (array) $cb->statuses_homeTimeline();
 print_r($reply);
 ```
@@ -102,8 +120,8 @@ $params = array(
 $reply = $cb->statuses_updateWithMedia($params);
 ```
 
-Mapping API methods to Codebird function calls
-----------------------------------------------
+3. Mapping API methods to Codebird function calls
+-------------------------------------------------
 
 As you can see from the last example, there is a general way how Twitter’s API methods
 map to Codebird function calls. The general rules are:
@@ -124,20 +142,20 @@ map to Codebird function calls. The general rules are:
     - ```users/profile_image/:screen_name``` maps to
       ```Codebird::users_profileImage_SCREEN_NAME('screen_name=mynetx')```.
 
-HTTP methods (GET, POST, DELETE etc.)
--------------------------------------
+4. HTTP methods (GET, POST, DELETE etc.)
+----------------------------------------
 
 Never care about which HTTP method (verb) to use when calling a Twitter API.
 Codebird is intelligent enough to find out on its own.
 
-Response codes
---------------
+5. Response codes
+-----------------
 
 The HTTP response code that the API gave is included in any return values.
 You can find it within the return object’s ```httpstatus``` property.
 
-Return formats
---------------
+6. Return formats
+-----------------
 The default return format for API calls is a PHP object.
 For API methods returning multiple data (like ```statuses/home_timeline```),
 you should cast the reply to array, like this:
@@ -153,8 +171,10 @@ Upon your choice, you may also get PHP arrays directly:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_ARRAY);
 ```
 
-Using multiple Codebird instances
----------------------------------
+Support for getting a SimpleXML object is planned.
+
+7. Using multiple Codebird instances
+------------------------------------
 
 By default, Codebird works with just one instance. This programming paradigma is
 called a *singleton*.
