@@ -154,6 +154,17 @@ Codebird is intelligent enough to find out on its own.
 The HTTP response code that the API gave is included in any return values.
 You can find it within the return object’s ```httpstatus``` property.
 
+### 5.1 Dealing with rate-limits
+
+Basically, Codebird leaves it up to you to handle Twitter’s rate limit.  
+The library returns the response HTTP status code, so you can detect rate limits.
+
+I suggest you to check if the ```$reply->httpstatus``` property is ```400``` 
+and check with the Twitter API to find out if you are currently being 
+rate-limited. 
+See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq) 
+for more information.
+
 6. Return formats
 -----------------
 The default return format for API calls is a PHP object.
@@ -198,11 +209,11 @@ Please note that your OAuth consumer key and secret is shared within
 multiple Codebird instances, while the OAuth request and access tokens with their
 secrets are *not* shared.
 
-Specialities
-============
+How Do I…?
+==========
 
-Accessing a user’s profile image
---------------------------------
+…access a user’s profile image?
+-------------------------------
 
 The Twitter API usually contains data in either JSON or XML. However, the
 templated method ```users/profile_image/:screen_name``` uses a HTTP 302 redirect
@@ -226,9 +237,6 @@ stdClass Object
 
 You can find out how to build the Codebird method name, in the section
 ‘Mapping API methods to Codebird function calls.’
-
-How Do I…?
-==========
 
 …get user ID, screen name and more details about the current user?
 ------------------------------------------------------------------
