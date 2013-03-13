@@ -274,3 +274,37 @@ print_r($reply);
 
 I suggest to cache the User Entity after obtaining it, as the 
 ```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes. 
+
+…walk through cursored results?
+-------------------------------
+
+The Twitter REST API utilizes a technique called ‘cursoring’ to paginate 
+large result sets. Cursoring separates results into pages of no more than 
+5000 results at a time, and provides a means to move backwards and 
+forwards through these pages. 
+
+Here is how you can walk through cursored results with Codebird.
+
+1. Get the first result set of a cursored method:
+```php
+$result1 = $cb->followers_list();
+```
+
+2. To navigate forth, take the ```next_cursor_str```:
+```php
+$nextCursor = $result1->next_cursor_str;
+```
+
+3. If ```$nextCursor``` is not 0, use this cursor to request the next result page:
+```php
+    if ($nextCursor > 0) {
+        $result2 = $cb->followers_list('cursor=' . $nextCursor);
+    }
+```
+
+To navigate back instead of forth, use the field ```$resultX->previous_cursor_str``` 
+instead of ```next_cursor_str```.
+
+It might make sense to use the cursors in a loop.  Watch out, though, 
+not to send more than the allowed number of requests to ```followers/list``` 
+per rate-limit timeframe, or else you will hit your rate-limit.
