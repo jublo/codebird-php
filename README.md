@@ -79,7 +79,23 @@ Some API methods also support authenticating on a per-application level.
 This is useful for getting data that are not directly related to a specific
 Twitter user, but generic to the Twitter ecosystem (such as ```search/tweets```).
 
-**Codebird does not currently support application-only auth, but will soon.**
+To obtain an app-only bearer token, call the appropriate API:
+
+```php
+$reply = $cb->oauth2_token();
+$bearer_token = $reply->access_token;
+```
+
+I strongly recommend that you store the obtained bearer token in your database.
+There is no need to re-obtain the token with each page load, as it becomes invalid
+only when you call the ```oauth2/invalidate_token``` method.
+
+If you already have your token, tell Codebird to use it:
+```php
+Codebird::setBearerToken('YOURBEARERTOKEN');
+```
+
+For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
 2. Usage examples
@@ -119,6 +135,17 @@ $params = array(
 );
 $reply = $cb->statuses_updateWithMedia($params);
 ```
+
+### Requests with app-only auth
+
+To send API requests without an access token for a user (app-only auth),
+add a second parameter to your method call, like this:
+
+```php
+$reply = $cb->search_tweets('q=Twitter', true);
+```
+
+Bear in mind that not all API methods support application-only auth.
 
 3. Mapping API methods to Codebird function calls
 -------------------------------------------------
