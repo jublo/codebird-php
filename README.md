@@ -1,6 +1,6 @@
 codebird-php
 ============
-*A simple wrapper for the Twitter API*
+*A Twitter library in PHP.*
 
 Copyright (C) 2010-2013 J.M. <me@mynetx.net>
 
