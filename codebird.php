@@ -92,11 +92,6 @@ class Codebird
     private $_return_format = CODEBIRD_RETURNFORMAT_OBJECT;
 
     /**
-     * The cache to use for the public timeline
-     */
-    private $_statuses_public_timeline_cache = array('timestamp' => false, 'data' => false);
-
-    /**
      * The file formats that Twitter accepts as image uploads
      */
     private $_supported_media_files = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
@@ -274,29 +269,6 @@ class Codebird
     /**
      * Uncommon API methods
      */
-
-    /**
-     * The public timeline is cached for 1 minute
-     * API method wrapper
-     *
-     * @param mixed Any parameters are sent to __call, untouched
-     *
-     * @return mixed The API reply
-     */
-    public function statuses_publicTimeline($mixed = null)
-    {
-        if ($this->_statuses_public_timeline_cache['timestamp'] && $this->_statuses_public_timeline_cache['timestamp'] + 60 > time()) {
-            return $this->_statuses_public_timeline_cache['data'];
-        }
-        $reply = $this->__call(__FUNCTION__, func_get_args());
-        if ($reply->httpstatus == 200) {
-            $this->_statuses_public_timeline_cache = array(
-                'timestamp' => time(),
-                'data' => $reply
-            );
-        }
-        return $reply;
-    }
 
     /**
      * Gets the OAuth authenticate URL for the current request token
