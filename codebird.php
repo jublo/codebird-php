@@ -72,11 +72,6 @@ class Codebird
     private static $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
-     * The API endpoint to use for untransitioned methods
-     */
-    private static $_endpoint_old = 'https://api.twitter.com/1/';
-
-    /**
      * The Request or access token. Used to sign requests
      */
     private $_oauth_token = null;
@@ -492,6 +487,7 @@ class Codebird
             'statuses/user_timeline',
             'statuses/home_timeline',
             'statuses/retweets_of_me',
+            'statuses/sample',
 
             // Tweets
             'statuses/retweets/:id',
@@ -507,6 +503,7 @@ class Codebird
             'direct_messages/show',
 
             // Friends & Followers
+            'friendships/no_retweets/ids',
             'friends/ids',
             'followers/ids',
             'friendships/lookup',
@@ -571,10 +568,7 @@ class Codebird
             'help/languages',
             'help/privacy',
             'help/tos',
-            'application/rate_limit_status',
-
-            // Old
-            'users/recommendations'
+            'application/rate_limit_status'
         );
         $httpmethods['POST'] = array(
             // Tweets
@@ -665,22 +659,6 @@ class Codebird
     }
 
     /**
-     * Detects if API call should use the old endpoint
-     *
-     * @param string $method The API method to call
-     *
-     * @return bool Whether the method is defined in old API
-     */
-    private function _detectOld($method)
-    {
-        $olds = array(
-            // Users
-            'users/recommendations'
-        );
-        return in_array($method, $olds);
-    }
-
-    /**
      * Detects filenames in upload parameters
      *
      * @param       string $method  The API method to call
@@ -760,8 +738,6 @@ class Codebird
     {
         if (substr($method, 0, 5) == 'oauth') {
             $url = self::$_endpoint_oauth . $method;
-        } elseif ($this->_detectOld($method_template)) {
-            $url = self::$_endpoint_old . $method . '.json';
         } else {
             $url = self::$_endpoint . $method . '.json';
         }
