@@ -1,6 +1,9 @@
 codebird-php - changelog
 ========================
 
+2.3.1 (not yet released)
+- Re-remove statuses/sample. It's streaming API, which Codebird doesn't currently support
+
 2.3.0 (2013-03-19)
 + Update README with info about how to get details of the current user
 + Clarify that the consumer secret and access token secret are not the same

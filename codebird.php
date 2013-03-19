@@ -487,7 +487,6 @@ class Codebird
             'statuses/user_timeline',
             'statuses/home_timeline',
             'statuses/retweets_of_me',
-            'statuses/sample',
 
             // Tweets
             'statuses/retweets/:id',
