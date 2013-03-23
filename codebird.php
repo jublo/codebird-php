@@ -4,7 +4,7 @@
  * A Twitter library in PHP.
  *
  * @package codebird
- * @version 2.3.0
+ * @version 2.3.1
  * @author J.M. <me@mynetx.net>
  * @copyright 2010-2013 J.M. <me@mynetx.net>
  *
