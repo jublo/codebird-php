@@ -1,8 +1,10 @@
 codebird-php - changelog
 ========================
 
-2.3.1 (not yet released)
+2.3.1 (2013-03-23)
 - Re-remove statuses/sample. It's streaming API, which Codebird doesn't currently support
++ Don't send multipart POST to non-multipart methods, fix issue #8
++ Remove auto-added backslashes from parsed API method parameters if magic quotes are on, fix #7
 
 2.3.0 (2013-03-19)
 + Update README with info about how to get details of the current user
