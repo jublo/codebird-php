@@ -768,16 +768,16 @@ class Codebird
             if (count($params) > 0) {
                 $url_with_params .= '?' . http_build_query($params);
             }
-            $authorization = $this->_sign('GET', $url, $params);
+            $authorization = $this->_sign($httpmethod, $url, $params);
             $ch = curl_init($url_with_params);
         } else {
-            if ($multipart) {
-                $authorization = $this->_sign('POST', $url, array());
-                $post_fields   = $params;
-            } else {
-                $post_fields = $this->_sign('POST', $url, $params);
+            $authorization = $this->_sign($httpmethod, $url, array());
+            if (! $multipart) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+                $params        = http_build_query($params);
             }
-            $ch = curl_init($url);
+            $post_fields = $params;
+            $ch          = curl_init($url);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
         }
