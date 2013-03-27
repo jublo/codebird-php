@@ -4,5 +4,6 @@
     "version": "2.3.1",
     "autoload": {
         "classmap": ["src/"]
-    }
+    },
+    "license": "GPL-3.0"
 }
