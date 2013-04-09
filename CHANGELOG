@@ -1,6 +1,9 @@
 codebird-php - changelog
 ========================
 
+2.3.2 (2013-04-09)
++ Use protected keyword for methods that may be overriden in extended classes
+
 2.3.1 (2013-03-23)
 - Re-remove statuses/sample. It's streaming API, which Codebird doesn't currently support
 + Don't send multipart POST to non-multipart methods, fix issue #8
