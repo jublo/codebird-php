@@ -4,7 +4,7 @@
  * A Twitter library in PHP.
  *
  * @package codebird
- * @version 2.3.1
+ * @version 2.3.2
  * @author J.M. <me@mynetx.net>
  * @copyright 2010-2013 J.M. <me@mynetx.net>
  *
@@ -49,52 +49,52 @@ class Codebird
     /**
      * The OAuth consumer key of your registered app
      */
-    private static $_oauth_consumer_key = null;
+    protected static $_oauth_consumer_key = null;
 
     /**
      * The corresponding consumer secret
      */
-    private static $_oauth_consumer_secret = null;
+    protected static $_oauth_consumer_secret = null;
 
     /**
      * The app-only bearer token. Used to authorize app-only requests
      */
-    private static $_oauth_bearer_token = null;
+    protected static $_oauth_bearer_token = null;
 
     /**
      * The API endpoint to use
      */
-    private static $_endpoint = 'https://api.twitter.com/1.1/';
+    protected static $_endpoint = 'https://api.twitter.com/1.1/';
 
     /**
      * The API endpoint to use for OAuth requests
      */
-    private static $_endpoint_oauth = 'https://api.twitter.com/';
+    protected static $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
      * The Request or access token. Used to sign requests
      */
-    private $_oauth_token = null;
+    protected $_oauth_token = null;
 
     /**
      * The corresponding request or access token secret
      */
-    private $_oauth_token_secret = null;
+    protected $_oauth_token_secret = null;
 
     /**
      * The format of data to return from API calls
      */
-    private $_return_format = CODEBIRD_RETURNFORMAT_OBJECT;
+    protected $_return_format = CODEBIRD_RETURNFORMAT_OBJECT;
 
     /**
      * The file formats that Twitter accepts as image uploads
      */
-    private $_supported_media_files = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+    protected $_supported_media_files = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
 
     /**
      * The current Codebird version
      */
-    private $_version = '2.3.1';
+    protected $_version = '2.3.2';
 
     /**
      * Returns singleton class instance
@@ -420,7 +420,7 @@ class Codebird
      *
      * @return string The random string
      */
-    private function _nonce($length = 8)
+    protected function _nonce($length = 8)
     {
         if ($length < 1) {
             throw new Exception('Invalid nonce length.');
@@ -437,7 +437,7 @@ class Codebird
      *
      * @return string Authorization HTTP header
      */
-    private function _sign($httpmethod, $method, $params = array())
+    protected function _sign($httpmethod, $method, $params = array())
     {
         if (self::$_oauth_consumer_key == null) {
             throw new Exception('To generate a signature, the consumer key must be set.');
@@ -487,7 +487,7 @@ class Codebird
      *
      * @return string The HTTP method that should be used
      */
-    private function _detectMethod($method, $params)
+    protected function _detectMethod($method, $params)
     {
         // multi-HTTP method endpoints
         switch($method) {
@@ -659,7 +659,7 @@ class Codebird
      *
      * @return bool Whether the method should be sent as multipart
      */
-    private function _detectMultipart($method)
+    protected function _detectMultipart($method)
     {
         $multiparts = array(
             // Tweets
@@ -681,7 +681,7 @@ class Codebird
      *
      * @return void
      */
-    private function _detectFilenames($method, &$params)
+    protected function _detectFilenames($method, &$params)
     {
         // well, files will only work in multipart methods
         if (! $this->_detectMultipart($method)) {
@@ -749,7 +749,7 @@ class Codebird
      *
      * @return string The URL to send the request to
      */
-    private function _getEndpoint($method, $method_template)
+    protected function _getEndpoint($method, $method_template)
     {
         if (substr($method, 0, 5) == 'oauth') {
             $url = self::$_endpoint_oauth . $method;
@@ -772,7 +772,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false)
+    protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false)
     {
         if (! function_exists('curl_init')) {
             throw new Exception('To make API requests, the PHP curl extension must be available.');
@@ -837,7 +837,7 @@ class Codebird
      *
      * @return array|object The parsed reply
      */
-    private function _parseApiReply($method, $reply)
+    protected function _parseApiReply($method, $reply)
     {
         // split headers and body
         $headers = array();
