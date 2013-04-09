@@ -280,14 +280,14 @@ class Codebird
      *
      * @return string The OAuth authenticate URL
      */
-    public function oauth_authenticate( $force_login = NULL, $screen_name = NULL )
+    public function oauth_authenticate($force_login = NULL, $screen_name = NULL)
     {
         if ($this->_oauth_token == null) {
             throw new Exception('To get the authenticate URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authenticate?oauth_token=' . $this->_url($this->_oauth_token);
-        if( $force_login ) $url .= "&force_login=1";
-        if( $screen_name ) $url .= "&screen_name=" . $screen_name;
+        if($force_login) $url .= "&force_login=1";
+        if($screen_name) $url .= "&screen_name=" . $screen_name;
         return $url;
     }
 
@@ -296,14 +296,14 @@ class Codebird
      *
      * @return string The OAuth authorize URL
      */
-    public function oauth_authorize( $force_login = NULL, $screen_name = NULL )
+    public function oauth_authorize($force_login = NULL, $screen_name = NULL)
     {
         if ($this->_oauth_token == null) {
             throw new Exception('To get the authorize URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authorize?oauth_token=' . $this->_url($this->_oauth_token);
-        if( $force_login ) $url .= "&force_login=1";
-        if( $screen_name ) $url .= "&screen_name=" . $screen_name;
+        if($force_login) $url .= "&force_login=1";
+        if($screen_name) $url .= "&screen_name=" . $screen_name;
         return $url;
     }
 
