@@ -61,7 +61,7 @@ if (! isset($_GET['oauth_verifier'])) {
     header('Location: ' . $auth_url);
     die();
 
-} else {
+} elseif (! isset($_SESSION['oauth_verified'])) {
     // gets the access token
     $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
     $reply = $cb->oauth_accessToken(array(
@@ -70,6 +70,8 @@ if (! isset($_GET['oauth_verifier'])) {
     // store the authenticated token, which may be different from the request token (!)
     $_SESSION['oauth_token'] = $reply->oauth_token;
     $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+    $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+    $_SESSION['oauth_verified'] = true;
 }
 ```
 
