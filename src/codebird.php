@@ -864,13 +864,24 @@ class Codebird
             }
         } elseif (!$parsed = json_decode($reply, $need_array)) {
             if ($reply) {
-                $reply = explode('&', $reply);
-                foreach ($reply as $element) {
-                    if (stristr($element, '=')) {
-                        list($key, $value) = explode('=', $element);
-                        $parsed[$key] = $value;
-                    } else {
-                        $parsed['message'] = $element;
+                if (stripos($reply, '<' . '?xml version="1.0" encoding="UTF-8"?' . '>') === 0) {
+                    // we received XML...
+                    // since this only happens for errors,
+                    // don't perform a full decoding
+                    preg_match('/<request>(.*)<\/request>/', $reply, $request);
+                    preg_match('/<error>(.*)<\/error>/', $reply, $error);
+                    $parsed['request'] = htmlspecialchars_decode($request[1]);
+                    $parsed['error'] = htmlspecialchars_decode($error[1]);
+                } else {
+                    // assume query format
+                    $reply = explode('&', $reply);
+                    foreach ($reply as $element) {
+                        if (stristr($element, '=')) {
+                            list($key, $value) = explode('=', $element);
+                            $parsed[$key] = $value;
+                        } else {
+                            $parsed['message'] = $element;
+                        }
                     }
                 }
             }

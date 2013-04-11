@@ -1,6 +1,9 @@
 codebird-php - changelog
 ========================
 
+2.3.3 (not yet released)
++ Detect API error responses as XML, see #1
+
 2.3.2 (2013-04-09)
 + Use protected keyword for methods that may be overriden in extended classes
 
