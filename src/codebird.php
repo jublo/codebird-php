@@ -1,5 +1,7 @@
 <?php
 
+namespace CodeBird;
+
 /**
  * A Twitter library in PHP.
  *
