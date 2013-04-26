@@ -1,9 +1,10 @@
 codebird-php - changelog
 ========================
 
-2.3.3 (not yet released)
+2.3.3 (2013-04-26)
 + Detect API error responses as XML, see #1
 + OAuth: add support for force_login, screen_name parameters, see #14
++ Add namespace
 
 2.3.2 (2013-04-09)
 + Use protected keyword for methods that may be overriden in extended classes

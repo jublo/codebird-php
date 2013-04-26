@@ -22,6 +22,8 @@ This is the PHP version of the Codebird library.
 It was forked from the JScript version.
 Please enable the CURL and OPENSSL extensions in your PHP environment.
 
+**This library requires PHP 5.3.0 or higher.**
+
 1. Authentication
 -----------------
 
