@@ -1,12 +1,12 @@
 <?php
 
-namespace CodeBird;
+namespace Codebird;
 
 /**
  * A Twitter library in PHP.
  *
  * @package codebird
- * @version 2.3.3
+ * @version 2.3.4-dev
  * @author J.M. <me@mynetx.net>
  * @copyright 2010-2013 J.M. <me@mynetx.net>
  *
@@ -96,7 +96,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.3.3';
+    protected $_version = '2.3.3-dev';
 
     /**
      * Returns singleton class instance

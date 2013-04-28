@@ -32,9 +32,9 @@ To authenticate your API requests on behalf of a certain Twitter user
 
 ```php
 require_once ('codebird.php');
-Codebird::setConsumerKey('YOURKEY', 'YOURSECRET'); // static, see 'Using multiple Codebird instances'
+\Codebird\Codebird::setConsumerKey('YOURKEY', 'YOURSECRET'); // static, see 'Using multiple Codebird instances'
 
-$cb = Codebird::getInstance();
+$cb = \Codebird\Codebird::getInstance();
 ```
 
 You may either set the OAuth token and secret, if you already have them:
@@ -96,7 +96,7 @@ only when you call the ```oauth2/invalidate_token``` method.
 
 If you already have your token, tell Codebird to use it:
 ```php
-Codebird::setBearerToken('YOURBEARERTOKEN');
+\Codebird\Codebird::setBearerToken('YOURBEARERTOKEN');
 ```
 
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
@@ -224,7 +224,7 @@ called a *singleton*.
 Getting the main Codebird object is done like this:
 
 ```php
-$cb = Codebird::getInstance();
+$cb = \Codebird\Codebird::getInstance();
 ```
 
 If you need to run requests to the Twitter API for multiple users at once,
@@ -232,8 +232,8 @@ Codebird supports this as well. Instead of getting the instance like shown above
 create a new object:
 
 ```php
-$cb1 = new Codebird;
-$cb2 = new Codebird;
+$cb1 = new \Codebird\Codebird;
+$cb2 = new \Codebird\Codebird;
 ```
 
 Please note that your OAuth consumer key and secret is shared within
