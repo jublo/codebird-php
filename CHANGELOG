@@ -1,8 +1,8 @@
 codebird-php - changelog
 ========================
 
-2.3.4 (not yet released)
-+ Fix namespace to be properly cased
+2.3.4 (2013-04-28)
++ Fix namespace not properly cased
 
 2.3.3 (2013-04-26)
 + Detect API error responses as XML, see #1
