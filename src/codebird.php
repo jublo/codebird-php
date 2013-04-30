@@ -241,7 +241,7 @@ class Codebird
                     for ($i = 0; $i < 26; $i++) {
                         $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
                     }
-                    throw new Exception(
+                    throw new \Exception(
                         'To call the templated method "' . $method_template
                         . '", specify the parameter value for "' . $param_l . '".'
                     );
@@ -285,7 +285,7 @@ class Codebird
     public function oauth_authenticate($force_login = NULL, $screen_name = NULL)
     {
         if ($this->_oauth_token == null) {
-            throw new Exception('To get the authenticate URL, the OAuth token must be set.');
+            throw new \Exception('To get the authenticate URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authenticate?oauth_token=' . $this->_url($this->_oauth_token);
         if ($force_login) {
@@ -305,7 +305,7 @@ class Codebird
     public function oauth_authorize($force_login = NULL, $screen_name = NULL)
     {
         if ($this->_oauth_token == null) {
-            throw new Exception('To get the authorize URL, the OAuth token must be set.');
+            throw new \Exception('To get the authorize URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authorize?oauth_token=' . $this->_url($this->_oauth_token);
         if ($force_login) {
@@ -326,10 +326,10 @@ class Codebird
     public function oauth2_token()
     {
         if (! function_exists('curl_init')) {
-            throw new Exception('To make API requests, the PHP curl extension must be available.');
+            throw new \Exception('To make API requests, the PHP curl extension must be available.');
         }
         if (self::$_oauth_consumer_key == null) {
-            throw new Exception('To obtain a bearer token, the consumer key must be set.');
+            throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
         $ch  = false;
         $post_fields = array(
@@ -414,10 +414,10 @@ class Codebird
     private function _sha1($data)
     {
         if (self::$_oauth_consumer_secret == null) {
-            throw new Exception('To generate a hash, the consumer secret must be set.');
+            throw new \Exception('To generate a hash, the consumer secret must be set.');
         }
         if (!function_exists('hash_hmac')) {
-            throw new Exception('To generate a hash, the PHP hash extension must be available.');
+            throw new \Exception('To generate a hash, the PHP hash extension must be available.');
         }
         return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&'
             . ($this->_oauth_token_secret != null ? $this->_oauth_token_secret : ''), true));
@@ -433,7 +433,7 @@ class Codebird
     protected function _nonce($length = 8)
     {
         if ($length < 1) {
-            throw new Exception('Invalid nonce length.');
+            throw new \Exception('Invalid nonce length.');
         }
         return substr(md5(microtime(true)), 0, $length);
     }
@@ -450,7 +450,7 @@ class Codebird
     protected function _sign($httpmethod, $method, $params = array())
     {
         if (self::$_oauth_consumer_key == null) {
-            throw new Exception('To generate a signature, the consumer key must be set.');
+            throw new \Exception('To generate a signature, the consumer key must be set.');
         }
         $sign_params      = array(
             'consumer_key' => self::$_oauth_consumer_key,
@@ -659,7 +659,7 @@ class Codebird
                 return $httpmethod;
             }
         }
-        throw new Exception('Can\'t find HTTP method to use for "' . $method . '".');
+        throw new \Exception('Can\'t find HTTP method to use for "' . $method . '".');
     }
 
     /**
@@ -721,7 +721,7 @@ class Codebird
             }
             // is it an array?
             if (is_array($params[$possible_file])) {
-                throw new Exception('Using URL-encoded parameters is not supported for uploading media.');
+                throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
                 continue;
             }
             // is it a file, a readable one?
@@ -785,7 +785,7 @@ class Codebird
     protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false)
     {
         if (! function_exists('curl_init')) {
-            throw new Exception('To make API requests, the PHP curl extension must be available.');
+            throw new \Exception('To make API requests, the PHP curl extension must be available.');
         }
         $url = $this->_getEndpoint($method, $method_template);
         $ch  = false;
@@ -809,7 +809,7 @@ class Codebird
         }
         if ($app_only_auth) {
             if (self::$_oauth_consumer_key == null) {
-                throw new Exception('To make an app-only auth API request, the consumer key must be set.');
+                throw new \Exception('To make an app-only auth API request, the consumer key must be set.');
             }
             // automatically fetch bearer token, if necessary
             if (self::$_oauth_bearer_token == null) {
