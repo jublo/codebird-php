@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package codebird
- * @version 2.3.4
+ * @version 2.3.5-dev
  * @author J.M. <me@mynetx.net>
  * @copyright 2010-2013 J.M. <me@mynetx.net>
  *
@@ -96,7 +96,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.3.4';
+    protected $_version = '2.3.5-dev';
 
     /**
      * Returns singleton class instance
