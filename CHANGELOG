@@ -2,6 +2,7 @@ codebird-php - changelog
 ========================
 
 2.3.5 (not yet released)
++ Fix fatal error:  Class 'Codebird\Exception' not found
 
 2.3.4 (2013-04-28)
 + Fix namespace not properly cased
