@@ -870,7 +870,7 @@ class Codebird
 
         $need_array = $this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY;
         if ($reply == '[]') {
-            return $need_array ? array() : new stdClass;
+            return $need_array ? array() : new \stdClass;
         }
         $parsed = array();
         if ($method == 'users/profile_image/:screen_name') {
