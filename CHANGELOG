@@ -2,6 +2,7 @@ codebird-php - changelog
 ========================
 
 2.3.6 (not yet released)
++ Add backslash to stdClass construction, due to namespace
 
 2.3.5 (2013-04-30)
 + Fix fatal error:  Class 'Codebird\Exception' not found
