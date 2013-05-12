@@ -1,6 +1,8 @@
 codebird-php - changelog
 ========================
 
+2.3.6 (not yet released)
+
 2.3.5 (2013-04-30)
 + Fix fatal error:  Class 'Codebird\Exception' not found
 
