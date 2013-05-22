@@ -246,28 +246,19 @@ How Do I…?
 …access a user’s profile image?
 -------------------------------
 
-The Twitter API usually contains data in either JSON or XML. However, the
-templated method ```users/profile_image/:screen_name``` uses a HTTP 302 redirect
-to send you to the requested image file URL.
+First retrieve the user object using
 
-Codebird intercepts this HTTP redirect and extracts the profile image URL instead.
-Thus, the following API call:
+```$reply = $cb->users_show("screen_name=$username");```
 
-```php
-$reply = $cb->users_profileImage_SCREEN_NAME('screen_name=mynetx&size=mini');
-```
 
-returns an object with the following contents:
-```
-stdClass Object
-(
-    [profile_image_url_https] => https://si0.twimg.com/profile_images/1417135246/Blue_Purple.96_mini.png
-    [httpstatus] => 302
-)
-```
+with ```$username``` being the username of the account you wish to retrieve the profile image from.
 
-You can find out how to build the Codebird method name, in the section
-‘Mapping API methods to Codebird function calls.’
+Then get the value from the index ```profile_image_url``` or ```profile_image_url_https``` of the user object previously retrieved. 
+
+
+For example:
+
+```$reply['profile_image_url']``` will then return the profile image url without https.
 
 …get user ID, screen name and more details about the current user?
 ------------------------------------------------------------------
