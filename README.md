@@ -339,3 +339,39 @@ instead of ```next_cursor_str```.
 It might make sense to use the cursors in a loop.  Watch out, though, 
 not to send more than the allowed number of requests to ```followers/list``` 
 per rate-limit timeframe, or else you will hit your rate-limit.
+
+…use xAuth with Codebird?
+-------------------------
+
+Codebird supports xAuth just like every other authentication used at Twitter.
+Remember that your application needs to be whitelisted to be able to use xAuth.
+
+Here’s an example:
+```php
+$reply = $cb->oauth_accessToken(array(
+    'x_auth_username' => 'username',
+    'x_auth_password' => '4h3_p4$$w0rd',
+    'x_auth_mode' => 'client_auth'
+));
+```
+
+Are you getting a strange error message?  If the user is enrolled in 
+login verification, the server will return a HTTP 401 error with a custom body. 
+If you are using the send_error_codes parameter, you will receive the 
+following error message in the response body:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<errors>
+<error code="231">User must verify login</error>
+</errors>
+```
+
+Otherwise, the response body will contain a plaintext response:
+```
+User must verify login
+```
+
+When this error occurs, advise the user to 
+[generate a temporary password](https://twitter.com/settings/applications)
+on twitter.com and use that to complete signing in to the application.
