@@ -2,7 +2,9 @@ codebird-php
 ============
 *A Twitter library in PHP.*
 
-Copyright (C) 2010-2013 J.M. <me@mynetx.net>
+[![Download latest version from SourceForge](https://f.cloud.github.com/assets/157944/591288/9a6955f4-c9fe-11e2-8bca-15db918638ef.png)](https://sourceforge.net/projects/codebird-php.codebird.p/files/latest/download)
+
+Copyright (C) 2010-2013 J.M. &lt;me@mynetx.net&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
