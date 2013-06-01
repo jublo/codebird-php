@@ -27,7 +27,7 @@ namespace Codebird;
 /**
  * Define constants
  */
-$constants = explode(' ', 'OBJECT ARRAY');
+$constants = explode(' ', 'OBJECT ARRAY JSON');
 foreach ($constants as $i => $id) {
     $id = 'CODEBIRD_RETURNFORMAT_' . $id;
     defined($id) or define($id, $i);
@@ -351,16 +351,25 @@ class Codebird
         $reply      = curl_exec($ch);
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply('oauth2/token', $reply);
-        if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
-            $reply->httpstatus = $httpstatus;
-            if ($httpstatus == 200) {
-                self::setBearerToken($reply->access_token);
-            }
-        } else {
-            $reply['httpstatus'] = $httpstatus;
-            if ($httpstatus == 200) {
-                self::setBearerToken($reply['access_token']);
-            }
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                if ($httpstatus == 200) {
+                    self::setBearerToken($reply['access_token']);
+                }
+                break;
+            case CODEBIRD_RETURNFORMAT_JSON:
+                if ($httpstatus == 200) {
+                    $parsed = json_decode($reply);
+                    self::setBearerToken($parsed->access_token);
+                }
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                if ($httpstatus == 200) {
+                    self::setBearerToken($reply->access_token);
+                }
+                break;
         }
         return $reply;
     }
@@ -833,7 +842,7 @@ class Codebird
         $reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
-        } else {
+        } elseif ($this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY) {
             $reply['httpstatus'] = $httpstatus;
         }
         return $reply;
@@ -870,15 +879,17 @@ class Codebird
 
         $need_array = $this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY;
         if ($reply == '[]') {
-            return $need_array ? array() : new \stdClass;
+            switch ($this->_return_format) {
+                case CODEBIRD_RETURNFORMAT_ARRAY:
+                    return array();
+                case CODEBIRD_RETURNFORMAT_JSON:
+                    return '{}';
+                case CODEBIRD_RETURNFORMAT_OBJECT:
+                    return new \stdClass;
+            }
         }
         $parsed = array();
-        if ($method == 'users/profile_image/:screen_name') {
-            // this method returns a 302 redirect, we need to extract the URL
-            if (isset($headers['Location'])) {
-                $parsed = array('profile_image_url_https' => $headers['Location']);
-            }
-        } elseif (!$parsed = json_decode($reply, $need_array)) {
+        if (! $parsed = json_decode($reply, $need_array)) {
             if ($reply) {
                 if (stripos($reply, '<' . '?xml version="1.0" encoding="UTF-8"?' . '>') === 0) {
                     // we received XML...
@@ -901,9 +912,15 @@ class Codebird
                     }
                 }
             }
+            $reply = json_encode($parsed);
         }
-        if (!$need_array) {
-            $parsed = (object) $parsed;
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                return $parsed;
+            case CODEBIRD_RETURNFORMAT_JSON:
+                return $reply;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                return (object) $parsed;
         }
         return $parsed;
     }

@@ -220,6 +220,13 @@ Upon your choice, you may also get PHP arrays directly:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_ARRAY);
 ```
 
+The Twitter API natively responds to API calls in JSON (JS Object Notation).
+To get a JSON string, set the corresponding return format:
+
+```php
+$cb->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
+```
+
 Support for getting a SimpleXML object is planned.
 
 7. Using multiple Codebird instances
