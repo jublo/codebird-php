@@ -19,12 +19,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+### Versions
 
-This is the PHP version of the Codebird library.
-It was forked from the JScript version.
-Please enable the CURL and OPENSSL extensions in your PHP environment.
+- JavaScript: https://github.com/mynetx/codebird-js
+- PHP: https://github.com/mynetx/codebird-php
 
-**This library requires PHP 5.3.0 or higher.**
+### Requirements
+
+- PHP 5.3.0 or higher
+- CURL extension
+- OpenSSL extension
+
 
 1. Authentication
 -----------------
