@@ -260,9 +260,6 @@ class Codebird
         $httpmethod = $this->_detectMethod($method_template, $apiparams);
         $multipart  = $this->_detectMultipart($method_template);
 
-        // geek-geek: Now allowing to specify filenames as params
-        $this->_detectFilenames($method_template, $apiparams);
-
         return $this->_callApi(
             $httpmethod,
             $method,
@@ -693,14 +690,15 @@ class Codebird
     }
 
     /**
-     * Detects filenames in upload parameters
+     * Detect filenames in upload parameters,
+     * build multipart request from upload params
      *
-     * @param       string $method  The API method to call
-     * @param byref array  $params  The parameters to send along
+     * @param string $method  The API method to call
+     * @param array  $params  The parameters to send along
      *
      * @return void
      */
-    protected function _detectFilenames($method, &$params)
+    protected function _buildMultipart($method, $params)
     {
         // well, files will only work in multipart methods
         if (! $this->_detectMultipart($method)) {
@@ -721,42 +719,54 @@ class Codebird
             return;
         }
 
-        // check for filenames
         $possible_files = explode(' ', $possible_files[$method]);
-        foreach ($possible_files as $possible_file) {
-            // is this parameter set currently?
-            if (! isset($params[$possible_file])) {
-                continue;
-            }
+
+        $multipart_border = '--------------------' . $this->_nonce();
+        $multipart_request = '';
+
+        foreach ($params as $key => $value) {
             // is it an array?
-            if (is_array($params[$possible_file])) {
+            if (is_array($value)) {
                 throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
                 continue;
             }
-            // is it a file, a readable one?
-            if (! @file_exists($params[$possible_file])
-                || ! @is_readable($params[$possible_file])
-            ) {
-                continue;
+            $multipart_request .=
+                '--' . $multipart_border . "\r\n"
+                . 'Content-Disposition: form-data; name="' . $key . '"';
+
+            // check for filenames
+            if (in_array($key, $possible_files)) {
+                $multipart_request .=
+                    "\r\nContent-Transfer-Encoding: base64";
+
+                if (// is it a file, a readable one?
+                    @file_exists($value)
+                    && @is_readable($value)
+
+                    // is it a valid image?
+                    && $data = @getimagesize($params[$possible_file])
+
+                    // is it a supported image format?
+                    && in_array($data[2], $this->_supported_media_files)
+                ) {
+                    // try to read the file
+                    ob_start();
+                    readfile($value);
+                    $data = ob_get_contents();
+                    ob_end_clean();
+                    if (strlen($data) == 0) {
+                        continue;
+                    }
+                    $value = $data;
+                }
             }
-            // is it a valid image?
-            if (! $data = @getimagesize($params[$possible_file])) {
-                continue;
-            }
-            // is it a supported image format?
-            if (! in_array($data[2], $this->_supported_media_files)) {
-                continue;
-            }
-            // try to read the file
-            ob_start();
-            readfile($params[$possible_file]);
-            $data = ob_get_contents();
-            ob_end_clean();
-            if (strlen($data) == 0) {
-                continue;
-            }
-            $params[$possible_file] = $data;
+
+            $multipart_request .=
+                "\r\n\r\n" . $value . "\r\n";
         }
+        $multipart_request .= '--' . $multipart_border . '--';
+
+        return $multipart_request;
     }
 
 
@@ -806,15 +816,16 @@ class Codebird
             $authorization = $this->_sign($httpmethod, $url, $params);
             $ch = curl_init($url_with_params);
         } else {
-            $authorization = $this->_sign($httpmethod, $url, array());
-            if (! $multipart) {
+            if ($multipart) {
+                $authorization = $this->_sign($httpmethod, $url, array());
+                $params        = $this->_buildMultipart($method_template, $params);
+            } else {
                 $authorization = $this->_sign($httpmethod, $url, $params);
                 $params        = http_build_query($params);
             }
-            $post_fields = $params;
             $ch          = curl_init($url);
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
         if ($app_only_auth) {
             if (self::$_oauth_consumer_key == null) {
@@ -826,17 +837,25 @@ class Codebird
             }
             $authorization = 'Authorization: Bearer ' . self::$_oauth_bearer_token;
         }
+        $request_headers = array();
+        if (isset($authorization)) {
+            $request_headers[] = $authorization;
+            $request_headers[] = 'Expect:';
+        }
+        if ($multipart) {
+            $first_newline      = strpos($params, "\r\n");
+            $multipart_boundary = substr($params, 2, $first_newline);
+            $request_headers[] = 'Content-Type: multipart/form-data; boundary='
+                . $multipart_boundary;
+        }
+print_r($request_headers);die();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        if (isset($authorization)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                $authorization,
-                'Expect:'
-            ));
-        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+
         $reply      = curl_exec($ch);
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply($method_template, $reply);
