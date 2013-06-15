@@ -736,29 +736,31 @@ class Codebird
 
             // check for filenames
             if (in_array($key, $possible_files)) {
-                $multipart_request .=
-                    "\r\nContent-Transfer-Encoding: base64";
-
                 if (// is it a file, a readable one?
                     @file_exists($value)
                     && @is_readable($value)
 
                     // is it a valid image?
-                    && $data = @getimagesize($params[$possible_file])
-
-                    // is it a supported image format?
-                    && in_array($data[2], $this->_supported_media_files)
+                    && $data = @getimagesize($value)
                 ) {
-                    // try to read the file
-                    ob_start();
-                    readfile($value);
-                    $data = ob_get_contents();
-                    ob_end_clean();
-                    if (strlen($data) == 0) {
-                        continue;
+                    if (// is it a supported image format?
+                        in_array($data[2], $this->_supported_media_files)
+                    ) {
+                        // try to read the file
+                        ob_start();
+                        readfile($value);
+                        $data = ob_get_contents();
+                        ob_end_clean();
+                        if (strlen($data) == 0) {
+                            continue;
+                        }
+                        $value = $data;
                     }
-                    $value = $data;
                 }
+
+                $multipart_request .=
+                    "\r\nContent-Transfer-Encoding: base64";
+                $value = base64_encode($value);
             }
 
             $multipart_request .=
@@ -823,7 +825,7 @@ class Codebird
                 $authorization = $this->_sign($httpmethod, $url, $params);
                 $params        = http_build_query($params);
             }
-            $ch          = curl_init($url);
+            $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
@@ -845,15 +847,16 @@ class Codebird
         if ($multipart) {
             $first_newline      = strpos($params, "\r\n");
             $multipart_boundary = substr($params, 2, $first_newline);
-            $request_headers[] = 'Content-Type: multipart/form-data; boundary='
+            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                 . $multipart_boundary;
         }
-print_r($request_headers);die();
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_PROXY, '127.0.0.1:8888');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
 
         $reply      = curl_exec($ch);
@@ -879,7 +882,19 @@ print_r($request_headers);die();
     {
         // split headers and body
         $headers = array();
-        $reply = explode("\r\n\r\n", $reply, 2);
+        $reply = explode("\r\n\r\n", $reply, 4);
+
+        // check if using proxy
+        if (substr($reply[0], 0, 35) === 'HTTP/1.1 200 Connection Established') {
+            array_shift($reply);
+        } elseif (count($reply) > 2) {
+            $headers = array_shift($reply);
+            $reply = array(
+                $headers,
+                implode("\r\n", $reply)
+            );
+        }
+
         $headers_array = explode("\r\n", $reply[0]);
         foreach ($headers_array as $header) {
             $header_array = explode(': ', $header, 2);
