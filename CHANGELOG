@@ -1,7 +1,7 @@
 codebird-php - changelog
 ========================
 
-2.4.0 (not yet released)
+2.4.0 (2013-06-15)
 + Add contributing guidelines
 + rfe #21 JSON return format
 + Support HTTP proxy replies

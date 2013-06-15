@@ -1,7 +1,7 @@
 {
     "name": "mynetx/codebird-php",
     "description" : "A Twitter library in PHP.",
-    "version": "2.4.0-dev",
+    "version": "2.4.0",
     "autoload": {
         "classmap": ["src/"]
     },
