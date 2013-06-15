@@ -6,6 +6,7 @@ codebird-php - changelog
 + rfe #21 JSON return format
 + Support HTTP proxy replies
 + Validate Twitter SSL certificate
++ #23 Readme: Fix authentication sample
 
 2.3.6 (2013-05-12)
 + Add backslash to stdClass construction, due to namespace
