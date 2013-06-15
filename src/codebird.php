@@ -758,9 +758,11 @@ class Codebird
                     }
                 }
 
+                /*
                 $multipart_request .=
                     "\r\nContent-Transfer-Encoding: base64";
                 $value = base64_encode($value);
+                */
             }
 
             $multipart_request .=
@@ -846,7 +848,8 @@ class Codebird
         }
         if ($multipart) {
             $first_newline      = strpos($params, "\r\n");
-            $multipart_boundary = substr($params, 2, $first_newline);
+            $multipart_boundary = substr($params, 2, $first_newline - 2);
+            $request_headers[]  = 'Content-Length: ' . strlen($params);
             $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                 . $multipart_boundary;
         }
@@ -854,9 +857,6 @@ class Codebird
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        // curl_setopt($ch, CURLOPT_PROXY, '127.0.0.1:8888');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
 
         $reply      = curl_exec($ch);
