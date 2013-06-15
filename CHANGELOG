@@ -2,12 +2,10 @@ codebird-php - changelog
 ========================
 
 2.4.0 (not yet released)
++ Add contributing guidelines
 + rfe #21 JSON return format
 + Support HTTP proxy replies
 + Validate Twitter SSL certificate
-
-2.3.7 (not yet released)
-+ Add contributing guidelines
 
 2.3.6 (2013-05-12)
 + Add backslash to stdClass construction, due to namespace
