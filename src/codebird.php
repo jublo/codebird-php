@@ -32,7 +32,18 @@ foreach ($constants as $i => $id) {
     $id = 'CODEBIRD_RETURNFORMAT_' . $id;
     defined($id) or define($id, $i);
 }
+$constants = array(
+    'CURLE_SSL_CERTPROBLEM' => 58,
+    'CURLE_SSL_CACERT' => 60,
+    'CURLE_SSL_CACERT_BADFILE' => 77,
+    'CURLE_SSL_CRL_BADFILE' => 82,
+    'CURLE_SSL_ISSUER_ERROR' => 83
+);
+foreach ($constants as $id => $i) {
+    defined($id) or define($id, $i);
+}
 unset($constants);
+unset($i);
 unset($id);
 
 /**
@@ -858,8 +869,28 @@ class Codebird
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 
-        $reply      = curl_exec($ch);
+        $reply = curl_exec($ch);
+
+        // certificate validation results
+        $validation_result = curl_errno($ch);
+        if (in_array(
+                $validation_result,
+                array(
+                    CURLE_SSL_CERTPROBLEM,
+                    CURLE_SSL_CACERT,
+                    CURLE_SSL_CACERT_BADFILE,
+                    CURLE_SSL_CRL_BADFILE,
+                    CURLE_SSL_ISSUER_ERROR
+                )
+            )
+        ) {
+            throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
+        }
+
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
