@@ -3,6 +3,9 @@ codebird-php - changelog
 
 2.5.0 (not yet released)
 
+2.4.1 (not yet released)
++ #26 Stringify null and boolean parameters
+
 2.4.0 (2013-06-15)
 + Add contributing guidelines
 + rfe #21 JSON return format

@@ -217,6 +217,19 @@ class Codebird
                 }
             }
         }
+
+        // stringify null and boolean parameters
+        foreach ($apiparams as $key => $value) {
+            if (! is_scalar($value)) {
+                continue;
+            }
+            if (is_null($value)) {
+                $apiparams[$key] = 'null';
+            } elseif (is_bool($value)) {
+                $apiparams[$key] = $value ? 'true' : 'false';
+            }
+        }
+
         $app_only_auth = false;
         if (count($params) > 1) {
             $app_only_auth = !! $params[1];
