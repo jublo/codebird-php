@@ -1,6 +1,6 @@
 ### Which branch?
-- Bugs are fixed in the latest QA_* branch, please base your bugfix pull requests on this branch.
-- New features are added to the master branch, please base your feature-add pull requests on that branch.
+- Bugs are fixed in the master branch, please base your bugfix pull requests on this branch.
+- New features are added to the develop branch, please base your feature-add pull requests on that branch.
 
 ### Code style
 - Please use 4 soft spaces per indent level.

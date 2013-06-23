@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package codebird
- * @version 2.4.1-dev
+ * @version 2.4.1
  * @author J.M. <me@mynetx.net>
  * @copyright 2010-2013 J.M. <me@mynetx.net>
  *
@@ -107,7 +107,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.4.1-dev';
+    protected $_version = '2.4.1';
 
     /**
      * Returns singleton class instance
@@ -363,13 +363,32 @@ class Codebird
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+
         curl_setopt($ch, CURLOPT_USERPWD, self::$_oauth_consumer_key . ':' . self::$_oauth_consumer_secret);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Expect:'
         ));
-        $reply      = curl_exec($ch);
+        $reply = curl_exec($ch);
+
+        // certificate validation results
+        $validation_result = curl_errno($ch);
+        if (in_array(
+                $validation_result,
+                array(
+                    CURLE_SSL_CERTPROBLEM,
+                    CURLE_SSL_CACERT,
+                    CURLE_SSL_CACERT_BADFILE,
+                    CURLE_SSL_CRL_BADFILE,
+                    CURLE_SSL_ISSUER_ERROR
+                )
+            )
+        ) {
+            throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
+        }
+
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply('oauth2/token', $reply);
         switch ($this->_return_format) {
