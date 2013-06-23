@@ -1,7 +1,7 @@
 codebird-php - changelog
 ========================
 
-2.4.1 (not yet released)
+2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
 + Validate Twitter SSL certificate for oauth2/token method
 
