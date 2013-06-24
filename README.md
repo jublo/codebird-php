@@ -390,3 +390,13 @@ User must verify login
 When this error occurs, advise the user to 
 [generate a temporary password](https://twitter.com/settings/applications)
 on twitter.com and use that to complete signing in to the application.
+
+…know what cacert.pem is for?
+-----------------------------
+
+Connections to the Twitter API are done over a secured SSL connection. 
+Since 2.4.0, codebird-php checks if the Twitter API server has a valid 
+SSL certificate. Valid certificates have a correct signature-chain. 
+The cacert.pem file contains a list of all public certificates for root 
+certificate authorities. You can find more information about this file 
+at http://curl.haxx.se/docs/caextract.html.

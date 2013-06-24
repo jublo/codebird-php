@@ -2,6 +2,7 @@ codebird-php - changelog
 ========================
 
 2.4.2 (not yet released)
++ Add section about cacert.pem to README
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
