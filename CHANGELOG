@@ -1,6 +1,9 @@
 codebird-php - changelog
 ========================
 
+2.5.0 (not yet released)
++ Option to set cURL timeout
+
 2.4.2 (not yet released)
 + Add section about cacert.pem to README
 
