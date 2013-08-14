@@ -204,13 +204,13 @@ You can find it within the return object’s ```httpstatus``` property.
 
 ### 5.1 Dealing with rate-limits
 
-Basically, Codebird leaves it up to you to handle Twitter’s rate limit.  
+Basically, Codebird leaves it up to you to handle Twitter’s rate limit.
 The library returns the response HTTP status code, so you can detect rate limits.
 
-I suggest you to check if the ```$reply->httpstatus``` property is ```400``` 
-and check with the Twitter API to find out if you are currently being 
-rate-limited. 
-See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq) 
+I suggest you to check if the ```$reply->httpstatus``` property is ```400```
+and check with the Twitter API to find out if you are currently being
+rate-limited.
+See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
 for more information.
 
 6. Return formats
@@ -277,7 +277,7 @@ First retrieve the user object using
 
 with ```$username``` being the username of the account you wish to retrieve the profile image from.
 
-Then get the value from the index ```profile_image_url``` or ```profile_image_url_https``` of the user object previously retrieved. 
+Then get the value from the index ```profile_image_url``` or ```profile_image_url_https``` of the user object previously retrieved.
 
 
 For example:
@@ -289,7 +289,7 @@ For example:
 
 When the user returns from the authentication screen, you need to trade
 the obtained request token for an access token, using the OAuth verifier.
-As discussed in the section ‘Usage example,’ you use a call to 
+As discussed in the section ‘Usage example,’ you use a call to
 ```oauth/access_token``` to do that.
 
 The API reply to this method call tells you details about the user that just logged in.
@@ -305,12 +305,12 @@ stdClass Object
     [user_id] => 14648265
     [screen_name] => mynetx
     [httpstatus] => 200
-) 
+)
 ```
 
-If you need to get more details, such as the user’s latest tweet, 
-you should fetch the complete User Entity.  The simplest way to get the 
-user entity of the currently authenticated user is to use the 
+If you need to get more details, such as the user’s latest tweet,
+you should fetch the complete User Entity.  The simplest way to get the
+user entity of the currently authenticated user is to use the
 ```account/verify_credentials``` API method.  In Codebird, it works like this:
 
 ```php
@@ -318,16 +318,16 @@ $reply = $cb->account_verifyCredentials();
 print_r($reply);
 ```
 
-I suggest to cache the User Entity after obtaining it, as the 
-```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes. 
+I suggest to cache the User Entity after obtaining it, as the
+```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes.
 
 …walk through cursored results?
 -------------------------------
 
-The Twitter REST API utilizes a technique called ‘cursoring’ to paginate 
-large result sets. Cursoring separates results into pages of no more than 
-5000 results at a time, and provides a means to move backwards and 
-forwards through these pages. 
+The Twitter REST API utilizes a technique called ‘cursoring’ to paginate
+large result sets. Cursoring separates results into pages of no more than
+5000 results at a time, and provides a means to move backwards and
+forwards through these pages.
 
 Here is how you can walk through cursored results with Codebird.
 
@@ -348,11 +348,11 @@ $nextCursor = $result1->next_cursor_str;
     }
 ```
 
-To navigate back instead of forth, use the field ```$resultX->previous_cursor_str``` 
+To navigate back instead of forth, use the field ```$resultX->previous_cursor_str```
 instead of ```next_cursor_str```.
 
-It might make sense to use the cursors in a loop.  Watch out, though, 
-not to send more than the allowed number of requests to ```followers/list``` 
+It might make sense to use the cursors in a loop.  Watch out, though,
+not to send more than the allowed number of requests to ```followers/list```
 per rate-limit timeframe, or else you will hit your rate-limit.
 
 …use xAuth with Codebird?
@@ -370,9 +370,9 @@ $reply = $cb->oauth_accessToken(array(
 ));
 ```
 
-Are you getting a strange error message?  If the user is enrolled in 
-login verification, the server will return a HTTP 401 error with a custom body. 
-If you are using the send_error_codes parameter, you will receive the 
+Are you getting a strange error message?  If the user is enrolled in
+login verification, the server will return a HTTP 401 error with a custom body.
+If you are using the send_error_codes parameter, you will receive the
 following error message in the response body:
 
 ```xml
@@ -387,16 +387,28 @@ Otherwise, the response body will contain a plaintext response:
 User must verify login
 ```
 
-When this error occurs, advise the user to 
+When this error occurs, advise the user to
 [generate a temporary password](https://twitter.com/settings/applications)
 on twitter.com and use that to complete signing in to the application.
 
 …know what cacert.pem is for?
 -----------------------------
 
-Connections to the Twitter API are done over a secured SSL connection. 
-Since 2.4.0, codebird-php checks if the Twitter API server has a valid 
-SSL certificate. Valid certificates have a correct signature-chain. 
-The cacert.pem file contains a list of all public certificates for root 
-certificate authorities. You can find more information about this file 
+Connections to the Twitter API are done over a secured SSL connection.
+Since 2.4.0, codebird-php checks if the Twitter API server has a valid
+SSL certificate. Valid certificates have a correct signature-chain.
+The cacert.pem file contains a list of all public certificates for root
+certificate authorities. You can find more information about this file
 at http://curl.haxx.se/docs/caextract.html.
+
+…set the timeout for requests to the Twitter API?
+-------------------------------------------------
+
+For connecting to Twitter, Codebird uses the cURL library.
+You can specify both the connection timeout and the request timeout,
+in milliseconds:
+
+```php
+$cb->setConnectionTimeout(2000);
+$cb->setTimeout(5000);
+```

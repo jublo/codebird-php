@@ -110,6 +110,16 @@ class Codebird
     protected $_version = '2.4.2-dev';
 
     /**
+     * Request timeout
+     */
+    protected $_timeout;
+
+    /**
+     * Connection timeout
+     */
+    protected $_connectionTimeout;
+
+    /**
      * Returns singleton class instance
      * Always use this method unless you're working with multiple authenticated users at once
      *
@@ -171,6 +181,30 @@ class Codebird
     {
         $this->_oauth_token        = $token;
         $this->_oauth_token_secret = $secret;
+    }
+
+    /**
+     * Sets request timeout in milliseconds
+     *
+     * @param int $timeout Request timeout in milliseconds
+     *
+     * @return void
+     */
+    public function setTimeout($timeout)
+    {
+        $this->_timeout = (int) $timeout;
+    }
+
+    /**
+     * Sets connection timeout in milliseconds
+     *
+     * @param int $timeout Connection timeout in milliseconds
+     *
+     * @return void
+     */
+    public function setConnectionTimeout($timeout)
+    {
+        $this->_connectionTimeout = (int) $timeout;
     }
 
     /**
@@ -904,6 +938,14 @@ class Codebird
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+
+        if (isset($this->_timeout)) {
+            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
+        }
+
+        if (isset($this->_connectionTimeout)) {
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
+        }
 
         $reply = curl_exec($ch);
 
