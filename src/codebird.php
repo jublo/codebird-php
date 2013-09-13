@@ -227,7 +227,7 @@ class Codebird
      *
      * @return array $apimethods
      */
-    function getApiMethods()
+    public function getApiMethods()
     {
         static $apimethods = array(
             'GET' => array(
