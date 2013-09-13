@@ -4,6 +4,7 @@ codebird-php - changelog
 2.5.0 (not yet released)
 + Add section about cacert.pem to README
 + Option to set cURL timeout
++ #42 Allow to get the supported API methods as array
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
