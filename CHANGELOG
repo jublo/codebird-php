@@ -5,6 +5,7 @@ codebird-php - changelog
 + Add section about cacert.pem to README
 + Option to set cURL timeout
 + #42 Allow to get the supported API methods as array
++ #48 Update composer file to jublonet path
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
