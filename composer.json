@@ -1,5 +1,5 @@
 {
-    "name": "mynetx/codebird-php",
+    "name": "jublonet/codebird-php",
     "description" : "A Twitter library in PHP.",
     "version": "2.5.0-dev",
     "autoload": {
