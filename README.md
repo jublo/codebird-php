@@ -2,9 +2,7 @@ codebird-php
 ============
 *A Twitter library in PHP.*
 
-[![Download latest version from SourceForge](https://f.cloud.github.com/assets/157944/591288/9a6955f4-c9fe-11e2-8bca-15db918638ef.png)](https://sourceforge.net/projects/codebird-php.codebird.p/files/latest/download)
-
-Copyright (C) 2010-2013 J.M. &lt;me@mynetx.net&gt;
+Copyright (C) 2010-2014 Jublo IT Solutions &lt;support@jublo.net&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Versions
 
-- JavaScript: https://github.com/mynetx/codebird-js
-- PHP: https://github.com/mynetx/codebird-php
+- JavaScript: https://github.com/jublonet/codebird-js
+- PHP: https://github.com/jublonet/codebird-php
 
 ### Requirements
 
@@ -142,7 +140,7 @@ giving all parameters in an array is supported, too:
 
 ```php
 $params = array(
-    'screen_name' => 'mynetx'
+    'screen_name' => 'jublonet'
 );
 $reply = $cb->users_show($params);
 ```
@@ -152,7 +150,7 @@ When **uploading files to Twitter**, the array syntax is obligatory:
 ```php
 $params = array(
     'status' => 'Look at this crazy cat! #lolcats',
-    'media[]' => '/home/mynetx/lolcats.jpg'
+    'media[]' => '/home/jublonet/lolcats.jpg'
 );
 $reply = $cb->statuses_updateWithMedia($params);
 ```
@@ -188,7 +186,7 @@ map to Codebird function calls. The general rules are:
     Examples:
     - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
     - ```users/profile_image/:screen_name``` maps to
-      ```Codebird::users_profileImage_SCREEN_NAME('screen_name=mynetx')```.
+      ```Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')```.
 
 4. HTTP methods (GET, POST, DELETE etc.)
 ----------------------------------------
@@ -303,7 +301,7 @@ stdClass Object
     [oauth_token] => 14648265-rPn8EJwfB**********************
     [oauth_token_secret] => agvf3L3**************************
     [user_id] => 14648265
-    [screen_name] => mynetx
+    [screen_name] => jublonet
     [httpstatus] => 200
 )
 ```
