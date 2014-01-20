@@ -7,8 +7,8 @@ namespace Codebird;
  *
  * @package codebird
  * @version 2.4.1
- * @author J.M. <me@mynetx.net>
- * @copyright 2010-2013 J.M. <me@mynetx.net>
+ * @author Jublo IT Solutions &lt;support@jublo.net&gt;
+ * @copyright 2010-2014 Jublo IT Solutions &lt;support@jublo.net&gt;
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
