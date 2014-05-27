@@ -442,7 +442,7 @@ class Codebird
             $method .= $path[$i];
         }
         // undo replacement for URL parameters
-        $url_parameters_with_underscore = array('screen_name');
+        $url_parameters_with_underscore = array('screen_name', 'place_id');
         foreach ($url_parameters_with_underscore as $param) {
             $param = strtoupper($param);
             $replacement_was = str_replace('_', '/', $param);
