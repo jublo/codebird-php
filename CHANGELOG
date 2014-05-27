@@ -7,6 +7,8 @@ codebird-php - changelog
 + #42 Allow to get the supported API methods as array
 + #48 Update composer file to jublonet path
 + Update cacert.pem root certificates file
++ #58 support for GET statuses/retweeters/ids
++ #53 Better Proxy HTTP status detection
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
