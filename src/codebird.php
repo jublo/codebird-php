@@ -236,6 +236,7 @@ class Codebird
                 'statuses/user_timeline',
                 'statuses/home_timeline',
                 'statuses/retweets_of_me',
+                'statuses/retweeters/ids',
 
                 // Tweets
                 'statuses/retweets/:id',
