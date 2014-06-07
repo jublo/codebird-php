@@ -80,9 +80,19 @@ class Codebird
     protected static $_endpoint = 'https://api.twitter.com/1.1/';
 
     /**
-     * The API endpoint to use for OAuth requests
+     * The media API endpoint to use
+     */
+    protected static $_endpoint_media = 'https://upload.twitter.com/1.1/';
+
+    /**
+     * The API endpoint base to use
      */
     protected static $_endpoint_oauth = 'https://api.twitter.com/';
+
+    /**
+     * The API endpoint to use for old requests
+     */
+    protected static $_endpoint_old = 'https://api.twitter.com/1/';
 
     /**
      * The Request or access token. Used to sign requests
@@ -478,6 +488,7 @@ class Codebird
 
         $httpmethod = $this->_detectMethod($method_template, $apiparams);
         $multipart  = $this->_detectMultipart($method_template);
+        $internal   = $this->_detectInternal($method_template);
 
         return $this->_callApi(
             $httpmethod,
@@ -485,7 +496,8 @@ class Codebird
             $method_template,
             $apiparams,
             $multipart,
-            $app_only_auth
+            $app_only_auth,
+            $internal
         );
     }
 
@@ -866,6 +878,48 @@ class Codebird
 
 
     /**
+     * Detects if API call is internal
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined in internal API
+     */
+    protected function _detectInternal($method) {
+        $internals = array(
+            'users/recommendations'
+        );
+        return in_array($method, $internals);
+    }
+
+    /**
+     * Detects if API call should use media endpoint
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined in media API
+     */
+    protected function _detectMedia($method) {
+        $medias = array(
+            'media/upload'
+        );
+        return in_array($method, $medias);
+    }
+
+    /**
+     * Detects if API call should use old endpoint
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined in old API
+     */
+    protected function _detectOld($method) {
+        $olds = array(
+            'account/push_destinations/device'
+        );
+        return in_array($method, $olds);
+    }
+
+    /**
      * Builds the complete API endpoint url
      *
      * @param string $method           The API method to call
@@ -875,8 +929,12 @@ class Codebird
      */
     protected function _getEndpoint($method, $method_template)
     {
-        if (substr($method, 0, 5) == 'oauth') {
+        if (substr($method, 0, 5) === 'oauth') {
             $url = self::$_endpoint_oauth . $method;
+        } elseif ($this->_detectMedia($method)) {
+            $url = self::$_endpoint_media . $method . '.json';
+        } elseif ($this->_detectOld($method)) {
+            $url = self::$_endpoint_old . $method . '.json';
         } else {
             $url = self::$_endpoint . $method . '.json';
         }
@@ -892,15 +950,21 @@ class Codebird
      * @param array  optional $params          The parameters to send along
      * @param bool   optional $multipart       Whether to use multipart/form-data
      * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     * @param bool   optional $internal        Whether to use internal call
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false)
+    protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
         if (! function_exists('curl_init')) {
             throw new \Exception('To make API requests, the PHP curl extension must be available.');
         }
+        if ($internal) {
+            $params['adc']            = 'phone';
+            $params['application_id'] = 333903271;
+        }
+
         $url = $this->_getEndpoint($method, $method_template);
         $ch  = false;
         if ($httpmethod == 'GET') {
