@@ -2,7 +2,7 @@ codebird-php
 ============
 *A Twitter library in PHP.*
 
-Copyright (C) 2010-2014 Jublo IT Solutions &lt;support@jublo.net&gt;
+Copyright (C) 2010-2014 Jublo Solutions &lt;support@jublo.net&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -145,7 +145,9 @@ $params = array(
 $reply = $cb->users_show($params);
 ```
 
-When **uploading files to Twitter**, the array syntax is obligatory:
+### Uploading files to Twitter
+
+The array syntax is obligatory:
 
 ```php
 $params = array(
@@ -154,6 +156,44 @@ $params = array(
 );
 $reply = $cb->statuses_updateWithMedia($params);
 ```
+
+#### Multiple images
+can be uploaded in a 2-step process. **First** you send each image to Twitter, like this:
+```php
+// these files to upload
+$media_files = array(
+    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
+);
+// will hold the uploaded IDs
+$media_ids = array();
+
+foreach ($media_files as $file) {
+    // upload all media files
+    $reply = $cb->media_upload(array(
+        'media' => $file
+    ));
+    // and collect their IDs
+    $media_ids[] = $reply->media_id_string;
+}
+```
+**Second,** you attach the collected media ids for all images to your call
+to ```statuses/update```, like this:
+
+```php
+// convert media ids to string list
+$media_ids = implode(',', $media_ids);
+
+// send tweet with these medias
+$reply = $cb->statuses_update(array(
+    'status' => 'These are some of my relatives.',
+    'media_ids' => $media_ids
+));
+print_r($reply);
+);
+```
+Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952) sent with the code above.
+
+More [documentation for tweeting with multiple media](https://dev.twitter.com/docs/api/multiple-media-extended-entities) is available on the Twitter Developer site.
 
 ### Requests with app-only auth
 
@@ -210,6 +250,9 @@ and check with the Twitter API to find out if you are currently being
 rate-limited.
 See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
 for more information.
+
+Unless your return format is JOSN, you will receive rate-limiting details
+in the returned data’s ```$reply->rate``` property.
 
 6. Return formats
 -----------------
@@ -388,3 +431,25 @@ User must verify login
 When this error occurs, advise the user to
 [generate a temporary password](https://twitter.com/settings/applications)
 on twitter.com and use that to complete signing in to the application.
+
+…know what cacert.pem is for?
+-----------------------------
+
+Connections to the Twitter API are done over a secured SSL connection.
+Since 2.4.0, codebird-php checks if the Twitter API server has a valid
+SSL certificate. Valid certificates have a correct signature-chain.
+The cacert.pem file contains a list of all public certificates for root
+certificate authorities. You can find more information about this file
+at http://curl.haxx.se/docs/caextract.html.
+
+…set the timeout for requests to the Twitter API?
+-------------------------------------------------
+
+For connecting to Twitter, Codebird uses the cURL library.
+You can specify both the connection timeout and the request timeout,
+in milliseconds:
+
+```php
+$cb->setConnectionTimeout(2000);
+$cb->setTimeout(5000);
+```

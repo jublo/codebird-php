@@ -1,9 +1,13 @@
 {
     "name": "jublonet/codebird-php",
     "description" : "A Twitter library in PHP.",
-    "version": "2.4.1",
+    "version": "2.5.0-rc.1",
     "autoload": {
         "classmap": ["src/"]
     },
-    "license": "GPL-3.0"
+    "license": "GPL-3.0",
+    "require": {
+        "lib-openssl": "*",
+        "lib-curl": "*"
+    }
 }
