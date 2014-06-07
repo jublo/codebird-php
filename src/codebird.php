@@ -305,12 +305,12 @@ class Codebird
 
         // replace AA by URL parameters
         $method_template = $method;
-        $match   = array();
+        $match           = array();
         if (preg_match('/[A-Z_]{2,}/', $method, $match)) {
             foreach ($match as $param) {
                 $param_l = strtolower($param);
                 $method_template = str_replace($param, ':' . $param_l, $method_template);
-                if (!isset($apiparams[$param_l])) {
+                if (! isset($apiparams[$param_l])) {
                     for ($i = 0; $i < 26; $i++) {
                         $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
                     }
@@ -888,7 +888,7 @@ class Codebird
                         readfile($value);
                         $data = ob_get_contents();
                         ob_end_clean();
-                        if (strlen($data) == 0) {
+                        if (strlen($data) === 0) {
                             continue;
                         }
                         $value = $data;
