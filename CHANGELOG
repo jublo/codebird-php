@@ -10,6 +10,11 @@ codebird-php - changelog
 + #58 support for GET statuses/retweeters/ids
 + #53 Better Proxy HTTP status detection
 - #62 Places & Geo API call issue
++ #33 Support internal API methods
++ #59 Support all known API methods
++ Reset bearer token when requesting a new token
++ #61 Return rate limit details with each API call
++ #60 Support uploading multiple media
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
