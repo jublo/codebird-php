@@ -1,8 +1,9 @@
 codebird-php
 ============
-*A Twitter library in PHP.*
+*A Twitter library in PHP, without cURL, perfect for google app engine.*
 
 Copyright (C) 2010-2014 Jublo IT Solutions &lt;support@jublo.net&gt;
+Copyright (C) 2014 Fabien Vauthey
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,11 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 - JavaScript: https://github.com/jublonet/codebird-js
 - PHP: https://github.com/jublonet/codebird-php
+- PHP without cURL option: https://github.com/FabFab/codebird-php
 
 ### Requirements
 
 - PHP 5.3.0 or higher
-- CURL extension
 - OpenSSL extension
 
 
@@ -409,4 +410,15 @@ in milliseconds:
 ```php
 $cb->setConnectionTimeout(2000);
 $cb->setTimeout(5000);
+```
+
+…use codebird without cURL?
+-------------------------------------------------
+
+For connecting to Twitter, Codebird uses the cURL library.
+You can specify both the connection timeout and the request timeout,
+in milliseconds:
+
+```php
+$cb->setUseCurl(false);
 ```
