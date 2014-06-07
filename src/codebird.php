@@ -137,7 +137,7 @@ class Codebird
      */
     public static function getInstance()
     {
-        if (self::$_instance == null) {
+        if (self::$_instance === null) {
             self::$_instance = new self;
         }
         return self::$_instance;
@@ -512,7 +512,7 @@ class Codebird
      */
     public function oauth_authenticate($force_login = NULL, $screen_name = NULL)
     {
-        if ($this->_oauth_token == null) {
+        if ($this->_oauth_token === null) {
             throw new \Exception('To get the authenticate URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authenticate?oauth_token=' . $this->_url($this->_oauth_token);
@@ -532,7 +532,7 @@ class Codebird
      */
     public function oauth_authorize($force_login = NULL, $screen_name = NULL)
     {
-        if ($this->_oauth_token == null) {
+        if ($this->_oauth_token === null) {
             throw new \Exception('To get the authorize URL, the OAuth token must be set.');
         }
         $url = self::$_endpoint_oauth . 'oauth/authorize?oauth_token=' . $this->_url($this->_oauth_token);
@@ -556,7 +556,7 @@ class Codebird
         if (! function_exists('curl_init')) {
             throw new \Exception('To make API requests, the PHP curl extension must be available.');
         }
-        if (self::$_oauth_consumer_key == null) {
+        if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
         $ch  = false;
@@ -601,19 +601,19 @@ class Codebird
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
-                if ($httpstatus == 200) {
+                if ($httpstatus === 200) {
                     self::setBearerToken($reply['access_token']);
                 }
                 break;
             case CODEBIRD_RETURNFORMAT_JSON:
-                if ($httpstatus == 200) {
+                if ($httpstatus === 200) {
                     $parsed = json_decode($reply);
                     self::setBearerToken($parsed->access_token);
                 }
                 break;
             case CODEBIRD_RETURNFORMAT_OBJECT:
                 $reply->httpstatus = $httpstatus;
-                if ($httpstatus == 200) {
+                if ($httpstatus === 200) {
                     self::setBearerToken($reply->access_token);
                 }
                 break;
@@ -669,7 +669,7 @@ class Codebird
      */
     private function _sha1($data)
     {
-        if (self::$_oauth_consumer_secret == null) {
+        if (self::$_oauth_consumer_secret === null) {
             throw new \Exception('To generate a hash, the consumer secret must be set.');
         }
         if (!function_exists('hash_hmac')) {
@@ -705,7 +705,7 @@ class Codebird
      */
     protected function _sign($httpmethod, $method, $params = array())
     {
-        if (self::$_oauth_consumer_key == null) {
+        if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To generate a signature, the consumer key must be set.');
         }
         $sign_params      = array(
