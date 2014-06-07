@@ -211,6 +211,9 @@ rate-limited.
 See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
 for more information.
 
+Unless your return format is JOSN, you will receive rate-limiting details
+in the returned data’s ```$reply->rate``` property.
+
 6. Return formats
 -----------------
 The default return format for API calls is a PHP object.

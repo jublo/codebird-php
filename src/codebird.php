@@ -422,7 +422,7 @@ class Codebird
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Expect:'
         ));
-        $reply = curl_exec($ch);
+        $result = curl_exec($ch);
 
         // certificate validation results
         $validation_result = curl_errno($ch);
@@ -441,10 +441,17 @@ class Codebird
         }
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply = $this->_parseApiReply('oauth2/token', $reply);
+        $reply      = $this->_parseApiReply('oauth2/token', $result);
+        $headers    = $this->_parseApiReply('oauth2/token', $result, true);
+        $rate       = array(
+            'limit'     => $headers['x-rate-limit-limit'],
+            'remaining' => $headers['x-rate-limit-remaining'],
+            'reset'     => $headers['x-rate-limit-reset']
+        );
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
                 if ($httpstatus === 200) {
                     self::setBearerToken($reply['access_token']);
                 }
@@ -457,6 +464,7 @@ class Codebird
                 break;
             case CODEBIRD_RETURNFORMAT_OBJECT:
                 $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
                 if ($httpstatus === 200) {
                     self::setBearerToken($reply->access_token);
                 }
@@ -1059,7 +1067,7 @@ class Codebird
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
         }
 
-        $reply = curl_exec($ch);
+        $result = curl_exec($ch);
 
         // certificate validation results
         $validation_result = curl_errno($ch);
@@ -1078,11 +1086,19 @@ class Codebird
         }
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply = $this->_parseApiReply($method_template, $reply);
-        if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
+        $reply      = $this->_parseApiReply($method_template, $result);
+        $headers    = $this->_parseApiReply($method_template, $result, true);
+        $rate       = array(
+            'limit'     => $headers['x-rate-limit-limit'],
+            'remaining' => $headers['x-rate-limit-remaining'],
+            'reset'     => $headers['x-rate-limit-reset']
+        );
+        if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
-        } elseif ($this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY) {
+            $reply->rate       = $rate;
+        } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
             $reply['httpstatus'] = $httpstatus;
+            $reply['rate']       = $rate;
         }
         return $reply;
     }
@@ -1090,12 +1106,13 @@ class Codebird
     /**
      * Parses the API reply to encode it in the set return_format
      *
-     * @param string $method The method that has been called
-     * @param string $reply  The actual reply, JSON-encoded or URL-encoded
+     * @param string $method      The method that has been called
+     * @param string $reply       The actual reply, JSON-encoded or URL-encoded
+     * @param bool   $get_headers If to return the headers instead of body
      *
      * @return array|object The parsed reply
      */
-    protected function _parseApiReply($method, $reply)
+    protected function _parseApiReply($method, $reply, $get_headers = false)
     {
         // split headers and body
         $headers = array();
@@ -1125,14 +1142,17 @@ class Codebird
             }
             $headers[$key] = $value;
         }
+        if ($get_headers) {
+            return $headers;
+        }
         if (count($reply) > 1) {
             $reply = $reply[1];
         } else {
             $reply = '';
         }
 
-        $need_array = $this->_return_format == CODEBIRD_RETURNFORMAT_ARRAY;
-        if ($reply == '[]') {
+        $need_array = $this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY;
+        if ($reply === '[]') {
             switch ($this->_return_format) {
                 case CODEBIRD_RETURNFORMAT_ARRAY:
                     return array();
