@@ -279,6 +279,11 @@ class Codebird
             $app_only_auth = !! $params[1];
         }
 
+        // reset token when requesting a new token (causes 401 for signature error on 2nd+ requests)
+        if ($fn === 'oauth_requestToken') {
+            $this->setToken(null, null);
+        }
+
         // map function name to API method
         $method = '';
 
