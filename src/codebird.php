@@ -833,6 +833,7 @@ class Codebird
         $multiparts = array(
             // Tweets
             'statuses/update_with_media',
+            'media/upload',
 
             // Users
             'account/update_profile_background_image',
@@ -862,6 +863,7 @@ class Codebird
         $possible_files = array(
             // Tweets
             'statuses/update_with_media' => 'media[]',
+            'media/upload' => 'media',
             // Accounts
             'account/update_profile_background_image' => 'image',
             'account/update_profile_image' => 'image',

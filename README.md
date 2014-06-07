@@ -145,7 +145,9 @@ $params = array(
 $reply = $cb->users_show($params);
 ```
 
-When **uploading files to Twitter**, the array syntax is obligatory:
+### Uploading files to Twitter
+
+The array syntax is obligatory:
 
 ```php
 $params = array(
@@ -154,6 +156,44 @@ $params = array(
 );
 $reply = $cb->statuses_updateWithMedia($params);
 ```
+
+#### Multiple images
+can be uploaded in a 2-step process. **First** you send each image to Twitter, like this:
+```php
+// these files to upload
+$media_files = array(
+    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
+);
+// will hold the uploaded IDs
+$media_ids = array();
+
+foreach ($media_files as $file) {
+    // upload all media files
+    $reply = $cb->media_upload(array(
+        'media' => $file
+    ));
+    // and collect their IDs
+    $media_ids[] = $reply->media_id_string;
+}
+```
+**Second,** you attach the collected media ids for all images to your call
+to ```statuses/update```, like this:
+
+```php
+// convert media ids to string list
+$media_ids = implode(',', $media_ids);
+
+// send tweet with these medias
+$reply = $cb->statuses_update(array(
+    'status' => 'These are some of my relatives.',
+    'media_ids' => $media_ids
+));
+print_r($reply);
+);
+```
+Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952) sent with the code above.
+
+More [documentation for tweeting with multiple media](https://dev.twitter.com/docs/api/multiple-media-extended-entities) is available on the Twitter Developer site.
 
 ### Requests with app-only auth
 
