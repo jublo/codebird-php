@@ -549,22 +549,23 @@ class Codebird
     /**
      * Generates an OAuth signature
      *
-     * @param string          $httpmethod Usually either 'GET' or 'POST' or 'DELETE'
-     * @param string          $method     The API method to call
-     * @param array  optional $params     The API call parameters, associative
+     * @param string          $httpmethod   Usually either 'GET' or 'POST' or 'DELETE'
+     * @param string          $method       The API method to call
+     * @param array  optional $params       The API call parameters, associative
+     * @param bool   optional append_to_get Whether to append the OAuth params to GET
      *
      * @return string Authorization HTTP header
      */
-    protected function _sign($httpmethod, $method, $params = array())
+    protected function _sign($httpmethod, $method, $params = array(), $append_to_get = false)
     {
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To generate a signature, the consumer key must be set.');
         }
         $sign_params      = array(
-            'consumer_key' => self::$_oauth_consumer_key,
-            'version' => '1.0',
-            'timestamp' => time(),
-            'nonce' => $this->_nonce(),
+            'consumer_key'     => self::$_oauth_consumer_key,
+            'version'          => '1.0',
+            'timestamp'        => time(),
+            'nonce'            => $this->_nonce(),
             'signature_method' => 'HMAC-SHA1'
         );
         $sign_base_params = array();
@@ -586,13 +587,20 @@ class Codebird
         $sign_base_string = substr($sign_base_string, 0, -1);
         $signature        = $this->_sha1($httpmethod . '&' . $this->_url($method) . '&' . $this->_url($sign_base_string));
 
-        $params = array_merge($oauth_params, array(
-            'oauth_signature' => $signature
-        ));
-        ksort($params);
-        $authorization = 'Authorization: OAuth ';
-        foreach ($params as $key => $value) {
-            $authorization .= $key . '="' . $this->_url($value) . '", ';
+        $params = $append_to_get ? $sign_base_params : $oauth_params;
+        $params['oauth_signature'] = $signature;
+        $keys = $params;
+        ksort($keys);
+        if ($append_to_get) {
+            $authorization = '';
+            foreach ($keys as $key => $value) {
+                $authorization .= $key . '="' . $this->_url($value) . '", ';
+            }
+            return authorization.substring(0, authorization.length - 1);
+        }
+        $authorization = 'OAuth ';
+        foreach ($keys as $key => $value) {
+            $authorization .= $key . "=\"" . $this->_url($value) . "\", ";
         }
         return substr($authorization, 0, -2);
     }
@@ -1007,11 +1015,13 @@ class Codebird
             $params['application_id'] = 333903271;
         }
 
-        $url = $this->_getEndpoint($method, $method_template);
+        $url           = $this->_getEndpoint($method, $method_template);
+        $authorization = null;
         $ch  = false;
-        if ($httpmethod == 'GET') {
+        $request_headers = array();
+        if ($httpmethod === 'GET') {
             $url_with_params = $url;
-            if (count($params) > 0) {
+            if (json_encode($params) !== '{}') {
                 $url_with_params .= '?' . http_build_query($params);
             }
             $authorization = $this->_sign($httpmethod, $url, $params);
@@ -1019,36 +1029,34 @@ class Codebird
         } else {
             if ($multipart) {
                 $authorization = $this->_sign($httpmethod, $url, array());
-                $params        = $this->_buildMultipart($method_template, $params);
+                $params        = $this->_buildMultipart($method, $params);
             } else {
                 $authorization = $this->_sign($httpmethod, $url, $params);
                 $params        = http_build_query($params);
             }
             $ch = curl_init($url);
+            if ($multipart) {
+                $first_newline      = strpos($params, "\r\n");
+                $multipart_boundary = substr($params, 2, $first_newline - 2);
+                $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
+                    . $multipart_boundary;
+            }
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
         if ($app_only_auth) {
-            if (self::$_oauth_consumer_key == null) {
+            if (self::$_oauth_consumer_key === null) {
                 throw new \Exception('To make an app-only auth API request, the consumer key must be set.');
             }
             // automatically fetch bearer token, if necessary
-            if (self::$_oauth_bearer_token == null) {
+            if (self::$_oauth_bearer_token === null) {
                 $this->oauth2_token();
             }
-            $authorization = 'Authorization: Bearer ' . self::$_oauth_bearer_token;
+            $authorization = 'Bearer ' . self::$_oauth_bearer_token;
         }
-        $request_headers = array();
-        if (isset($authorization)) {
-            $request_headers[] = $authorization;
+        if ($authorization !== null) {
+            $request_headers[] = 'Authorization: ' . $authorization;
             $request_headers[] = 'Expect:';
-        }
-        if ($multipart) {
-            $first_newline      = strpos($params, "\r\n");
-            $multipart_boundary = substr($params, 2, $first_newline - 2);
-            $request_headers[]  = 'Content-Length: ' . strlen($params);
-            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
-                . $multipart_boundary;
         }
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
