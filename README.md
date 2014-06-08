@@ -247,7 +247,8 @@ See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
 for more information.
 
 Unless your return format is JOSN, you will receive rate-limiting details
-in the returned data’s ```$reply->rate``` property.
+in the returned data’s ```$reply->rate``` property,
+if the Twitter API responds with rate-limiting HTTP headers.
 
 Return formats
 --------------
