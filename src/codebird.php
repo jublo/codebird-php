@@ -868,7 +868,7 @@ class Codebird
      * @param string $method  The API method to call
      * @param array  $params  The parameters to send along
      *
-     * @return void
+     * @return null|string
      */
     protected function _buildMultipart($method, $params)
     {
