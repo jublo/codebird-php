@@ -443,11 +443,14 @@ class Codebird
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply('oauth2/token', $result);
         $headers    = $this->_parseApiReply('oauth2/token', $result, true);
-        $rate       = array(
-            'limit'     => $headers['x-rate-limit-limit'],
-            'remaining' => $headers['x-rate-limit-remaining'],
-            'reset'     => $headers['x-rate-limit-reset']
-        );
+        $rate       = null;
+        if (isset($headers['x-rate-limit-limit'])) {
+            $rate       = array(
+                'limit'     => $headers['x-rate-limit-limit'],
+                'remaining' => $headers['x-rate-limit-remaining'],
+                'reset'     => $headers['x-rate-limit-reset']
+            );
+        }
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -1108,14 +1111,10 @@ class Codebird
         }
         if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
-            if ($rate !== null) {
-                $reply->rate       = $rate;
-            }
+            $reply->rate       = $rate;
         } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
             $reply['httpstatus'] = $httpstatus;
-            if ($rate !== null) {
-                $reply['rate']       = $rate;
-            }
+            $reply['rate']       = $rate;
         }
         return $reply;
     }
