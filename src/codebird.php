@@ -490,7 +490,7 @@ class Codebird
      *
      * @return void
      */
-    private function _validateSslCertificate()
+    private function _validateSslCertificate($validation_result)
     {
         if (in_array(
                 $validation_result,
