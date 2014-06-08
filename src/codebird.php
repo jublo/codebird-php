@@ -429,19 +429,7 @@ class Codebird
 
         // certificate validation results
         $validation_result = curl_errno($ch);
-        if (in_array(
-                $validation_result,
-                array(
-                    CURLE_SSL_CERTPROBLEM,
-                    CURLE_SSL_CACERT,
-                    CURLE_SSL_CACERT_BADFILE,
-                    CURLE_SSL_CRL_BADFILE,
-                    CURLE_SSL_ISSUER_ERROR
-                )
-            )
-        ) {
-            throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
-        }
+        $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply($result);
@@ -474,6 +462,10 @@ class Codebird
 
     /**
      * General helpers to avoid duplicate code
+     */
+
+    /**
+     * Extract rate-limiting data from response headers
      *
      * @param array $headers The CURL response headers
      *
@@ -489,6 +481,33 @@ class Codebird
             'remaining' => $headers['x-rate-limit-remaining'],
             'reset'     => $headers['x-rate-limit-reset']
         );
+    }
+
+    /**
+     * Check if there were any SSL certificate errors
+     *
+     * @param int $validation_result The curl error number
+     *
+     * @return void
+     */
+    private function _validateSslCertificate()
+    {
+        if (in_array(
+                $validation_result,
+                array(
+                    CURLE_SSL_CERTPROBLEM,
+                    CURLE_SSL_CACERT,
+                    CURLE_SSL_CACERT_BADFILE,
+                    CURLE_SSL_CRL_BADFILE,
+                    CURLE_SSL_ISSUER_ERROR
+                )
+            )
+        ) {
+            throw new \Exception(
+                'Error ' . $validation_result
+                . ' while validating the Twitter API certificate.'
+            );
+        }
     }
 
     /**
@@ -1092,19 +1111,7 @@ class Codebird
 
         // certificate validation results
         $validation_result = curl_errno($ch);
-        if (in_array(
-                $validation_result,
-                array(
-                    CURLE_SSL_CERTPROBLEM,
-                    CURLE_SSL_CACERT,
-                    CURLE_SSL_CACERT_BADFILE,
-                    CURLE_SSL_CRL_BADFILE,
-                    CURLE_SSL_ISSUER_ERROR
-                )
-            )
-        ) {
-            throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
-        }
+        $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply($result);
