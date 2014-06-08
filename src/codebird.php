@@ -443,14 +443,7 @@ class Codebird
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply('oauth2/token', $result);
         $headers    = $this->_parseApiReply('oauth2/token', $result, true);
-        $rate       = null;
-        if (isset($headers['x-rate-limit-limit'])) {
-            $rate       = array(
-                'limit'     => $headers['x-rate-limit-limit'],
-                'remaining' => $headers['x-rate-limit-remaining'],
-                'reset'     => $headers['x-rate-limit-reset']
-            );
-        }
+        $rate       = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -474,6 +467,25 @@ class Codebird
                 break;
         }
         return $reply;
+    }
+
+    /**
+     * General helpers to avoid duplicate code
+     *
+     * @param array $headers The CURL response headers
+     *
+     * @return null|array The rate-limiting information
+     */
+    private function _getRateLimitInfo($headers)
+    {
+        if (! isset($headers['x-rate-limit-limit'])) {
+            return null;
+        }
+        return array(
+            'limit'     => $headers['x-rate-limit-limit'],
+            'remaining' => $headers['x-rate-limit-remaining'],
+            'reset'     => $headers['x-rate-limit-reset']
+        );
     }
 
     /**
@@ -1101,14 +1113,8 @@ class Codebird
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply($method_template, $result);
         $headers    = $this->_parseApiReply($method_template, $result, true);
-        $rate       = null;
-        if (isset($headers['x-rate-limit-limit'])) {
-            $rate   = array(
-                'limit'     => $headers['x-rate-limit-limit'],
-                'remaining' => $headers['x-rate-limit-remaining'],
-                'reset'     => $headers['x-rate-limit-reset']
-            );
-        }
+        $rate       = $this->_getRateLimitInfo($headers);
+
         if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
             $reply->rate       = $rate;
