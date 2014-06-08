@@ -247,8 +247,14 @@ class Codebird
         if (count($params) > 0) {
             if (is_array($params[0])) {
                 $apiparams = $params[0];
+                if (! is_array($apiparams)) {
+                    $apiparams = array();
+                }
             } else {
                 parse_str($params[0], $apiparams);
+                if (! is_array($apiparams)) {
+                    $apiparams = array();
+                }
                 // remove auto-added slashes if on magic quotes steroids
                 if (get_magic_quotes_gpc()) {
                     foreach($apiparams as $key => $value) {
@@ -352,14 +358,21 @@ class Codebird
     /**
      * Gets the OAuth authenticate URL for the current request token
      *
-     * @return string The OAuth authenticate URL
+     * @param optional bool   $force_login Whether to force the user to enter their login data
+     * @param optional string $screen_name Screen name to repopulate the user name with
+     * @param optional string $type        'authenticate' or 'authorize', to avoid duplicate code
+     *
+     * @return string The OAuth authenticate/authorize URL
      */
-    public function oauth_authenticate($force_login = NULL, $screen_name = NULL)
+    public function oauth_authenticate($force_login = NULL, $screen_name = NULL, $type = 'authenticate')
     {
-        if ($this->_oauth_token === null) {
-            throw new \Exception('To get the authenticate URL, the OAuth token must be set.');
+        if (! in_array($type, array('authenticate', 'authorize'))) {
+            throw new \Exception('To get the ' . $type . ' URL, use the correct third parameter, or omit it.');
         }
-        $url = self::$_endpoint_oauth . 'oauth/authenticate?oauth_token=' . $this->_url($this->_oauth_token);
+        if ($this->_oauth_token === null) {
+            throw new \Exception('To get the ' . $type . ' URL, the OAuth token must be set.');
+        }
+        $url = self::$_endpoint_oauth . 'oauth/' . $type . '?oauth_token=' . $this->_url($this->_oauth_token);
         if ($force_login) {
             $url .= "&force_login=1";
         }
@@ -371,22 +384,14 @@ class Codebird
 
     /**
      * Gets the OAuth authorize URL for the current request token
+     * @param optional bool   $force_login Whether to force the user to enter their login data
+     * @param optional string $screen_name Screen name to repopulate the user name with
      *
      * @return string The OAuth authorize URL
      */
     public function oauth_authorize($force_login = NULL, $screen_name = NULL)
     {
-        if ($this->_oauth_token === null) {
-            throw new \Exception('To get the authorize URL, the OAuth token must be set.');
-        }
-        $url = self::$_endpoint_oauth . 'oauth/authorize?oauth_token=' . $this->_url($this->_oauth_token);
-        if ($force_login) {
-            $url .= "&force_login=1";
-        }
-        if ($screen_name) {
-            $url .= "&screen_name=" . $screen_name;
-        }
-        return $url;
+        return $this->oauth_authenticate($force_login, $screen_name, 'authorize');
     }
 
     /**
@@ -403,7 +408,6 @@ class Codebird
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
-        $ch  = false;
         $post_fields = array(
             'grant_type' => 'client_credentials'
         );
@@ -441,8 +445,8 @@ class Codebird
         }
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply('oauth2/token', $result);
-        $headers    = $this->_parseApiReply('oauth2/token', $result, true);
+        $reply      = $this->_parseApiReply($result);
+        $headers    = $this->_parseApiReply($result, true);
         $rate       = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
@@ -898,7 +902,6 @@ class Codebird
             // is it an array?
             if (is_array($value)) {
                 throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
-                continue;
             }
             $multipart_request .=
                 '--' . $multipart_border . "\r\n"
@@ -989,12 +992,11 @@ class Codebird
     /**
      * Builds the complete API endpoint url
      *
-     * @param string $method           The API method to call
-     * @param string $method_template  The API method template to call
+     * @param string $method The API method to call
      *
      * @return string The URL to send the request to
      */
-    protected function _getEndpoint($method, $method_template)
+    protected function _getEndpoint($method)
     {
         if (substr($method, 0, 5) === 'oauth') {
             $url = self::$_endpoint_oauth . $method;
@@ -1032,9 +1034,7 @@ class Codebird
             $params['application_id'] = 333903271;
         }
 
-        $url           = $this->_getEndpoint($method, $method_template);
-        $authorization = null;
-        $ch  = false;
+        $url = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
             $url_with_params = $url;
@@ -1071,10 +1071,8 @@ class Codebird
             }
             $authorization = 'Bearer ' . self::$_oauth_bearer_token;
         }
-        if ($authorization !== null) {
-            $request_headers[] = 'Authorization: ' . $authorization;
-            $request_headers[] = 'Expect:';
-        }
+        $request_headers[] = 'Authorization: ' . $authorization;
+        $request_headers[] = 'Expect:';
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
@@ -1111,8 +1109,8 @@ class Codebird
         }
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply($method_template, $result);
-        $headers    = $this->_parseApiReply($method_template, $result, true);
+        $reply      = $this->_parseApiReply($result);
+        $headers    = $this->_parseApiReply($result, true);
         $rate       = $this->_getRateLimitInfo($headers);
 
         if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
@@ -1128,13 +1126,12 @@ class Codebird
     /**
      * Parses the API reply to encode it in the set return_format
      *
-     * @param string $method      The method that has been called
      * @param string $reply       The actual reply, JSON-encoded or URL-encoded
      * @param bool   $get_headers If to return the headers instead of body
      *
      * @return array|object The parsed reply
      */
-    protected function _parseApiReply($method, $reply, $get_headers = false)
+    protected function _parseApiReply($reply, $get_headers = false)
     {
         // split headers and body
         $headers = array();
@@ -1184,7 +1181,6 @@ class Codebird
                     return new \stdClass;
             }
         }
-        $parsed = array();
         if (! $parsed = json_decode($reply, $need_array)) {
             if ($reply) {
                 if (stripos($reply, '<' . '?xml version="1.0" encoding="UTF-8"?' . '>') === 0) {
