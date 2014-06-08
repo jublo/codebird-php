@@ -343,7 +343,6 @@ class Codebird
         return $this->_callApi(
             $httpmethod,
             $method,
-            $method_template,
             $apiparams,
             $multipart,
             $app_only_auth,
@@ -1013,18 +1012,17 @@ class Codebird
     /**
      * Calls the API using cURL
      *
-     * @param string          $httpmethod      The HTTP method to use for making the request
-     * @param string          $method          The API method to call
-     * @param string          $method_template The templated API method to call
-     * @param array  optional $params          The parameters to send along
-     * @param bool   optional $multipart       Whether to use multipart/form-data
-     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
-     * @param bool   optional $internal        Whether to use internal call
+     * @param string          $httpmethod    The HTTP method to use for making the request
+     * @param string          $method        The API method to call
+     * @param array  optional $params        The parameters to send along
+     * @param bool   optional $multipart     Whether to use multipart/form-data
+     * @param bool   optional $app_only_auth Whether to use app-only bearer authentication
+     * @param bool   optional $internal      Whether to use internal call
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
         if (! function_exists('curl_init')) {
             throw new \Exception('To make API requests, the PHP curl extension must be available.');
