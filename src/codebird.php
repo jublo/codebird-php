@@ -1098,17 +1098,24 @@ class Codebird
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply      = $this->_parseApiReply($method_template, $result);
         $headers    = $this->_parseApiReply($method_template, $result, true);
-        $rate       = array(
-            'limit'     => $headers['x-rate-limit-limit'],
-            'remaining' => $headers['x-rate-limit-remaining'],
-            'reset'     => $headers['x-rate-limit-reset']
-        );
+        $rate       = null;
+        if (isset($headers['x-rate-limit-limit'])) {
+            $rate   = array(
+                'limit'     => $headers['x-rate-limit-limit'],
+                'remaining' => $headers['x-rate-limit-remaining'],
+                'reset'     => $headers['x-rate-limit-reset']
+            );
+        }
         if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
-            $reply->rate       = $rate;
+            if ($rate !== null) {
+                $reply->rate       = $rate;
+            }
         } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
             $reply['httpstatus'] = $httpstatus;
-            $reply['rate']       = $rate;
+            if ($rate !== null) {
+                $reply['rate']       = $rate;
+            }
         }
         return $reply;
     }
