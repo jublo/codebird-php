@@ -274,8 +274,6 @@ To get a JSON string, set the corresponding return format:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
 ```
 
-Support for getting a SimpleXML object is planned.
-
 Using multiple Codebird instances
 ---------------------------------
 
