@@ -1,7 +1,7 @@
 {
     "name": "jublonet/codebird-php",
     "description" : "A Twitter library in PHP.",
-    "version": "2.5.0-rc.2-dev",
+    "version": "2.5.0-rc.2",
     "autoload": {
         "classmap": ["src/"]
     },
