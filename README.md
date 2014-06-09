@@ -2,7 +2,7 @@ codebird-php
 ============
 *A Twitter library in PHP.*
 
-Copyright (C) 2010-2014 Jublo Solutions &lt;support@jublo.net&gt;
+Copyright (C) 2010-2014 Jublo Solutions <support@jublo.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,11 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-### Versions
-
-- JavaScript: https://github.com/jublonet/codebird-js
-- PHP: https://github.com/jublonet/codebird-php
-
 ### Requirements
 
 - PHP 5.3.0 or higher
@@ -29,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - OpenSSL extension
 
 
-1. Authentication
------------------
+Authentication
+--------------
 
 To authenticate your API requests on behalf of a certain Twitter user
 (following OAuth 1.0a), take a look at these steps:
@@ -92,7 +87,7 @@ if (! isset($_SESSION['oauth_token'])) {
 $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
 ```
 
-### 1.1. Application-only auth
+### Application-only auth
 
 Some API methods also support authenticating on a per-application level.
 This is useful for getting data that are not directly related to a specific
@@ -117,8 +112,8 @@ If you already have your token, tell Codebird to use it:
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
-2. Usage examples
------------------
+Usage examples
+--------------
 
 When you have an access token, calling the API is simple:
 
@@ -206,8 +201,8 @@ $reply = $cb->search_tweets('q=Twitter', true);
 
 Bear in mind that not all API methods support application-only auth.
 
-3. Mapping API methods to Codebird function calls
--------------------------------------------------
+Mapping API methods to Codebird function calls
+----------------------------------------------
 
 As you can see from the last example, there is a general way how Twitter’s API methods
 map to Codebird function calls. The general rules are:
@@ -228,19 +223,19 @@ map to Codebird function calls. The general rules are:
     - ```users/profile_image/:screen_name``` maps to
       ```Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')```.
 
-4. HTTP methods (GET, POST, DELETE etc.)
-----------------------------------------
+HTTP methods (GET, POST, DELETE etc.)
+-------------------------------------
 
 Never care about which HTTP method (verb) to use when calling a Twitter API.
 Codebird is intelligent enough to find out on its own.
 
-5. Response codes
------------------
+Response codes
+--------------
 
 The HTTP response code that the API gave is included in any return values.
 You can find it within the return object’s ```httpstatus``` property.
 
-### 5.1 Dealing with rate-limits
+### Dealing with rate-limits
 
 Basically, Codebird leaves it up to you to handle Twitter’s rate limit.
 The library returns the response HTTP status code, so you can detect rate limits.
@@ -252,10 +247,11 @@ See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
 for more information.
 
 Unless your return format is JOSN, you will receive rate-limiting details
-in the returned data’s ```$reply->rate``` property.
+in the returned data’s ```$reply->rate``` property,
+if the Twitter API responds with rate-limiting HTTP headers.
 
-6. Return formats
------------------
+Return formats
+--------------
 The default return format for API calls is a PHP object.
 For API methods returning multiple data (like ```statuses/home_timeline```),
 you should cast the reply to array, like this:
@@ -278,10 +274,8 @@ To get a JSON string, set the corresponding return format:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
 ```
 
-Support for getting a SimpleXML object is planned.
-
-7. Using multiple Codebird instances
-------------------------------------
+Using multiple Codebird instances
+---------------------------------
 
 By default, Codebird works with just one instance. This programming paradigma is
 called a *singleton*.
@@ -306,10 +300,9 @@ multiple Codebird instances, while the OAuth request and access tokens with thei
 secrets are *not* shared.
 
 How Do I…?
-==========
+----------
 
-…access a user’s profile image?
--------------------------------
+### …access a user’s profile image?
 
 First retrieve the user object using
 
@@ -325,8 +318,7 @@ For example:
 
 ```$reply['profile_image_url']``` will then return the profile image url without https.
 
-…get user ID, screen name and more details about the current user?
-------------------------------------------------------------------
+### …get user ID, screen name and more details about the current user?
 
 When the user returns from the authentication screen, you need to trade
 the obtained request token for an access token, using the OAuth verifier.
@@ -362,8 +354,7 @@ print_r($reply);
 I suggest to cache the User Entity after obtaining it, as the
 ```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes.
 
-…walk through cursored results?
--------------------------------
+### …walk through cursored results?
 
 The Twitter REST API utilizes a technique called ‘cursoring’ to paginate
 large result sets. Cursoring separates results into pages of no more than
@@ -396,8 +387,7 @@ It might make sense to use the cursors in a loop.  Watch out, though,
 not to send more than the allowed number of requests to ```followers/list```
 per rate-limit timeframe, or else you will hit your rate-limit.
 
-…use xAuth with Codebird?
--------------------------
+### …use xAuth with Codebird?
 
 Codebird supports xAuth just like every other authentication used at Twitter.
 Remember that your application needs to be whitelisted to be able to use xAuth.
@@ -432,8 +422,7 @@ When this error occurs, advise the user to
 [generate a temporary password](https://twitter.com/settings/applications)
 on twitter.com and use that to complete signing in to the application.
 
-…know what cacert.pem is for?
------------------------------
+### …know what cacert.pem is for?
 
 Connections to the Twitter API are done over a secured SSL connection.
 Since 2.4.0, codebird-php checks if the Twitter API server has a valid
@@ -442,8 +431,7 @@ The cacert.pem file contains a list of all public certificates for root
 certificate authorities. You can find more information about this file
 at http://curl.haxx.se/docs/caextract.html.
 
-…set the timeout for requests to the Twitter API?
--------------------------------------------------
+### …set the timeout for requests to the Twitter API?
 
 For connecting to Twitter, Codebird uses the cURL library.
 You can specify both the connection timeout and the request timeout,

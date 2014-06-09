@@ -15,6 +15,7 @@ codebird-php - changelog
 + Reset bearer token when requesting a new token
 + #61 Return rate limit details with each API call
 + #60 Support uploading multiple media
+- #63 Return rate-limiting info only if contained in response
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
