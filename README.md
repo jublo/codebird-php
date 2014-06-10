@@ -130,8 +130,8 @@ Tweeting is as easy as this:
 $reply = $cb->statuses_update('status=Whohoo, I just tweeted!');
 ```
 
-### :warning: Make sure to urlencode any parameter values that contain query-reserved
-characters, like tweeting the `&` sign:
+:warning: *Make sure to urlencode any parameter values that contain
+query-reserved characters, like tweeting the `&` sign:*
 
 ```php
 $reply = $cb->statuses_update('status=' . urlencode('Fish & chips'));
