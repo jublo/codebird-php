@@ -16,6 +16,7 @@ codebird-php - changelog
 + #61 Return rate limit details with each API call
 + #60 Support uploading multiple media
 - #63 Return rate-limiting info only if contained in response
+- #57 Don't require consumer key if bearer token is already known
 
 2.4.1 (2013-06-23)
 + #26 Stringify null and boolean parameters
