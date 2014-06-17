@@ -108,7 +108,7 @@ If you already have your token, tell Codebird to use it:
 ```php
 \Codebird\Codebird::setBearerToken('YOURBEARERTOKEN');
 ```
-
+In this case, you don't need to set the consumer key and secret.
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
