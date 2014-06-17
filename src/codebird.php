@@ -1058,14 +1058,20 @@ class Codebird
             if (json_encode($params) !== '{}') {
                 $url_with_params .= '?' . http_build_query($params);
             }
-            $authorization = $this->_sign($httpmethod, $url, $params);
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
             $ch = curl_init($url_with_params);
         } else {
             if ($multipart) {
-                $authorization = $this->_sign($httpmethod, $url, array());
-                $params        = $this->_buildMultipart($method, $params);
+                if (! $app_only_auth) {
+                    $authorization = $this->_sign($httpmethod, $url, array());
+                }
+                $params = $this->_buildMultipart($method, $params);
             } else {
-                $authorization = $this->_sign($httpmethod, $url, $params);
+                if (! $app_only_auth) {
+                    $authorization = $this->_sign($httpmethod, $url, $params);
+                }
                 $params        = http_build_query($params);
             }
             $ch = curl_init($url);
@@ -1079,8 +1085,10 @@ class Codebird
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
         if ($app_only_auth) {
-            if (self::$_oauth_consumer_key === null) {
-                throw new \Exception('To make an app-only auth API request, the consumer key must be set.');
+            if (self::$_oauth_consumer_key === null
+                && self::$_oauth_bearer_token === null
+            ) {
+                throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
             }
             // automatically fetch bearer token, if necessary
             if (self::$_oauth_bearer_token === null) {
