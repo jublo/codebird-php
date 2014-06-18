@@ -1051,7 +1051,8 @@ class Codebird
             $params['application_id'] = 333903271;
         }
 
-        $url = $this->_getEndpoint($method);
+        $authorization = null;
+        $url           = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
             $url_with_params = $url;
