@@ -108,7 +108,7 @@ If you already have your token, tell Codebird to use it:
 ```php
 \Codebird\Codebird::setBearerToken('YOURBEARERTOKEN');
 ```
-
+In this case, you don't need to set the consumer key and secret.
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
@@ -130,8 +130,24 @@ Tweeting is as easy as this:
 $reply = $cb->statuses_update('status=Whohoo, I just tweeted!');
 ```
 
-For more complex parameters (see the [Twitter API documentation](https://dev.twitter.com/)),
-giving all parameters in an array is supported, too:
+:warning: *Make sure to urlencode any parameter values that contain
+query-reserved characters, like tweeting the `&` sign:*
+
+```php
+$reply = $cb->statuses_update('status=' . urlencode('Fish & chips'));
+// will result in this:
+$reply = $cb->statuses_update('status=Fish+%26+chips');
+```
+
+In most cases, giving all parameters in an array is easier,
+because no encoding is needed:
+
+```php
+$params = array(
+    'status' => 'Fish & chips'
+);
+$reply = $cb->statuses_update($params);
+```
 
 ```php
 $params = array(
