@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### Requirements
 
 - PHP 5.3.0 or higher
-- CURL extension
 - OpenSSL extension
 
 
@@ -449,7 +448,7 @@ at http://curl.haxx.se/docs/caextract.html.
 
 ### …set the timeout for requests to the Twitter API?
 
-For connecting to Twitter, Codebird uses the cURL library.
+For connecting to Twitter, Codebird uses the cURL library, if available.
 You can specify both the connection timeout and the request timeout,
 in milliseconds:
 

@@ -2,6 +2,7 @@ codebird-php - changelog
 ========================
 
 2.6.0 (not yet released)
++ #67 Don't require cURL, allow stream connections too
 
 2.5.0 (not yet released)
 + Add section about cacert.pem to README
