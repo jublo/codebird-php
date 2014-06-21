@@ -1332,6 +1332,8 @@ class Codebird
                 $multipart_boundary = substr($params, 2, $first_newline - 2);
                 $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                     . $multipart_boundary;
+            } else {
+                $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
             }
         }
         if ($app_only_auth) {
