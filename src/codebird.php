@@ -509,14 +509,16 @@ class Codebird
 
         $context = stream_context_create(array(
             'http' => array(
-                'method'  => 'POST',
+                'method'           => 'POST',
+                'protocol_version' => '1.1',
                 'header'  => 'Authorization: Basic '
                     . base64_encode(
                         self::$_oauth_consumer_key
                         . ':'
                         . self::$_oauth_consumer_secret
                     ),
-                'content' => 'grant_type=client_credentials'
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => 'grant_type=client_credentials'
             ),
             'ssl' => array(
                 'verify_peer'  => true,
@@ -1339,9 +1341,11 @@ class Codebird
 
         $context = stream_context_create(array(
             'http' => array(
-                'method'  => $httpmethod,
-                'header'  => implode("\r\n", $request_headers),
-                'content' => $httpmethod === 'POST' ? $params : null,
+                'method'           => $httpmethod,
+                'protocol_version' => '1.1',
+                'header'           => implode("\r\n", $request_headers),
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => $httpmethod === 'POST' ? $params : null
             ),
             'ssl' => array(
                 'verify_peer'  => true,
