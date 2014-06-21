@@ -504,7 +504,8 @@ class Codebird
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
 
-        $url = self::$_endpoint_oauth . 'oauth2/token';
+        $url      = self::$_endpoint_oauth . 'oauth2/token';
+        $hostname = parse_url($url, PHP_URL_HOST);
 
         $context = stream_context_create(array(
             'http' => array(
@@ -518,10 +519,10 @@ class Codebird
                 'content' => 'grant_type=client_credentials'
             ),
             'ssl' => array(
-                'verify_peer'   => true,
-                'cafile'        => __DIR__ . '/cacert.pem',
-                'verify_depth'  => 5,
-                'peer_name'     => 'api.twitter.com'
+                'verify_peer'  => true,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
             )
         ));
         $reply   = @file_get_contents($url, false, $context);
@@ -1293,6 +1294,7 @@ class Codebird
 
         $authorization = null;
         $url           = $this->_getEndpoint($method);
+        $hostname      = parse_url($url, PHP_URL_HOST);
         $request_headers = array();
         if ($httpmethod === 'GET') {
             if (json_encode($params) !== '{}') {
@@ -1342,10 +1344,10 @@ class Codebird
                 'content' => $httpmethod === 'POST' ? $params : null,
             ),
             'ssl' => array(
-                'verify_peer'   => true,
-                'cafile'        => __DIR__ . '/cacert.pem',
-                'verify_depth'  => 5,
-                'peer_name'     => 'api.twitter.com'
+                'verify_peer'  => true,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
             )
         ));
 
