@@ -423,9 +423,9 @@ class Codebird
     public function oauth2_token()
     {
         if ($this->_use_curl) {
-            return $this->_oauth2_token_curl();
+            return $this->_oauth2_tokenCurl();
         }
-        return $this->_oauth2_token_no_curl();
+        return $this->_oauth2_tokenNoCurl();
     }
 
     /**
@@ -434,7 +434,7 @@ class Codebird
      * @return string The OAuth bearer token
      */
 
-    protected function _oauth2_token_curl()
+    protected function _oauth2_tokenCurl()
     {
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
@@ -498,7 +498,7 @@ class Codebird
      * @return string The OAuth bearer token
      */
 
-    protected function _oauth2_token_no_curl()
+    protected function _oauth2_tokenNoCurl()
     {
         if (self::$_oauth_consumer_key == null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
@@ -1170,9 +1170,9 @@ class Codebird
                 throw new \Exception('To call this API, the OAuth access token must be set.');
         }
         if ($this->_use_curl) {
-            return $this->_callApi_curl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+            return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
         }
-        return $this->_callApi_no_curl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+        return $this->_callApiNoCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
     }
 
     /**
@@ -1188,7 +1188,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi_curl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
         if ($internal) {
             $params['adc']            = 'phone';
@@ -1295,7 +1295,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi_no_curl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiNoCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
         if ($internal) {
             $params['adc']            = 'phone';
