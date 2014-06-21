@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### Requirements
 
 - PHP 5.3.0 or higher
-- CURL extension
 - OpenSSL extension
 
 
@@ -419,7 +418,7 @@ $reply = $cb->oauth_accessToken(array(
 
 Are you getting a strange error message?  If the user is enrolled in
 login verification, the server will return a HTTP 401 error with a custom body.
-If you are using the send_error_codes parameter, you will receive the
+If you are using the ```send_error_codes``` parameter, you will receive the
 following error message in the response body:
 
 ```xml
@@ -449,7 +448,7 @@ at http://curl.haxx.se/docs/caextract.html.
 
 ### …set the timeout for requests to the Twitter API?
 
-For connecting to Twitter, Codebird uses the cURL library.
+For connecting to Twitter, Codebird uses the cURL library, if available.
 You can specify both the connection timeout and the request timeout,
 in milliseconds:
 
@@ -457,3 +456,8 @@ in milliseconds:
 $cb->setConnectionTimeout(2000);
 $cb->setTimeout(5000);
 ```
+
+If you don't specify the timeout, codebird uses these values:
+
+- connection time = 5000 ms = 5 s
+- timeout = 2000 ms = 2 s

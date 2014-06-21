@@ -109,14 +109,30 @@ class Codebird
     protected $_version = '2.6.0-dev';
 
     /**
+     * Auto-detect cURL absence
+     */
+    protected $_use_curl = true;
+
+    /**
      * Request timeout
      */
-    protected $_timeout;
+    protected $_timeout = 2000;
 
     /**
      * Connection timeout
      */
-    protected $_connectionTimeout;
+    protected $_connectionTimeout = 5000;
+
+    /**
+     *
+     * Class constructor
+     *
+     */
+    public function __construct()
+    {
+        // Pre-define $_use_curl depending on cURL availability
+        $this->setUseCurl(function_exists('curl_init'));
+    }
 
     /**
      * Returns singleton class instance
@@ -180,6 +196,22 @@ class Codebird
     {
         $this->_oauth_token        = $token;
         $this->_oauth_token_secret = $secret;
+    }
+
+    /**
+     * Sets if codebird should use cURL
+     *
+     * @param bool $use_curl Request uses cURL or not
+     *
+     * @return void
+     */
+    public function setUseCurl($use_curl)
+    {
+        if ($use_curl && ! function_exists('curl_init')) {
+            throw new \Exception('To use cURL, the PHP curl extension must be available.');
+        }
+
+        $this->_use_curl = (bool) $use_curl;
     }
 
     /**
@@ -390,9 +422,20 @@ class Codebird
 
     public function oauth2_token()
     {
-        if (! function_exists('curl_init')) {
-            throw new \Exception('To make API requests, the PHP curl extension must be available.');
+        if ($this->_use_curl) {
+            return $this->_oauth2_tokenCurl();
         }
+        return $this->_oauth2_tokenNoCurl();
+    }
+
+    /**
+     * Gets the OAuth bearer token, using cURL
+     *
+     * @return string The OAuth bearer token
+     */
+
+    protected function _oauth2_tokenCurl()
+    {
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
@@ -450,6 +493,86 @@ class Codebird
     }
 
     /**
+     * Gets the OAuth bearer token, without cURL
+     *
+     * @return string The OAuth bearer token
+     */
+
+    protected function _oauth2_tokenNoCurl()
+    {
+        if (self::$_oauth_consumer_key == null) {
+            throw new \Exception('To obtain a bearer token, the consumer key must be set.');
+        }
+
+        $url      = self::$_endpoint_oauth . 'oauth2/token';
+        $hostname = parse_url($url, PHP_URL_HOST);
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method'           => 'POST',
+                'protocol_version' => '1.1',
+                'header'           => "Accept: */*\r\n"
+                    . 'Authorization: Basic '
+                    . base64_encode(
+                        self::$_oauth_consumer_key
+                        . ':'
+                        . self::$_oauth_consumer_secret
+                    ),
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => 'grant_type=client_credentials'
+            ),
+            'ssl' => array(
+                'verify_peer'  => true,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
+            )
+        ));
+        $reply   = @file_get_contents($url, false, $context);
+        $headers = $http_response_header;
+        $result  = '';
+        foreach ($headers as $header) {
+            $result .= $header . "\r\n";
+        }
+        $result .= "\r\n" . $reply;
+
+        // find HTTP status
+        $httpstatus = '500';
+        $match      = array();
+        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+            $httpstatus = $match[1];
+        }
+
+        $reply      = $this->_parseApiReply($result);
+        $headers    = $this->_parseApiReply($result, true);
+        $rate       = $this->_getRateLimitInfo($headers);
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
+                if ($httpstatus === 200) {
+                    self::setBearerToken($reply['access_token']);
+                }
+                break;
+            case CODEBIRD_RETURNFORMAT_JSON:
+                if ($httpstatus === 200) {
+                    $parsed = json_decode($reply);
+                    self::setBearerToken($parsed->access_token);
+                }
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
+                if ($httpstatus === 200) {
+                    self::setBearerToken($reply->access_token);
+                }
+                break;
+        }
+        return $reply;
+    }
+
+
+    /**
      * General helpers to avoid duplicate code
      */
 
@@ -460,7 +583,7 @@ class Codebird
      *
      * @return null|array The rate-limiting information
      */
-    private function _getRateLimitInfo($headers)
+    protected function _getRateLimitInfo($headers)
     {
         if (! isset($headers['x-rate-limit-limit'])) {
             return null;
@@ -479,7 +602,7 @@ class Codebird
      *
      * @return void
      */
-    private function _validateSslCertificate($validation_result)
+    protected function _validateSslCertificate($validation_result)
     {
         if (in_array(
                 $validation_result,
@@ -510,7 +633,7 @@ class Codebird
      *
      * @return mixed The encoded data
      */
-    private function _url($data)
+    protected function _url($data)
     {
         if (is_array($data)) {
             return array_map(array(
@@ -545,7 +668,7 @@ class Codebird
      *
      * @return string The hash
      */
-    private function _sha1($data)
+    protected function _sha1($data)
     {
         if (self::$_oauth_consumer_secret === null) {
             throw new \Exception('To generate a hash, the consumer secret must be set.');
@@ -553,8 +676,17 @@ class Codebird
         if (!function_exists('hash_hmac')) {
             throw new \Exception('To generate a hash, the PHP hash extension must be available.');
         }
-        return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&'
-            . ($this->_oauth_token_secret != null ? $this->_oauth_token_secret : ''), true));
+        return base64_encode(hash_hmac(
+            'sha1',
+            $data,
+            self::$_oauth_consumer_secret
+            . '&'
+            . ($this->_oauth_token_secret != null
+                ? $this->_oauth_token_secret
+                : ''
+            ),
+            true
+        ));
     }
 
     /**
@@ -1018,6 +1150,32 @@ class Codebird
     }
 
     /**
+     * Calls the API
+     *
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $multipart       Whether to use multipart/form-data
+     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return mixed The API reply, encoded in the set return_format
+     */
+
+    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    {
+        if (! $app_only_auth
+            && $this->_oauth_token === null
+            && substr($method, 0, 5) !== 'oauth'
+        ) {
+                throw new \Exception('To call this API, the OAuth access token must be set.');
+        }
+        if ($this->_use_curl) {
+            return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+        }
+        return $this->_callApiNoCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+    }
+
+    /**
      * Calls the API using cURL
      *
      * @param string          $httpmethod    The HTTP method to use for making the request
@@ -1030,11 +1188,8 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
-        if (! function_exists('curl_init')) {
-            throw new \Exception('To make API requests, the PHP curl extension must be available.');
-        }
         if ($internal) {
             $params['adc']            = 'phone';
             $params['application_id'] = 333903271;
@@ -1044,14 +1199,15 @@ class Codebird
         $url           = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
-            $url_with_params = $url;
-            if (json_encode($params) !== '{}') {
-                $url_with_params .= '?' . http_build_query($params);
+            if (json_encode($params) !== '{}'
+                && json_encode($params) !== '[]'
+            ) {
+                $url .= '?' . http_build_query($params);
             }
             if (! $app_only_auth) {
                 $authorization = $this->_sign($httpmethod, $url, $params);
             }
-            $ch = curl_init($url_with_params);
+            $ch = curl_init($url);
         } else {
             if ($multipart) {
                 if (! $app_only_auth) {
@@ -1122,6 +1278,122 @@ class Codebird
         } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
             $reply['httpstatus'] = $httpstatus;
             $reply['rate']       = $rate;
+        }
+        return $reply;
+    }
+
+    /**
+     * Calls the API without cURL
+     *
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $multipart       Whether to use multipart/form-data
+     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     * @param bool   optional $internal      Whether to use internal call
+     *
+     * @return mixed The API reply, encoded in the set return_format
+     */
+
+    protected function _callApiNoCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    {
+        if ($internal) {
+            $params['adc']            = 'phone';
+            $params['application_id'] = 333903271;
+        }
+
+        $authorization = null;
+        $url           = $this->_getEndpoint($method);
+        $hostname      = parse_url($url, PHP_URL_HOST);
+        $request_headers = array();
+        if ($httpmethod === 'GET') {
+            if (json_encode($params) !== '{}'
+                && json_encode($params) !== '[]'
+            ) {
+                $url .= '?' . http_build_query($params);
+            }
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
+        } else {
+            if ($multipart) {
+                if (! $app_only_auth) {
+                    $authorization = $this->_sign($httpmethod, $url, array());
+                }
+                $params = $this->_buildMultipart($method, $params);
+            } else {
+                if (! $app_only_auth) {
+                    $authorization = $this->_sign($httpmethod, $url, $params);
+                }
+                $params        = http_build_query($params);
+            }
+            if ($multipart) {
+                $first_newline      = strpos($params, "\r\n");
+                $multipart_boundary = substr($params, 2, $first_newline - 2);
+                $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
+                    . $multipart_boundary;
+            } else {
+                $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
+            }
+        }
+        if ($app_only_auth) {
+            if (self::$_oauth_consumer_key === null
+                && self::$_oauth_bearer_token === null
+            ) {
+                throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
+            }
+            // automatically fetch bearer token, if necessary
+            if (self::$_oauth_bearer_token === null) {
+                $this->oauth2_token();
+            }
+            $authorization = 'Bearer ' . self::$_oauth_bearer_token;
+        }
+        $request_headers[] = 'Accept: */*';
+        $request_headers[] = 'Authorization: ' . $authorization;
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method'           => $httpmethod,
+                'protocol_version' => '1.1',
+                'header'           => implode("\r\n", $request_headers),
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => $httpmethod === 'POST' ? $params : null
+            ),
+            'ssl' => array(
+                'verify_peer'  => true,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
+            )
+        ));
+
+        $reply   = @file_get_contents($url, false, $context);
+        $headers = $http_response_header;
+        $result  = '';
+        foreach ($headers as $header) {
+            $result .= $header . "\r\n";
+        }
+        $result .= "\r\n" . $reply;
+
+        // find HTTP status
+        $httpstatus = '500';
+        $match      = array();
+        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+            $httpstatus = $match[1];
+        }
+
+        $reply      = $this->_parseApiReply($result);
+        $headers    = $this->_parseApiReply($result, true);
+        $rate       = $this->_getRateLimitInfo($headers);
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
+                break;
         }
         return $reply;
     }
