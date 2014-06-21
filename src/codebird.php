@@ -1348,7 +1348,6 @@ class Codebird
         }
         $request_headers[] = 'Accept: */*';
         $request_headers[] = 'Authorization: ' . $authorization;
-        $request_headers[] = 'Expect:';
 
         $context = stream_context_create(array(
             'http' => array(
