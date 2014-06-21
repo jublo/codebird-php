@@ -1163,6 +1163,12 @@ class Codebird
 
     protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
+        if (! $app_only_auth
+            && $this->_oauth_token === null
+            && substr($method, 0, 5) !== 'oauth'
+        ) {
+                throw new \Exception('To call this API, the OAuth access token must be set.');
+        }
         if ($this->_use_curl) {
             return $this->_callApi_curl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
         }
