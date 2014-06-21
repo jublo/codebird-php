@@ -511,7 +511,8 @@ class Codebird
             'http' => array(
                 'method'           => 'POST',
                 'protocol_version' => '1.1',
-                'header'  => 'Authorization: Basic '
+                'header'           => "Accept: */*\r\n"
+                    . 'Authorization: Basic '
                     . base64_encode(
                         self::$_oauth_consumer_key
                         . ':'
@@ -1336,6 +1337,7 @@ class Codebird
             }
             $authorization = 'Bearer ' . self::$_oauth_bearer_token;
         }
+        $request_headers[] = 'Accept: */*';
         $request_headers[] = 'Authorization: ' . $authorization;
         $request_headers[] = 'Expect:';
 
