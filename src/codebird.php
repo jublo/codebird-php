@@ -1199,7 +1199,9 @@ class Codebird
         $url           = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
-            if (json_encode($params) !== '{}') {
+            if (json_encode($params) !== '{}'
+                && json_encode($params) !== '[]'
+            ) {
                 $url .= '?' . http_build_query($params);
             }
             if (! $app_only_auth) {
@@ -1295,7 +1297,6 @@ class Codebird
 
     protected function _callApi_no_curl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
     {
-
         if ($internal) {
             $params['adc']            = 'phone';
             $params['application_id'] = 333903271;
@@ -1306,7 +1307,9 @@ class Codebird
         $hostname      = parse_url($url, PHP_URL_HOST);
         $request_headers = array();
         if ($httpmethod === 'GET') {
-            if (json_encode($params) !== '{}') {
+            if (json_encode($params) !== '{}'
+                && json_encode($params) !== '[]'
+            ) {
                 $url .= '?' . http_build_query($params);
             }
             if (! $app_only_auth) {
