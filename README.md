@@ -418,7 +418,7 @@ $reply = $cb->oauth_accessToken(array(
 
 Are you getting a strange error message?  If the user is enrolled in
 login verification, the server will return a HTTP 401 error with a custom body.
-If you are using the send_error_codes parameter, you will receive the
+If you are using the ```send_error_codes``` parameter, you will receive the
 following error message in the response body:
 
 ```xml
@@ -456,3 +456,8 @@ in milliseconds:
 $cb->setConnectionTimeout(2000);
 $cb->setTimeout(5000);
 ```
+
+If you don't specify the timeout, codebird uses these values:
+
+- connection time = 5000 ms = 5 s
+- timeout = 2000 ms = 2 s

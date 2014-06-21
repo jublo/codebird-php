@@ -116,12 +116,12 @@ class Codebird
     /**
      * Request timeout
      */
-    protected $_timeout;
+    protected $_timeout = 2000;
 
     /**
      * Connection timeout
      */
-    protected $_connectionTimeout;
+    protected $_connectionTimeout = 5000;
 
     /**
      *
