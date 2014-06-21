@@ -511,7 +511,7 @@ class Codebird
         $reply = $authResponse;
 
         $httpstatus = ($http_response_header[0] == "HTTP/1.0 200 OK") ? 200 : 500;
-        
+
 	//$reply = $this->_parseApiReply('oauth2/token', $reply);
 	$this->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
         switch ($this->_return_format) {
@@ -1287,13 +1287,13 @@ class Codebird
             $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                 . $multipart_boundary;
         }
- 
+
 
 	$context = stream_context_create(array(
 	    'http' => array(
 		'method'  => $httpmethod,
         	'header'  => implode("\r\n", $request_headers),
-		'content' => $postdata, 
+		'content' => $postdata,
 	    ),
 	    'ssl' => array(
 		'verify_peer'   => true,
@@ -1308,12 +1308,12 @@ class Codebird
 	$reply = $encodedData;
 
         $httpstatus = ($http_response_header[0] == "HTTP/1.0 200 OK") ? 200 : 500;
-        
+
 	if ($httpstatus == 500) {
 
 	}
 	$this->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
-	
+
 	//$reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {
             $reply->httpstatus = $httpstatus;
