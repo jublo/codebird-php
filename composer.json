@@ -31,6 +31,7 @@
         "ext-hash": "*",
         "ext-json": "*",
         "lib-openssl": "*",
+        "composer/installers": "~1.0"
     },
     "autoload": {
         "classmap": ["src/"]
