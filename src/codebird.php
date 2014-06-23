@@ -423,9 +423,9 @@ class Codebird
     public function oauth2_token()
     {
         if ($this->_use_curl) {
-            return $this->_oauth2_tokenCurl();
+            return $this->_oauth2TokenCurl();
         }
-        return $this->_oauth2_tokenNoCurl();
+        return $this->_oauth2TokenNoCurl();
     }
 
     /**
@@ -434,7 +434,7 @@ class Codebird
      * @return string The OAuth bearer token
      */
 
-    protected function _oauth2_tokenCurl()
+    protected function _oauth2TokenCurl()
     {
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
@@ -498,7 +498,7 @@ class Codebird
      * @return string The OAuth bearer token
      */
 
-    protected function _oauth2_tokenNoCurl()
+    protected function _oauth2TokenNoCurl()
     {
         if (self::$_oauth_consumer_key == null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
