@@ -720,7 +720,8 @@ class Codebird
                         . self::$_oauth_consumer_secret
                     ),
                 'timeout'          => $this->_timeout / 1000,
-                'content'          => 'grant_type=client_credentials'
+                'content'          => 'grant_type=client_credentials',
+                'ignore_errors'    => true
             ),
             'ssl' => array(
                 'verify_peer'  => true,
@@ -1373,7 +1374,8 @@ class Codebird
                 'protocol_version' => '1.1',
                 'header'           => implode("\r\n", $request_headers),
                 'timeout'          => $this->_timeout / 1000,
-                'content'          => $httpmethod === 'POST' ? $params : null
+                'content'          => $httpmethod === 'POST' ? $params : null,
+                'ignore_errors'    => true
             ),
             'ssl' => array(
                 'verify_peer'  => true,
