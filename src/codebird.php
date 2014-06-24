@@ -1285,12 +1285,15 @@ class Codebird
         $headers    = $this->_parseApiReply($result, true);
         $rate       = $this->_getRateLimitInfo($headers);
 
-        if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
-            $reply->httpstatus = $httpstatus;
-            $reply->rate       = $rate;
-        } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
-            $reply['httpstatus'] = $httpstatus;
-            $reply['rate']       = $rate;
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
+                break;
         }
         return $reply;
     }
