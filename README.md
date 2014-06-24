@@ -461,3 +461,15 @@ If you don't specify the timeout, codebird uses these values:
 
 - connection time = 5000 ms = 5 s
 - timeout = 2000 ms = 2 s
+
+### …disable cURL?
+
+Codebird automatically detects whether you have the PHP cURL extension enabled.
+If not, the library will try to connect to Twitter via socket.
+For this to work, the PHP setting `allow_url_fopen` must be enabled.
+
+You may also manually disable cURL.  Use the following call:
+
+```php
+$cb->setUseCurl(false);
+```
