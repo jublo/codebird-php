@@ -1487,7 +1487,7 @@ class Codebird
                     $reply = explode('&', $reply);
                     foreach ($reply as $element) {
                         if (stristr($element, '=')) {
-                            list($key, $value) = explode('=', $element);
+                            list($key, $value) = explode('=', $element, 2);
                             $parsed[$key] = $value;
                         } else {
                             $parsed['message'] = $element;
