@@ -450,7 +450,7 @@ class Codebird
                 'beta/timelines/custom/remove'
             )
         );
-        return $apimethods;
+        return $httpmethods;
     }
 
     /**
