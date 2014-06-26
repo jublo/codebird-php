@@ -1080,6 +1080,40 @@ class Codebird
                         continue;
                     }
                     $value = $data;
+                } elseif (// is it a remote file?
+                    filter_var($value, FILTER_VALIDATE_URL)
+                    && preg_match('/^https?:\/\//', $value)
+                ) {
+                    // try to fetch the file
+                    if ($this->_use_curl) {
+                        $ch = curl_init($value);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        // no SSL validation for downloading media
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                        // use hardcoded download timeouts for now
+                        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 5000);
+                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        $result = curl_exec($ch);
+                        if ($result !== false) {
+                            $value = $result;
+                        }
+                    } else {
+                        $context = stream_context_create(array(
+                            'http' => array(
+                                'method'           => 'GET',
+                                'protocol_version' => '1.1',
+                                'timeout'          => 5000
+                            ),
+                            'ssl' => array(
+                                'verify_peer'  => false
+                            )
+                        ));
+                        $result  = @file_get_contents($value, false, $context);
+                        if ($result !== false) {
+                            $value = $result;
+                        }
+                    }
                 }
             }
 
