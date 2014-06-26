@@ -471,8 +471,8 @@ $cb->setTimeout(5000);
 
 If you don't specify the timeout, codebird uses these values:
 
-- connection time = 5000 ms = 5 s
-- timeout = 2000 ms = 2 s
+- connection time = 3000 ms = 3 s
+- timeout = 10000 ms = 10 s
 
 ### …disable cURL?
 
