@@ -1213,13 +1213,13 @@ class Codebird
         $url           = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
             if (json_encode($params) !== '{}'
                 && json_encode($params) !== '[]'
             ) {
                 $url .= '?' . http_build_query($params);
-            }
-            if (! $app_only_auth) {
-                $authorization = $this->_sign($httpmethod, $url, $params);
             }
             $ch = curl_init($url);
         } else {
@@ -1324,13 +1324,13 @@ class Codebird
         $hostname      = parse_url($url, PHP_URL_HOST);
         $request_headers = array();
         if ($httpmethod === 'GET') {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
             if (json_encode($params) !== '{}'
                 && json_encode($params) !== '[]'
             ) {
                 $url .= '?' . http_build_query($params);
-            }
-            if (! $app_only_auth) {
-                $authorization = $this->_sign($httpmethod, $url, $params);
             }
         } else {
             if ($multipart) {
