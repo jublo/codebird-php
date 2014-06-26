@@ -1068,18 +1068,19 @@ class Codebird
 
                     // is it a valid image?
                     && $data = @getimagesize($value)
-                    // is it a supported image format?
-                    && in_array($data[2], $this->_supported_media_files)
                 ) {
-                    // try to read the file
-                    ob_start();
-                    readfile($value);
-                    $data = ob_get_contents();
-                    ob_end_clean();
-                    if (strlen($data) === 0) {
-                        continue;
+                    // is it a supported image format?
+                    if (in_array($data[2], $this->_supported_media_files)) {
+                        // try to read the file
+                        ob_start();
+                        readfile($value);
+                        $data = ob_get_contents();
+                        ob_end_clean();
+                        if (strlen($data) === 0) {
+                            continue;
+                        }
+                        $value = $data;
                     }
-                    $value = $data;
                 } elseif (// is it a remote file?
                     filter_var($value, FILTER_VALIDATE_URL)
                     && preg_match('/^https?:\/\//', $value)
