@@ -167,12 +167,23 @@ $params = array(
 $reply = $cb->statuses_updateWithMedia($params);
 ```
 
+Remote files received from `http` and `https` servers are supported, too:
+```php
+$reply = $cb->statuses_updateWithMedia(array(
+    'status'  => 'This is the Guggenheim museum in Bilbao, Spain, as seen by @Bing.',
+    'media[]' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
+));
+```
+
+This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
+sent with the code above.
+
 #### Multiple images
 can be uploaded in a 2-step process. **First** you send each image to Twitter, like this:
 ```php
 // these files to upload
 $media_files = array(
-    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
+    'bird1.jpg', 'bird2.jpg', 'bird3.jpg' // http/https URLs allowed here, too!
 );
 // will hold the uploaded IDs
 $media_ids = array();
@@ -201,7 +212,8 @@ $reply = $cb->statuses_update(array(
 print_r($reply);
 );
 ```
-Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952) sent with the code above.
+Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
+sent with the code above.
 
 More [documentation for tweeting with multiple media](https://dev.twitter.com/docs/api/multiple-media-extended-entities) is available on the Twitter Developer site.
 
