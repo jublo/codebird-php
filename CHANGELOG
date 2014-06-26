@@ -6,6 +6,7 @@ codebird-php - changelog
 + Use default timeout
 + #69 Add composer/installers to allow install path changes
 - Regression: Codebird::getApiMethods removed accidentally in 2.5.0
++ #66 Allow remote media uploads
 
 2.5.0 (2014-06-20)
 + Add section about cacert.pem to README
