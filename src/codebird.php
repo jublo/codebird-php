@@ -1068,27 +1068,19 @@ class Codebird
 
                     // is it a valid image?
                     && $data = @getimagesize($value)
+                    // is it a supported image format?
+                    && in_array($data[2], $this->_supported_media_files)
                 ) {
-                    if (// is it a supported image format?
-                        in_array($data[2], $this->_supported_media_files)
-                    ) {
-                        // try to read the file
-                        ob_start();
-                        readfile($value);
-                        $data = ob_get_contents();
-                        ob_end_clean();
-                        if (strlen($data) === 0) {
-                            continue;
-                        }
-                        $value = $data;
+                    // try to read the file
+                    ob_start();
+                    readfile($value);
+                    $data = ob_get_contents();
+                    ob_end_clean();
+                    if (strlen($data) === 0) {
+                        continue;
                     }
+                    $value = $data;
                 }
-
-                /*
-                $multipart_request .=
-                    "\r\nContent-Transfer-Encoding: base64";
-                $value = base64_encode($value);
-                */
             }
 
             $multipart_request .=
