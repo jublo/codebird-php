@@ -1299,9 +1299,9 @@ class Codebird
         $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
 
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
