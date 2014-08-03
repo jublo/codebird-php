@@ -665,31 +665,7 @@ class Codebird
         $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        list($headers, $reply) = $this->_parseApiHeaders($result);
-        $reply                 = $this->_parseApiReply($reply);
-        $rate                  = $this->_getRateLimitInfo($headers);
-        switch ($this->_return_format) {
-            case CODEBIRD_RETURNFORMAT_ARRAY:
-                $reply['httpstatus'] = $httpstatus;
-                $reply['rate']       = $rate;
-                if ($httpstatus === 200) {
-                    self::setBearerToken($reply['access_token']);
-                }
-                break;
-            case CODEBIRD_RETURNFORMAT_JSON:
-                if ($httpstatus === 200) {
-                    $parsed = json_decode($reply);
-                    self::setBearerToken($parsed->access_token);
-                }
-                break;
-            case CODEBIRD_RETURNFORMAT_OBJECT:
-                $reply->httpstatus = $httpstatus;
-                $reply->rate       = $rate;
-                if ($httpstatus === 200) {
-                    self::setBearerToken($reply->access_token);
-                }
-                break;
-        }
+        $reply = $this->_parseBearerReply($result, $httpstatus);
         return $reply;
     }
 
@@ -745,6 +721,25 @@ class Codebird
             $httpstatus = $match[1];
         }
 
+        $reply = $this->_parseBearerReply($result, $httpstatus);
+        return $reply;
+    }
+
+
+    /**
+     * General helpers to avoid duplicate code
+     */
+
+    /**
+     * Parse oauth2_token reply and set bearer token, if found
+     *
+     * @param string $result     Raw HTTP response
+     * @param int    $httpstatus HTTP status code
+     *
+     * @return array|object reply
+     */
+    protected function _parseBearerReply($result, $httpstatus)
+    {
         list($headers, $reply) = $this->_parseApiHeaders($result);
         $reply                 = $this->_parseApiReply($reply);
         $rate                  = $this->_getRateLimitInfo($headers);
@@ -772,11 +767,6 @@ class Codebird
         }
         return $reply;
     }
-
-
-    /**
-     * General helpers to avoid duplicate code
-     */
 
     /**
      * Extract rate-limiting data from response headers
