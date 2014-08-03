@@ -665,9 +665,9 @@ class Codebird
         $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -745,9 +745,9 @@ class Codebird
             $httpstatus = $match[1];
         }
 
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -1427,9 +1427,9 @@ class Codebird
             $httpstatus = $match[1];
         }
 
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -1444,15 +1444,13 @@ class Codebird
     }
 
     /**
-     * Parses the API reply to encode it in the set return_format
+     * Parses the API reply to separate headers from the body
      *
-     * @param string $reply       The actual reply, JSON-encoded or URL-encoded
-     * @param bool   $get_headers If to return the headers instead of body
+     * @param string $reply The actual raw HTTP request reply
      *
-     * @return array|object The parsed reply
+     * @return array (headers, reply)
      */
-    protected function _parseApiReply($reply, $get_headers = false)
-    {
+    protected function _parseApiHeaders($reply) {
         // split headers and body
         $headers = array();
         $reply = explode("\r\n\r\n", $reply, 4);
@@ -1481,15 +1479,25 @@ class Codebird
             }
             $headers[$key] = $value;
         }
-        if ($get_headers) {
-            return $headers;
-        }
+
         if (count($reply) > 1) {
             $reply = $reply[1];
         } else {
             $reply = '';
         }
 
+        return array($headers, $reply);
+    }
+
+    /**
+     * Parses the API reply to encode it in the set return_format
+     *
+     * @param string $reply The actual HTTP body, JSON-encoded or URL-encoded
+     *
+     * @return array|object The parsed reply
+     */
+    protected function _parseApiReply($reply)
+    {
         $need_array = $this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY;
         if ($reply === '[]') {
             switch ($this->_return_format) {
