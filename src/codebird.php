@@ -465,34 +465,102 @@ class Codebird
     public function __call($fn, $params)
     {
         // parse parameters
+        $apiparams = $this->_parseApiParams($params);
+
+        // stringify null and boolean parameters
+        $apiparams = $this->_stringifyNullBoolParams($apiparams);
+
+        $app_only_auth = false;
+        if (count($params) > 1) {
+            // convert app_only_auth param to bool
+            $app_only_auth = !! $params[1];
+        }
+
+        // reset token when requesting a new token
+        // (causes 401 for signature error on subsequent requests)
+        if ($fn === 'oauth_requestToken') {
+            $this->setToken(null, null);
+        }
+
+        // map function name to API method
+        list($method, $method_template) = $this->_mapFnToApiMethod($fn, $apiparams);
+
+        $httpmethod = $this->_detectMethod($method_template, $apiparams);
+        $multipart  = $this->_detectMultipart($method_template);
+        $internal   = $this->_detectInternal($method_template);
+
+        return $this->_callApi(
+            $httpmethod,
+            $method,
+            $apiparams,
+            $multipart,
+            $app_only_auth,
+            $internal
+        );
+    }
+
+
+    /**
+     * __call() helpers
+     */
+
+    /**
+     * Parse given params, detect query-style params
+     *
+     * @param array|string $params Parameters to parse
+     *
+     * @return array $apiparams
+     */
+    protected function _parseApiParams($params)
+    {
         $apiparams = array();
-        if (count($params) > 0) {
-            if (is_array($params[0])) {
-                $apiparams = $params[0];
-                if (! is_array($apiparams)) {
-                    $apiparams = array();
-                }
+        if (count($params) === 0) {
+            return $apiparams;
+        }
+
+        if (is_array($params[0])) {
+            // given parameters are array
+            $apiparams = $params[0];
+            if (! is_array($apiparams)) {
+                $apiparams = array();
+            }
+            return $apiparams;
+        }
+
+        // user gave us query-style params
+        parse_str($params[0], $apiparams);
+        if (! is_array($apiparams)) {
+            $apiparams = array();
+        }
+
+        if (! get_magic_quotes_gpc()) {
+            return $apiparams;
+        }
+
+        // remove auto-added slashes recursively if on magic quotes steroids
+        foreach($apiparams as $key => $value) {
+            if (is_array($value)) {
+                $apiparams[$key] = array_map('stripslashes', $value);
             } else {
-                parse_str($params[0], $apiparams);
-                if (! is_array($apiparams)) {
-                    $apiparams = array();
-                }
-                // remove auto-added slashes if on magic quotes steroids
-                if (get_magic_quotes_gpc()) {
-                    foreach($apiparams as $key => $value) {
-                        if (is_array($value)) {
-                            $apiparams[$key] = array_map('stripslashes', $value);
-                        } else {
-                            $apiparams[$key] = stripslashes($value);
-                        }
-                    }
-                }
+                $apiparams[$key] = stripslashes($value);
             }
         }
 
-        // stringify null and boolean parameters
+        return $apiparams;
+    }
+
+    /**
+     * Replace null and boolean parameters with their string representations
+     *
+     * @param array $apiparams Parameter array to replace in
+     *
+     * @return array $apiparams
+     */
+    protected function _stringifyNullBoolParams($apiparams)
+    {
         foreach ($apiparams as $key => $value) {
             if (! is_scalar($value)) {
+                // no need to try replacing arrays
                 continue;
             }
             if (is_null($value)) {
@@ -502,34 +570,24 @@ class Codebird
             }
         }
 
-        $app_only_auth = false;
-        if (count($params) > 1) {
-            $app_only_auth = !! $params[1];
-        }
+        return $apiparams;
+    }
 
-        // reset token when requesting a new token (causes 401 for signature error on 2nd+ requests)
-        if ($fn === 'oauth_requestToken') {
-            $this->setToken(null, null);
-        }
-
-        // map function name to API method
-        $method = '';
-
+    /**
+     * Maps called PHP magic method name to Twitter API method
+     *
+     * @param string $fn              Function called
+     * @param array  $apiparams byref API parameters
+     *
+     * @return array (string method, string method_template)
+     */
+    protected function _mapFnToApiMethod($fn, &$apiparams)
+    {
         // replace _ by /
-        $path = explode('_', $fn);
-        for ($i = 0; $i < count($path); $i++) {
-            if ($i > 0) {
-                $method .= '/';
-            }
-            $method .= $path[$i];
-        }
+        $method = $this->_mapFnInsertSlashes($fn);
+
         // undo replacement for URL parameters
-        $url_parameters_with_underscore = array('screen_name', 'place_id');
-        foreach ($url_parameters_with_underscore as $param) {
-            $param = strtoupper($param);
-            $replacement_was = str_replace('_', '/', $param);
-            $method = str_replace($replacement_was, $param, $method);
-        }
+        $method = $this->_mapFnRestoreParamUnderscores($method);
 
         // replace AA by URL parameters
         $method_template = $method;
@@ -558,19 +616,43 @@ class Codebird
             $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
         }
 
-        $httpmethod = $this->_detectMethod($method_template, $apiparams);
-        $multipart  = $this->_detectMultipart($method_template);
-        $internal   = $this->_detectInternal($method_template);
-
-        return $this->_callApi(
-            $httpmethod,
-            $method,
-            $apiparams,
-            $multipart,
-            $app_only_auth,
-            $internal
-        );
+        return array($method, $method_template);
     }
+
+    /**
+     * API method mapping: Replaces _ with / character
+     *
+     * @param string $fn Function called
+     *
+     * @return string API method to call
+     */
+    protected function _mapFnInsertSlashes($fn)
+    {
+        $path   = explode('_', $fn);
+        $method = implode('/', $path);
+
+        return $method;
+    }
+
+    /**
+     * API method mapping: Restore _ character in named parameters
+     *
+     * @param string $method API method to call
+     *
+     * @return string API method with restored underscores
+     */
+    protected function _mapFnRestoreParamUnderscores($method)
+    {
+        $url_parameters_with_underscore = array('screen_name', 'place_id');
+        foreach ($url_parameters_with_underscore as $param) {
+            $param = strtoupper($param);
+            $replacement_was = str_replace('_', '/', $param);
+            $method = str_replace($replacement_was, $param, $method);
+        }
+
+        return $method;
+    }
+
 
     /**
      * Uncommon API methods
