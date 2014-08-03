@@ -1301,13 +1301,11 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApiCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiCurl(
+        $httpmethod, $method, $params = array(),
+        $multipart = false, $app_only_auth = false, $internal = false
+    )
     {
-        if ($internal) {
-            $params['adc']            = 'phone';
-            $params['application_id'] = 333903271;
-        }
-
         $authorization = null;
         $url           = $this->_getEndpoint($method);
         $request_headers = array();
@@ -1411,13 +1409,11 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApiNoCurl($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiNoCurl(
+        $httpmethod, $method, $params = array(), $multipart = false,
+        $app_only_auth = false, $internal = false
+    )
     {
-        if ($internal) {
-            $params['adc']            = 'phone';
-            $params['application_id'] = 333903271;
-        }
-
         $authorization = null;
         $url           = $this->_getEndpoint($method);
         $hostname      = parse_url($url, PHP_URL_HOST);
