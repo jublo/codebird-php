@@ -1028,7 +1028,7 @@ class Codebird
             foreach ($keys as $key => $value) {
                 $authorization .= $key . '="' . $this->_url($value) . '", ';
             }
-            return authorization.substring(0, authorization.length - 1);
+            return substr($authorization, 0, -1);
         }
         $authorization = 'OAuth ';
         foreach ($keys as $key => $value) {
