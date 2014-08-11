@@ -150,6 +150,15 @@ $reply = $cb->statuses_update($params);
 
 ```php
 $params = array(
+    'status' => 'I love London',
+    'lat'    => 51.5033,
+    'long'   => 0.1197
+);
+$reply = $cb->statuses_update($params);
+```
+
+```php
+$params = array(
     'screen_name' => 'jublonet'
 );
 $reply = $cb->users_show($params);
