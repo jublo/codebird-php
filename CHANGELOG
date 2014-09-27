@@ -8,7 +8,7 @@ codebird-php - changelog
 - Regression: Codebird::getApiMethods removed accidentally in 2.5.0
 + #66 Allow remote media uploads
 - #81 CURLOPT_TIMEOUT_MS and CURLOPT_CONNECTTIMEOUT_MS errors on PHP 5.3
-- #83 Use POST for users/lookup API method, params may get too long for GET
+- #83 Use POST for users/lookup and statuses/lookup, params may get too long for GET
 
 2.5.0 (2014-06-20)
 + Add section about cacert.pem to README
