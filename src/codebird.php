@@ -390,7 +390,7 @@ class Codebird
                 'statuses/lookup',
                 'statuses/retweet/:id',
                 'statuses/update',
-                'statuses/update_with_media',
+                'statuses/update_with_media', // deprecated, use media/upload
                 'users/lookup',
                 'users/report_spam',
 
