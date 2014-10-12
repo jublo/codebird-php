@@ -1511,7 +1511,7 @@ class Codebird
      *
      * @param string $reply The actual HTTP body, JSON-encoded or URL-encoded
      *
-     * @return array|object The parsed reply
+     * @return array|object|string The parsed reply
      */
     protected function _parseApiReply($reply)
     {
