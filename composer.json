@@ -7,7 +7,7 @@
         "networking"
     ],
     "homepage": "http://www.jublo.net/projects/codebird/php",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0+",
     "authors": [
         {
             "name": "Joshua Atkins",
@@ -28,11 +28,10 @@
         "source": "https://github.com/jublonet/codebird-php/releases"
     },
     "require": {
-        "ext-curl": "*",
         "ext-hash": "*",
         "ext-json": "*",
         "lib-openssl": "*",
-        "lib-curl": "*"
+        "composer/installers": "~1.0"
     },
     "autoload": {
         "classmap": ["src/"]

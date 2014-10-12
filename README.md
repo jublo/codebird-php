@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### Requirements
 
 - PHP 5.3.0 or higher
-- CURL extension
 - OpenSSL extension
 
 
@@ -151,27 +150,29 @@ $reply = $cb->statuses_update($params);
 
 ```php
 $params = array(
+    'status' => 'I love London',
+    'lat'    => 51.5033,
+    'long'   => 0.1197
+);
+$reply = $cb->statuses_update($params);
+```
+
+```php
+$params = array(
     'screen_name' => 'jublonet'
 );
 $reply = $cb->users_show($params);
 ```
+This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
+sent with the code above.
 
-### Uploading files to Twitter
+### Uploading media to Twitter
 
-The array syntax is obligatory:
+Tweet media can be uploaded in a 2-step process.
+**First** you send each image to Twitter, like this:
 
 ```php
-$params = array(
-    'status' => 'Look at this crazy cat! #lolcats',
-    'media[]' => '/home/jublonet/lolcats.jpg'
-);
-$reply = $cb->statuses_updateWithMedia($params);
-```
-
-#### Multiple images
-can be uploaded in a 2-step process. **First** you send each image to Twitter, like this:
-```php
-// these files to upload
+// these files to upload. You can also just upload 1 image!
 $media_files = array(
     'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
 );
@@ -187,6 +188,7 @@ foreach ($media_files as $file) {
     $media_ids[] = $reply->media_id_string;
 }
 ```
+
 **Second,** you attach the collected media ids for all images to your call
 to ```statuses/update```, like this:
 
@@ -202,9 +204,20 @@ $reply = $cb->statuses_update(array(
 print_r($reply);
 );
 ```
-Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952) sent with the code above.
 
-More [documentation for tweeting with multiple media](https://dev.twitter.com/docs/api/multiple-media-extended-entities) is available on the Twitter Developer site.
+Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
+sent with the code above.
+
+More [documentation for tweeting with media](https://dev.twitter.com/rest/public/uploading-media-multiple-photos) is available on the Twitter Developer site.
+
+#### Remote files
+
+Remote files received from `http` and `https` servers are supported, too:
+```php
+$reply = $cb->media_upload(array(
+    'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
+));
+```
 
 ### Requests with app-only auth
 
@@ -259,10 +272,10 @@ The library returns the response HTTP status code, so you can detect rate limits
 I suggest you to check if the ```$reply->httpstatus``` property is ```400```
 and check with the Twitter API to find out if you are currently being
 rate-limited.
-See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
+See the [Rate Limiting FAQ](https://dev.twitter.com/rest/public/rate-limiting)
 for more information.
 
-Unless your return format is JOSN, you will receive rate-limiting details
+Unless your return format is JSON, you will receive rate-limiting details
 in the returned data’s ```$reply->rate``` property,
 if the Twitter API responds with rate-limiting HTTP headers.
 
@@ -419,7 +432,7 @@ $reply = $cb->oauth_accessToken(array(
 
 Are you getting a strange error message?  If the user is enrolled in
 login verification, the server will return a HTTP 401 error with a custom body.
-If you are using the send_error_codes parameter, you will receive the
+If you are using the ```send_error_codes``` parameter, you will receive the
 following error message in the response body:
 
 ```xml
@@ -449,11 +462,28 @@ at http://curl.haxx.se/docs/caextract.html.
 
 ### …set the timeout for requests to the Twitter API?
 
-For connecting to Twitter, Codebird uses the cURL library.
+For connecting to Twitter, Codebird uses the cURL library, if available.
 You can specify both the connection timeout and the request timeout,
 in milliseconds:
 
 ```php
 $cb->setConnectionTimeout(2000);
 $cb->setTimeout(5000);
+```
+
+If you don't specify the timeout, codebird uses these values:
+
+- connection time = 3000 ms = 3 s
+- timeout = 10000 ms = 10 s
+
+### …disable cURL?
+
+Codebird automatically detects whether you have the PHP cURL extension enabled.
+If not, the library will try to connect to Twitter via socket.
+For this to work, the PHP setting `allow_url_fopen` must be enabled.
+
+You may also manually disable cURL.  Use the following call:
+
+```php
+$cb->setUseCurl(false);
 ```

@@ -5,23 +5,12 @@ namespace Codebird;
 /**
  * A Twitter library in PHP.
  *
- * @package codebird
- * @version 2.5.0
- * @author Jublo Solutions <support@jublo.net>
+ * @package   codebird
+ * @version   2.6.0
+ * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2014 Jublo Solutions <support@jublo.net>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
+ * @link      https://github.com/jublonet/codebird-php
  */
 
 /**
@@ -37,7 +26,10 @@ $constants = array(
     'CURLE_SSL_CACERT' => 60,
     'CURLE_SSL_CACERT_BADFILE' => 77,
     'CURLE_SSL_CRL_BADFILE' => 82,
-    'CURLE_SSL_ISSUER_ERROR' => 83
+    'CURLE_SSL_ISSUER_ERROR' => 83,
+    // workaround for http://php.net/manual/en/function.curl-setopt.php#107314
+    '_CURLOPT_TIMEOUT_MS' => 155,
+    '_CURLOPT_CONNECTTIMEOUT_MS' => 156
 );
 foreach ($constants as $id => $i) {
     defined($id) or define($id, $i);
@@ -117,17 +109,33 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.5.0';
+    protected $_version = '2.6.0';
+
+    /**
+     * Auto-detect cURL absence
+     */
+    protected $_use_curl = true;
 
     /**
      * Request timeout
      */
-    protected $_timeout;
+    protected $_timeout = 10000;
 
     /**
      * Connection timeout
      */
-    protected $_connectionTimeout;
+    protected $_connectionTimeout = 3000;
+
+    /**
+     *
+     * Class constructor
+     *
+     */
+    public function __construct()
+    {
+        // Pre-define $_use_curl depending on cURL availability
+        $this->setUseCurl(function_exists('curl_init'));
+    }
 
     /**
      * Returns singleton class instance
@@ -194,6 +202,22 @@ class Codebird
     }
 
     /**
+     * Sets if codebird should use cURL
+     *
+     * @param bool $use_curl Request uses cURL or not
+     *
+     * @return void
+     */
+    public function setUseCurl($use_curl)
+    {
+        if ($use_curl && ! function_exists('curl_init')) {
+            throw new \Exception('To use cURL, the PHP curl extension must be available.');
+        }
+
+        $this->_use_curl = (bool) $use_curl;
+    }
+
+    /**
      * Sets request timeout in milliseconds
      *
      * @param int $timeout Request timeout in milliseconds
@@ -232,6 +256,161 @@ class Codebird
     }
 
     /**
+     * Get allowed API methods, sorted by GET or POST
+     * Watch out for multiple-method "account/settings"!
+     *
+     * @return array $apimethods
+     */
+    public function getApiMethods()
+    {
+        static $httpmethods = array(
+            'GET' => array(
+                'account/settings',
+                'account/verify_credentials',
+                'application/rate_limit_status',
+                'blocks/ids',
+                'blocks/list',
+                'direct_messages',
+                'direct_messages/sent',
+                'direct_messages/show',
+                'favorites/list',
+                'followers/ids',
+                'followers/list',
+                'friends/ids',
+                'friends/list',
+                'friendships/incoming',
+                'friendships/lookup',
+                'friendships/lookup',
+                'friendships/no_retweets/ids',
+                'friendships/outgoing',
+                'friendships/show',
+                'geo/id/:place_id',
+                'geo/reverse_geocode',
+                'geo/search',
+                'geo/similar_places',
+                'help/configuration',
+                'help/languages',
+                'help/privacy',
+                'help/tos',
+                'lists/list',
+                'lists/members',
+                'lists/members/show',
+                'lists/memberships',
+                'lists/ownerships',
+                'lists/show',
+                'lists/statuses',
+                'lists/subscribers',
+                'lists/subscribers/show',
+                'lists/subscriptions',
+                'mutes/users/ids',
+                'mutes/users/list',
+                'oauth/authenticate',
+                'oauth/authorize',
+                'saved_searches/list',
+                'saved_searches/show/:id',
+                'search/tweets',
+                'statuses/home_timeline',
+                'statuses/mentions_timeline',
+                'statuses/oembed',
+                'statuses/retweeters/ids',
+                'statuses/retweets/:id',
+                'statuses/retweets_of_me',
+                'statuses/show/:id',
+                'statuses/user_timeline',
+                'trends/available',
+                'trends/closest',
+                'trends/place',
+                'users/contributees',
+                'users/contributors',
+                'users/profile_banner',
+                'users/search',
+                'users/show',
+                'users/suggestions',
+                'users/suggestions/:slug',
+                'users/suggestions/:slug/members',
+
+                // Internal
+                'users/recommendations',
+                'account/push_destinations/device',
+                'activity/about_me',
+                'activity/by_friends',
+                'statuses/media_timeline',
+                'timeline/home',
+                'help/experiments',
+                'search/typeahead',
+                'search/universal',
+                'discover/universal',
+                'conversation/show',
+                'statuses/:id/activity/summary',
+                'account/login_verification_enrollment',
+                'account/login_verification_request',
+                'prompts/suggest',
+
+                'beta/timelines/custom/list',
+                'beta/timelines/timeline',
+                'beta/timelines/custom/show'
+            ),
+            'POST' => array(
+                'account/remove_profile_banner',
+                'account/settings__post',
+                'account/update_delivery_device',
+                'account/update_profile',
+                'account/update_profile_background_image',
+                'account/update_profile_banner',
+                'account/update_profile_colors',
+                'account/update_profile_image',
+                'blocks/create',
+                'blocks/destroy',
+                'direct_messages/destroy',
+                'direct_messages/new',
+                'favorites/create',
+                'favorites/destroy',
+                'friendships/create',
+                'friendships/destroy',
+                'friendships/update',
+                'lists/create',
+                'lists/destroy',
+                'lists/members/create',
+                'lists/members/create_all',
+                'lists/members/destroy',
+                'lists/members/destroy_all',
+                'lists/subscribers/create',
+                'lists/subscribers/destroy',
+                'lists/update',
+                'media/upload',
+                'mutes/users/create',
+                'mutes/users/destroy',
+                'oauth/access_token',
+                'oauth/request_token',
+                'oauth2/invalidate_token',
+                'oauth2/token',
+                'saved_searches/create',
+                'saved_searches/destroy/:id',
+                'statuses/destroy/:id',
+                'statuses/lookup',
+                'statuses/retweet/:id',
+                'statuses/update',
+                'statuses/update_with_media', // deprecated, use media/upload
+                'users/lookup',
+                'users/report_spam',
+
+                // Internal
+                'direct_messages/read',
+                'account/login_verification_enrollment__post',
+                'push_destinations/enable_login_verification',
+                'account/login_verification_request__post',
+
+                'beta/timelines/custom/create',
+                'beta/timelines/custom/update',
+                'beta/timelines/custom/destroy',
+                'beta/timelines/custom/add',
+                'beta/timelines/custom/remove'
+            )
+        );
+        return $httpmethods;
+    }
+
+    /**
      * Main API handler working on any requests you issue
      *
      * @param string $fn    The member function you called
@@ -243,34 +422,102 @@ class Codebird
     public function __call($fn, $params)
     {
         // parse parameters
+        $apiparams = $this->_parseApiParams($params);
+
+        // stringify null and boolean parameters
+        $apiparams = $this->_stringifyNullBoolParams($apiparams);
+
+        $app_only_auth = false;
+        if (count($params) > 1) {
+            // convert app_only_auth param to bool
+            $app_only_auth = !! $params[1];
+        }
+
+        // reset token when requesting a new token
+        // (causes 401 for signature error on subsequent requests)
+        if ($fn === 'oauth_requestToken') {
+            $this->setToken(null, null);
+        }
+
+        // map function name to API method
+        list($method, $method_template) = $this->_mapFnToApiMethod($fn, $apiparams);
+
+        $httpmethod = $this->_detectMethod($method_template, $apiparams);
+        $multipart  = $this->_detectMultipart($method_template);
+        $internal   = $this->_detectInternal($method_template);
+
+        return $this->_callApi(
+            $httpmethod,
+            $method,
+            $apiparams,
+            $multipart,
+            $app_only_auth,
+            $internal
+        );
+    }
+
+
+    /**
+     * __call() helpers
+     */
+
+    /**
+     * Parse given params, detect query-style params
+     *
+     * @param array|string $params Parameters to parse
+     *
+     * @return array $apiparams
+     */
+    protected function _parseApiParams($params)
+    {
         $apiparams = array();
-        if (count($params) > 0) {
-            if (is_array($params[0])) {
-                $apiparams = $params[0];
-                if (! is_array($apiparams)) {
-                    $apiparams = array();
-                }
+        if (count($params) === 0) {
+            return $apiparams;
+        }
+
+        if (is_array($params[0])) {
+            // given parameters are array
+            $apiparams = $params[0];
+            if (! is_array($apiparams)) {
+                $apiparams = array();
+            }
+            return $apiparams;
+        }
+
+        // user gave us query-style params
+        parse_str($params[0], $apiparams);
+        if (! is_array($apiparams)) {
+            $apiparams = array();
+        }
+
+        if (! get_magic_quotes_gpc()) {
+            return $apiparams;
+        }
+
+        // remove auto-added slashes recursively if on magic quotes steroids
+        foreach($apiparams as $key => $value) {
+            if (is_array($value)) {
+                $apiparams[$key] = array_map('stripslashes', $value);
             } else {
-                parse_str($params[0], $apiparams);
-                if (! is_array($apiparams)) {
-                    $apiparams = array();
-                }
-                // remove auto-added slashes if on magic quotes steroids
-                if (get_magic_quotes_gpc()) {
-                    foreach($apiparams as $key => $value) {
-                        if (is_array($value)) {
-                            $apiparams[$key] = array_map('stripslashes', $value);
-                        } else {
-                            $apiparams[$key] = stripslashes($value);
-                        }
-                    }
-                }
+                $apiparams[$key] = stripslashes($value);
             }
         }
 
-        // stringify null and boolean parameters
+        return $apiparams;
+    }
+
+    /**
+     * Replace null and boolean parameters with their string representations
+     *
+     * @param array $apiparams Parameter array to replace in
+     *
+     * @return array $apiparams
+     */
+    protected function _stringifyNullBoolParams($apiparams)
+    {
         foreach ($apiparams as $key => $value) {
             if (! is_scalar($value)) {
+                // no need to try replacing arrays
                 continue;
             }
             if (is_null($value)) {
@@ -280,34 +527,24 @@ class Codebird
             }
         }
 
-        $app_only_auth = false;
-        if (count($params) > 1) {
-            $app_only_auth = !! $params[1];
-        }
+        return $apiparams;
+    }
 
-        // reset token when requesting a new token (causes 401 for signature error on 2nd+ requests)
-        if ($fn === 'oauth_requestToken') {
-            $this->setToken(null, null);
-        }
-
-        // map function name to API method
-        $method = '';
-
+    /**
+     * Maps called PHP magic method name to Twitter API method
+     *
+     * @param string $fn              Function called
+     * @param array  $apiparams byref API parameters
+     *
+     * @return array (string method, string method_template)
+     */
+    protected function _mapFnToApiMethod($fn, &$apiparams)
+    {
         // replace _ by /
-        $path = explode('_', $fn);
-        for ($i = 0; $i < count($path); $i++) {
-            if ($i > 0) {
-                $method .= '/';
-            }
-            $method .= $path[$i];
-        }
+        $method = $this->_mapFnInsertSlashes($fn);
+
         // undo replacement for URL parameters
-        $url_parameters_with_underscore = array('screen_name', 'place_id');
-        foreach ($url_parameters_with_underscore as $param) {
-            $param = strtoupper($param);
-            $replacement_was = str_replace('_', '/', $param);
-            $method = str_replace($replacement_was, $param, $method);
-        }
+        $method = $this->_mapFnRestoreParamUnderscores($method);
 
         // replace AA by URL parameters
         $method_template = $method;
@@ -336,19 +573,43 @@ class Codebird
             $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
         }
 
-        $httpmethod = $this->_detectMethod($method_template, $apiparams);
-        $multipart  = $this->_detectMultipart($method_template);
-        $internal   = $this->_detectInternal($method_template);
-
-        return $this->_callApi(
-            $httpmethod,
-            $method,
-            $apiparams,
-            $multipart,
-            $app_only_auth,
-            $internal
-        );
+        return array($method, $method_template);
     }
+
+    /**
+     * API method mapping: Replaces _ with / character
+     *
+     * @param string $fn Function called
+     *
+     * @return string API method to call
+     */
+    protected function _mapFnInsertSlashes($fn)
+    {
+        $path   = explode('_', $fn);
+        $method = implode('/', $path);
+
+        return $method;
+    }
+
+    /**
+     * API method mapping: Restore _ character in named parameters
+     *
+     * @param string $method API method to call
+     *
+     * @return string API method with restored underscores
+     */
+    protected function _mapFnRestoreParamUnderscores($method)
+    {
+        $url_parameters_with_underscore = array('screen_name', 'place_id');
+        foreach ($url_parameters_with_underscore as $param) {
+            $param = strtoupper($param);
+            $replacement_was = str_replace('_', '/', $param);
+            $method = str_replace($replacement_was, $param, $method);
+        }
+
+        return $method;
+    }
+
 
     /**
      * Uncommon API methods
@@ -401,9 +662,20 @@ class Codebird
 
     public function oauth2_token()
     {
-        if (! function_exists('curl_init')) {
-            throw new \Exception('To make API requests, the PHP curl extension must be available.');
+        if ($this->_use_curl) {
+            return $this->_oauth2TokenCurl();
         }
+        return $this->_oauth2TokenNoCurl();
+    }
+
+    /**
+     * Gets the OAuth bearer token, using cURL
+     *
+     * @return string The OAuth bearer token
+     */
+
+    protected function _oauth2TokenCurl()
+    {
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
@@ -432,9 +704,84 @@ class Codebird
         $this->_validateSslCertificate($validation_result);
 
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
+        $reply = $this->_parseBearerReply($result, $httpstatus);
+        return $reply;
+    }
+
+    /**
+     * Gets the OAuth bearer token, without cURL
+     *
+     * @return string The OAuth bearer token
+     */
+
+    protected function _oauth2TokenNoCurl()
+    {
+        if (self::$_oauth_consumer_key == null) {
+            throw new \Exception('To obtain a bearer token, the consumer key must be set.');
+        }
+
+        $url      = self::$_endpoint_oauth . 'oauth2/token';
+        $hostname = parse_url($url, PHP_URL_HOST);
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method'           => 'POST',
+                'protocol_version' => '1.1',
+                'header'           => "Accept: */*\r\n"
+                    . 'Authorization: Basic '
+                    . base64_encode(
+                        self::$_oauth_consumer_key
+                        . ':'
+                        . self::$_oauth_consumer_secret
+                    ),
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => 'grant_type=client_credentials',
+                'ignore_errors'    => true
+            ),
+            'ssl' => array(
+                'verify_peer'  => true,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
+            )
+        ));
+        $reply   = @file_get_contents($url, false, $context);
+        $headers = $http_response_header;
+        $result  = '';
+        foreach ($headers as $header) {
+            $result .= $header . "\r\n";
+        }
+        $result .= "\r\n" . $reply;
+
+        // find HTTP status
+        $httpstatus = '500';
+        $match      = array();
+        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+            $httpstatus = $match[1];
+        }
+
+        $reply = $this->_parseBearerReply($result, $httpstatus);
+        return $reply;
+    }
+
+
+    /**
+     * General helpers to avoid duplicate code
+     */
+
+    /**
+     * Parse oauth2_token reply and set bearer token, if found
+     *
+     * @param string $result     Raw HTTP response
+     * @param int    $httpstatus HTTP status code
+     *
+     * @return array|object reply
+     */
+    protected function _parseBearerReply($result, $httpstatus)
+    {
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
         switch ($this->_return_format) {
             case CODEBIRD_RETURNFORMAT_ARRAY:
                 $reply['httpstatus'] = $httpstatus;
@@ -461,17 +808,13 @@ class Codebird
     }
 
     /**
-     * General helpers to avoid duplicate code
-     */
-
-    /**
      * Extract rate-limiting data from response headers
      *
      * @param array $headers The CURL response headers
      *
      * @return null|array The rate-limiting information
      */
-    private function _getRateLimitInfo($headers)
+    protected function _getRateLimitInfo($headers)
     {
         if (! isset($headers['x-rate-limit-limit'])) {
             return null;
@@ -490,7 +833,7 @@ class Codebird
      *
      * @return void
      */
-    private function _validateSslCertificate($validation_result)
+    protected function _validateSslCertificate($validation_result)
     {
         if (in_array(
                 $validation_result,
@@ -521,7 +864,7 @@ class Codebird
      *
      * @return mixed The encoded data
      */
-    private function _url($data)
+    protected function _url($data)
     {
         if (is_array($data)) {
             return array_map(array(
@@ -556,7 +899,7 @@ class Codebird
      *
      * @return string The hash
      */
-    private function _sha1($data)
+    protected function _sha1($data)
     {
         if (self::$_oauth_consumer_secret === null) {
             throw new \Exception('To generate a hash, the consumer secret must be set.');
@@ -564,8 +907,17 @@ class Codebird
         if (!function_exists('hash_hmac')) {
             throw new \Exception('To generate a hash, the PHP hash extension must be available.');
         }
-        return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&'
-            . ($this->_oauth_token_secret != null ? $this->_oauth_token_secret : ''), true));
+        return base64_encode(hash_hmac(
+            'sha1',
+            $data,
+            self::$_oauth_consumer_secret
+            . '&'
+            . ($this->_oauth_token_secret != null
+                ? $this->_oauth_token_secret
+                : ''
+            ),
+            true
+        ));
     }
 
     /**
@@ -633,7 +985,7 @@ class Codebird
             foreach ($keys as $key => $value) {
                 $authorization .= $key . '="' . $this->_url($value) . '", ';
             }
-            return authorization.substring(0, authorization.length - 1);
+            return substr($authorization, 0, -1);
         }
         $authorization = 'OAuth ';
         foreach ($keys as $key => $value) {
@@ -661,196 +1013,8 @@ class Codebird
                 break;
         }
 
-        $httpmethods = array();
-        $httpmethods['GET'] = array(
-            // Timelines
-            'statuses/mentions_timeline',
-            'statuses/user_timeline',
-            'statuses/home_timeline',
-            'statuses/retweets_of_me',
-
-            // Tweets
-            'statuses/retweets/:id',
-            'statuses/show/:id',
-            'statuses/oembed',
-            'statuses/retweeters/ids',
-
-            // Search
-            'search/tweets',
-
-            // Direct Messages
-            'direct_messages',
-            'direct_messages/sent',
-            'direct_messages/show',
-
-            // Friends & Followers
-            'friendships/no_retweets/ids',
-            'friends/ids',
-            'followers/ids',
-            'friendships/lookup',
-            'friendships/incoming',
-            'friendships/outgoing',
-            'friendships/show',
-            'friends/list',
-            'followers/list',
-            'friendships/lookup',
-
-            // Users
-            'account/settings',
-            'account/verify_credentials',
-            'blocks/list',
-            'blocks/ids',
-            'users/lookup',
-            'users/show',
-            'users/search',
-            'users/contributees',
-            'users/contributors',
-            'users/profile_banner',
-            'mutes/users/ids',
-            'mutes/users/list',
-
-            // Suggested Users
-            'users/suggestions/:slug',
-            'users/suggestions',
-            'users/suggestions/:slug/members',
-
-            // Favorites
-            'favorites/list',
-
-            // Lists
-            'lists/list',
-            'lists/statuses',
-            'lists/memberships',
-            'lists/subscribers',
-            'lists/subscribers/show',
-            'lists/members/show',
-            'lists/members',
-            'lists/show',
-            'lists/subscriptions',
-            'lists/ownerships',
-
-            // Saved searches
-            'saved_searches/list',
-            'saved_searches/show/:id',
-
-            // Places & Geo
-            'geo/id/:place_id',
-            'geo/reverse_geocode',
-            'geo/search',
-            'geo/similar_places',
-
-            // Trends
-            'trends/place',
-            'trends/available',
-            'trends/closest',
-
-            // OAuth
-            'oauth/authenticate',
-            'oauth/authorize',
-
-            // Help
-            'help/configuration',
-            'help/languages',
-            'help/privacy',
-            'help/tos',
-            'application/rate_limit_status',
-
-            // Tweets
-            'statuses/lookup',
-
-            // Internal
-            'users/recommendations',
-            'account/push_destinations/device',
-            'activity/about_me',
-            'activity/by_friends',
-            'statuses/media_timeline',
-            'timeline/home',
-            'help/experiments',
-            'search/typeahead',
-            'search/universal',
-            'discover/universal',
-            'conversation/show',
-            'statuses/:id/activity/summary',
-            'account/login_verification_enrollment',
-            'account/login_verification_request',
-            'prompts/suggest',
-
-            'beta/timelines/custom/list',
-            'beta/timelines/timeline',
-            'beta/timelines/custom/show'
-        );
-        $httpmethods['POST'] = array(
-            // Tweets
-            'statuses/destroy/:id',
-            'statuses/update',
-            'statuses/retweet/:id',
-            'statuses/update_with_media',
-            'media/upload',
-
-            // Direct Messages
-            'direct_messages/destroy',
-            'direct_messages/new',
-
-            // Friends & Followers
-            'friendships/create',
-            'friendships/destroy',
-            'friendships/update',
-
-            // Users
-            'account/settings__post',
-            'account/update_delivery_device',
-            'account/update_profile',
-            'account/update_profile_background_image',
-            'account/update_profile_colors',
-            'account/update_profile_image',
-            'blocks/create',
-            'blocks/destroy',
-            'account/update_profile_banner',
-            'account/remove_profile_banner',
-            'mutes/users/create',
-            'mutes/users/destroy',
-
-            // Favorites
-            'favorites/destroy',
-            'favorites/create',
-
-            // Lists
-            'lists/members/destroy',
-            'lists/subscribers/create',
-            'lists/subscribers/destroy',
-            'lists/members/create_all',
-            'lists/members/create',
-            'lists/destroy',
-            'lists/update',
-            'lists/create',
-            'lists/members/destroy_all',
-
-            // Saved Searches
-            'saved_searches/create',
-            'saved_searches/destroy/:id',
-
-            // Spam Reporting
-            'users/report_spam',
-
-            // OAuth
-            'oauth/access_token',
-            'oauth/request_token',
-            'oauth2/token',
-            'oauth2/invalidate_token',
-
-            // Internal
-            'direct_messages/read',
-            'account/login_verification_enrollment__post',
-            'push_destinations/enable_login_verification',
-            'account/login_verification_request__post',
-
-            'beta/timelines/custom/create',
-            'beta/timelines/custom/update',
-            'beta/timelines/custom/destroy',
-            'beta/timelines/custom/add',
-            'beta/timelines/custom/remove'
-        );
-        foreach ($httpmethods as $httpmethod => $methods) {
+        $apimethods = $this->getApiMethods();
+        foreach ($apimethods as $httpmethod => $methods) {
             if (in_array($method, $methods)) {
                 return $httpmethod;
             }
@@ -934,9 +1098,8 @@ class Codebird
                     // is it a valid image?
                     && $data = @getimagesize($value)
                 ) {
-                    if (// is it a supported image format?
-                        in_array($data[2], $this->_supported_media_files)
-                    ) {
+                    // is it a supported image format?
+                    if (in_array($data[2], $this->_supported_media_files)) {
                         // try to read the file
                         ob_start();
                         readfile($value);
@@ -947,13 +1110,41 @@ class Codebird
                         }
                         $value = $data;
                     }
+                } elseif (// is it a remote file?
+                    filter_var($value, FILTER_VALIDATE_URL)
+                    && preg_match('/^https?:\/\//', $value)
+                ) {
+                    // try to fetch the file
+                    if ($this->_use_curl) {
+                        $ch = curl_init($value);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        // no SSL validation for downloading media
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                        // use hardcoded download timeouts for now
+                        curl_setopt($ch, _CURLOPT_TIMEOUT_MS, 5000);
+                        curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        $result = curl_exec($ch);
+                        if ($result !== false) {
+                            $value = $result;
+                        }
+                    } else {
+                        $context = stream_context_create(array(
+                            'http' => array(
+                                'method'           => 'GET',
+                                'protocol_version' => '1.1',
+                                'timeout'          => 5000
+                            ),
+                            'ssl' => array(
+                                'verify_peer'  => false
+                            )
+                        ));
+                        $result  = @file_get_contents($value, false, $context);
+                        if ($result !== false) {
+                            $value = $result;
+                        }
+                    }
                 }
-
-                /*
-                $multipart_request .=
-                    "\r\nContent-Transfer-Encoding: base64";
-                $value = base64_encode($value);
-                */
             }
 
             $multipart_request .=
@@ -1029,6 +1220,32 @@ class Codebird
     }
 
     /**
+     * Calls the API
+     *
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $multipart       Whether to use multipart/form-data
+     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return mixed The API reply, encoded in the set return_format
+     */
+
+    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    {
+        if (! $app_only_auth
+            && $this->_oauth_token === null
+            && substr($method, 0, 5) !== 'oauth'
+        ) {
+                throw new \Exception('To call this API, the OAuth access token must be set.');
+        }
+        if ($this->_use_curl) {
+            return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+        }
+        return $this->_callApiNoCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+    }
+
+    /**
      * Calls the API using cURL
      *
      * @param string          $httpmethod    The HTTP method to use for making the request
@@ -1041,28 +1258,171 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApiCurl(
+        $httpmethod, $method, $params = array(),
+        $multipart = false, $app_only_auth = false, $internal = false
+    )
     {
-        if (! function_exists('curl_init')) {
-            throw new \Exception('To make API requests, the PHP curl extension must be available.');
-        }
-        if ($internal) {
-            $params['adc']            = 'phone';
-            $params['application_id'] = 333903271;
+        list ($authorization, $url, $params, $request_headers)
+            = $this->_callApiPreparations(
+                $httpmethod, $method, $params, $multipart, $app_only_auth
+            );
+
+        $ch                = curl_init($url);
+        $request_headers[] = 'Authorization: ' . $authorization;
+        $request_headers[] = 'Expect:';
+
+        if ($httpmethod !== 'GET') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+
+        if (isset($this->_timeout)) {
+            curl_setopt($ch, _CURLOPT_TIMEOUT_MS, $this->_timeout);
+        }
+
+        if (isset($this->_connectionTimeout)) {
+            curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
+        }
+
+        $result = curl_exec($ch);
+
+        // certificate validation results
+        $validation_result = curl_errno($ch);
+        $this->_validateSslCertificate($validation_result);
+
+        $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
+
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
+                break;
+        }
+        return $reply;
+    }
+
+    /**
+     * Calls the API without cURL
+     *
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $multipart       Whether to use multipart/form-data
+     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     * @param bool   optional $internal        Whether to use internal call
+     *
+     * @return mixed The API reply, encoded in the set return_format
+     */
+
+    protected function _callApiNoCurl(
+        $httpmethod, $method, $params = array(), $multipart = false,
+        $app_only_auth = false, $internal = false
+    )
+    {
+        list ($authorization, $url, $params, $request_headers)
+            = $this->_callApiPreparations(
+                $httpmethod, $method, $params, $multipart, $app_only_auth
+            );
+
+        $hostname          = parse_url($url, PHP_URL_HOST);
+        $request_headers[] = 'Authorization: ' . $authorization;
+        $request_headers[] = 'Accept: */*';
+        $request_headers[] = 'Connection: Close';
+        if ($httpmethod !== 'GET' && ! $multipart) {
+            $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
+        }
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method'           => $httpmethod,
+                'protocol_version' => '1.1',
+                'header'           => implode("\r\n", $request_headers),
+                'timeout'          => $this->_timeout / 1000,
+                'content'          => $httpmethod === 'POST' ? $params : null,
+                'ignore_errors'    => true
+            ),
+            'ssl' => array(
+                'verify_peer'  => false,
+                'cafile'       => __DIR__ . '/cacert.pem',
+                'verify_depth' => 5,
+                'peer_name'    => $hostname
+            )
+        ));
+
+        $reply   = @file_get_contents($url, false, $context);
+        $headers = $http_response_header;
+        $result  = '';
+        foreach ($headers as $header) {
+            $result .= $header . "\r\n";
+        }
+        $result .= "\r\n" . $reply;
+
+        // find HTTP status
+        $httpstatus = '500';
+        $match      = array();
+        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+            $httpstatus = $match[1];
+        }
+
+        list($headers, $reply) = $this->_parseApiHeaders($result);
+        $reply                 = $this->_parseApiReply($reply);
+        $rate                  = $this->_getRateLimitInfo($headers);
+        switch ($this->_return_format) {
+            case CODEBIRD_RETURNFORMAT_ARRAY:
+                $reply['httpstatus'] = $httpstatus;
+                $reply['rate']       = $rate;
+                break;
+            case CODEBIRD_RETURNFORMAT_OBJECT:
+                $reply->httpstatus = $httpstatus;
+                $reply->rate       = $rate;
+                break;
+        }
+        return $reply;
+    }
+
+    /**
+     * Do preparations to make the API call
+     *
+     * @param string  $httpmethod      The HTTP method to use for making the request
+     * @param string  $method          The API method to call
+     * @param array   $params          The parameters to send along
+     * @param bool    $multipart       Whether to use multipart/form-data
+     * @param bool    $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return array (string authorization, string url, array params, array request_headers)
+     */
+    protected function _callApiPreparations(
+        $httpmethod, $method, $params, $multipart, $app_only_auth
+    )
+    {
         $authorization = null;
         $url           = $this->_getEndpoint($method);
         $request_headers = array();
         if ($httpmethod === 'GET') {
-            $url_with_params = $url;
-            if (json_encode($params) !== '{}') {
-                $url_with_params .= '?' . http_build_query($params);
-            }
             if (! $app_only_auth) {
                 $authorization = $this->_sign($httpmethod, $url, $params);
             }
-            $ch = curl_init($url_with_params);
+            if (json_encode($params) !== '{}'
+                && json_encode($params) !== '[]'
+            ) {
+                $url .= '?' . http_build_query($params);
+            }
         } else {
             if ($multipart) {
                 if (! $app_only_auth) {
@@ -1075,15 +1435,12 @@ class Codebird
                 }
                 $params        = http_build_query($params);
             }
-            $ch = curl_init($url);
             if ($multipart) {
                 $first_newline      = strpos($params, "\r\n");
                 $multipart_boundary = substr($params, 2, $first_newline - 2);
                 $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                     . $multipart_boundary;
             }
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
         if ($app_only_auth) {
             if (self::$_oauth_consumer_key === null
@@ -1097,56 +1454,20 @@ class Codebird
             }
             $authorization = 'Bearer ' . self::$_oauth_bearer_token;
         }
-        $request_headers[] = 'Authorization: ' . $authorization;
-        $request_headers[] = 'Expect:';
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
-
-        if (isset($this->_timeout)) {
-            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
-        }
-
-        if (isset($this->_connectionTimeout)) {
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
-        }
-
-        $result = curl_exec($ch);
-
-        // certificate validation results
-        $validation_result = curl_errno($ch);
-        $this->_validateSslCertificate($validation_result);
-
-        $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $reply      = $this->_parseApiReply($result);
-        $headers    = $this->_parseApiReply($result, true);
-        $rate       = $this->_getRateLimitInfo($headers);
-
-        if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
-            $reply->httpstatus = $httpstatus;
-            $reply->rate       = $rate;
-        } elseif ($this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY) {
-            $reply['httpstatus'] = $httpstatus;
-            $reply['rate']       = $rate;
-        }
-        return $reply;
+        return array(
+            $authorization, $url, $params, $request_headers
+        );
     }
 
     /**
-     * Parses the API reply to encode it in the set return_format
+     * Parses the API reply to separate headers from the body
      *
-     * @param string $reply       The actual reply, JSON-encoded or URL-encoded
-     * @param bool   $get_headers If to return the headers instead of body
+     * @param string $reply The actual raw HTTP request reply
      *
-     * @return array|object The parsed reply
+     * @return array (headers, reply)
      */
-    protected function _parseApiReply($reply, $get_headers = false)
-    {
+    protected function _parseApiHeaders($reply) {
         // split headers and body
         $headers = array();
         $reply = explode("\r\n\r\n", $reply, 4);
@@ -1175,15 +1496,25 @@ class Codebird
             }
             $headers[$key] = $value;
         }
-        if ($get_headers) {
-            return $headers;
-        }
+
         if (count($reply) > 1) {
             $reply = $reply[1];
         } else {
             $reply = '';
         }
 
+        return array($headers, $reply);
+    }
+
+    /**
+     * Parses the API reply to encode it in the set return_format
+     *
+     * @param string $reply The actual HTTP body, JSON-encoded or URL-encoded
+     *
+     * @return array|object The parsed reply
+     */
+    protected function _parseApiReply($reply)
+    {
         $need_array = $this->_return_format === CODEBIRD_RETURNFORMAT_ARRAY;
         if ($reply === '[]') {
             switch ($this->_return_format) {
@@ -1210,7 +1541,7 @@ class Codebird
                     $reply = explode('&', $reply);
                     foreach ($reply as $element) {
                         if (stristr($element, '=')) {
-                            list($key, $value) = explode('=', $element);
+                            list($key, $value) = explode('=', $element, 2);
                             $parsed[$key] = $value;
                         } else {
                             $parsed['message'] = $element;
