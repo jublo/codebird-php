@@ -163,36 +163,18 @@ $params = array(
 );
 $reply = $cb->users_show($params);
 ```
-
-### Uploading files to Twitter
-
-The array syntax is obligatory:
-
-```php
-$params = array(
-    'status' => 'Look at this crazy cat! #lolcats',
-    'media[]' => '/home/jublonet/lolcats.jpg'
-);
-$reply = $cb->statuses_updateWithMedia($params);
-```
-
-Remote files received from `http` and `https` servers are supported, too:
-```php
-$reply = $cb->statuses_updateWithMedia(array(
-    'status'  => 'This is the Guggenheim museum in Bilbao, Spain, as seen by @Bing.',
-    'media[]' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
-));
-```
-
 This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
 sent with the code above.
 
-#### Multiple images
-can be uploaded in a 2-step process. **First** you send each image to Twitter, like this:
+### Uploading media to Twitter
+
+Tweet media can be uploaded in a 2-step process.
+**First** you send each image to Twitter, like this:
+
 ```php
-// these files to upload
+// these files to upload. You can also just upload 1 image!
 $media_files = array(
-    'bird1.jpg', 'bird2.jpg', 'bird3.jpg' // http/https URLs allowed here, too!
+    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
 );
 // will hold the uploaded IDs
 $media_ids = array();
@@ -206,6 +188,7 @@ foreach ($media_files as $file) {
     $media_ids[] = $reply->media_id_string;
 }
 ```
+
 **Second,** you attach the collected media ids for all images to your call
 to ```statuses/update```, like this:
 
@@ -221,10 +204,20 @@ $reply = $cb->statuses_update(array(
 print_r($reply);
 );
 ```
+
 Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
 sent with the code above.
 
-More [documentation for tweeting with multiple media](https://dev.twitter.com/docs/api/multiple-media-extended-entities) is available on the Twitter Developer site.
+More [documentation for tweeting with media](https://dev.twitter.com/rest/public/uploading-media-multiple-photos) is available on the Twitter Developer site.
+
+#### Remote files
+
+Remote files received from `http` and `https` servers are supported, too:
+```php
+$reply = $cb->media_upload(array(
+    'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
+));
+```
 
 ### Requests with app-only auth
 
@@ -279,10 +272,10 @@ The library returns the response HTTP status code, so you can detect rate limits
 I suggest you to check if the ```$reply->httpstatus``` property is ```400```
 and check with the Twitter API to find out if you are currently being
 rate-limited.
-See the [Rate Limiting FAQ](https://dev.twitter.com/docs/rate-limiting-faq)
+See the [Rate Limiting FAQ](https://dev.twitter.com/rest/public/rate-limiting)
 for more information.
 
-Unless your return format is JOSN, you will receive rate-limiting details
+Unless your return format is JSON, you will receive rate-limiting details
 in the returned data’s ```$reply->rate``` property,
 if the Twitter API responds with rate-limiting HTTP headers.
 

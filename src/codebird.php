@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   2.6.0-dev
+ * @version   2.6.0
  * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2014 Jublo Solutions <support@jublo.net>
  * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
@@ -109,7 +109,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.6.0-dev';
+    protected $_version = '2.6.0';
 
     /**
      * Auto-detect cURL absence
@@ -390,7 +390,7 @@ class Codebird
                 'statuses/lookup',
                 'statuses/retweet/:id',
                 'statuses/update',
-                'statuses/update_with_media',
+                'statuses/update_with_media', // deprecated, use media/upload
                 'users/lookup',
                 'users/report_spam',
 
