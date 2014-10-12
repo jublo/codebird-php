@@ -1,6 +1,8 @@
 codebird-php - changelog
 ========================
 
+2.6.1 (not yet released)
+
 2.6.0 (2014-10-12)
 + #67 Don't require cURL, allow stream connections too
 + Use default timeout
