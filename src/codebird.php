@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   2.6.0
+ * @version   2.6.1
  * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2014 Jublo Solutions <support@jublo.net>
  * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
@@ -109,7 +109,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.6.0';
+    protected $_version = '2.6.1';
 
     /**
      * Auto-detect cURL absence
@@ -1091,18 +1091,20 @@ class Codebird
 
             // check for filenames
             if (in_array($key, $possible_files)) {
+                // the file system does not know about UTF-8 filenames
+                $filename_decoded = utf8_decode($value);
                 if (// is it a file, a readable one?
-                    @file_exists($value)
-                    && @is_readable($value)
+                    @file_exists($filename_decoded)
+                    && @is_readable($filename_decoded)
 
                     // is it a valid image?
-                    && $data = @getimagesize($value)
+                    && $data = @getimagesize($filename_decoded)
                 ) {
                     // is it a supported image format?
                     if (in_array($data[2], $this->_supported_media_files)) {
                         // try to read the file
                         ob_start();
-                        readfile($value);
+                        readfile($filename_decoded);
                         $data = ob_get_contents();
                         ob_end_clean();
                         if (strlen($data) === 0) {
