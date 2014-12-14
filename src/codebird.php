@@ -1113,8 +1113,8 @@ class Codebird
                         $value = $data;
                     }
                 } elseif (// is it a remote file?
-                    filter_var($value, FILTER_VALIDATE_URL)
-                    && preg_match('/^https?:\/\//', $value)
+                    /*filter_var($value, FILTER_VALIDATE_URL)   // FILTER_VALIDATE_URL does not work for URLs containing UTF-8 characters
+                    &&*/ preg_match('/^https?:\/\//', $value)
                 ) {
                     // try to fetch the file
                     if ($this->_use_curl) {
