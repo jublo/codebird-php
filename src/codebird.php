@@ -1091,20 +1091,18 @@ class Codebird
 
             // check for filenames
             if (in_array($key, $possible_files)) {
-                // the file system does not know about UTF-8 filenames
-                $filename_decoded = utf8_decode($value);
                 if (// is it a file, a readable one?
-                    @file_exists($filename_decoded)
-                    && @is_readable($filename_decoded)
+                    @file_exists($value)
+                    && @is_readable($value)
 
                     // is it a valid image?
-                    && $data = @getimagesize($filename_decoded)
+                    && $data = @getimagesize($value)
                 ) {
                     // is it a supported image format?
                     if (in_array($data[2], $this->_supported_media_files)) {
                         // try to read the file
                         ob_start();
-                        readfile($filename_decoded);
+                        readfile($value);
                         $data = ob_get_contents();
                         ob_end_clean();
                         if (strlen($data) === 0) {
@@ -1113,8 +1111,8 @@ class Codebird
                         $value = $data;
                     }
                 } elseif (// is it a remote file?
-                    /*filter_var($value, FILTER_VALIDATE_URL)   // FILTER_VALIDATE_URL does not work for URLs containing UTF-8 characters
-                    &&*/ preg_match('/^https?:\/\//', $value)
+                    filter_var($value, FILTER_VALIDATE_URL)
+                    && preg_match('/^https?:\/\//', $value)
                 ) {
                     // try to fetch the file
                     if ($this->_use_curl) {
