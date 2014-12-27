@@ -250,7 +250,7 @@ map to Codebird function calls. The general rules are:
     Examples:
     - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
     - ```users/profile_image/:screen_name``` maps to
-      ```Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')```.
+      `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
 
 HTTP methods (GET, POST, DELETE etc.)
 -------------------------------------
