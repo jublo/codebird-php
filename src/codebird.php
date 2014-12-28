@@ -585,10 +585,13 @@ class Codebird
      */
     protected function _mapFnInsertSlashes($fn)
     {
-        $path   = explode('_', $fn);
-        $method = implode('/', $path);
-
-        return $method;
+        if ($fn != "direct_messages")
+        {
+            $path   = explode('_', $fn);
+            $method = implode('/', $path);            
+            return $method;
+        }
+        return $fn;  
     }
 
     /**
