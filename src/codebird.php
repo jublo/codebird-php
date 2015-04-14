@@ -8,7 +8,7 @@ namespace Codebird;
  * @package   codebird
  * @version   3.0.0-dev
  * @author    Jublo Solutions <support@jublo.net>
- * @copyright 2010-2014 Jublo Solutions <support@jublo.net>
+ * @copyright 2010-2015 Jublo Solutions <support@jublo.net>
  * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
  * @link      https://github.com/jublonet/codebird-php
  */
