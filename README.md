@@ -219,6 +219,8 @@ $reply = $cb->media_upload(array(
 ));
 ```
 
+:warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
+
 ### Requests with app-only auth
 
 To send API requests without an access token for a user (app-only auth),
