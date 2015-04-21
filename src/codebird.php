@@ -700,6 +700,45 @@ class Codebird
     }
 
     /**
+     * Gets the proxy host
+     *
+     * @return string The proxy host
+     */
+    protected function getProxyHost()
+    {
+        return $this->getProxyData('host');
+    }
+
+    /**
+     * Gets the proxy port
+     *
+     * @return string The proxy port
+     */
+    protected function getProxyPort()
+    {
+        return $this->getProxyData('port');
+    }
+
+    /**
+     * Gets the proxy authentication
+     *
+     * @return string The proxy authentication
+     */
+    protected function getProxyAuthentication()
+    {
+        return $this->getProxyData('authentication');
+    }
+    
+    private function getProxyData($name)
+    {
+        if (empty($this->_proxy[$name])) {
+            return null;
+        }
+        
+        return $this->_proxy[$name];
+    }
+
+    /**
      * Gets the OAuth bearer token, using cURL
      *
      * @return string The OAuth bearer token
