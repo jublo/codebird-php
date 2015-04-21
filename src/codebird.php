@@ -798,7 +798,7 @@ class Codebird
             'grant_type' => 'client_credentials'
         );
         $url = self::$_endpoint_oauth . 'oauth2/token';
-        $ch = curl_init($url);
+        $ch = $this->getCurlInitialization($url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1231,7 +1231,7 @@ class Codebird
                 ) {
                     // try to fetch the file
                     if ($this->_use_curl) {
-                        $ch = curl_init($value);
+                        $ch = $this->getCurlInitialization($value);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                         // no SSL validation for downloading media
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -1383,7 +1383,7 @@ class Codebird
                 $httpmethod, $method, $params, $multipart, $app_only_auth
             );
 
-        $ch                = curl_init($url);
+        $ch                = $this->getCurlInitialization($url);
         $request_headers[] = 'Authorization: ' . $authorization;
         $request_headers[] = 'Expect:';
 
