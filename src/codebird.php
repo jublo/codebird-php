@@ -700,6 +700,51 @@ class Codebird
     }
 
     /**
+     * Gets a cURL handle
+     * @param string $url the URL for the curl initialization
+     * @return cURL handle
+     */
+    protected function getCurlInitialization($url)
+    {
+        $ch = curl_init($url);
+        
+        if ($this->hasProxy()) {
+            curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+            curl_setopt($ch, CURLOPT_PROXY, $this->getProxyHost());
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
+            
+            if ($this->hasProxyAuthentication()) {
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
+            }
+        }
+        
+        return $ch;
+    }
+
+    protected function hasProxy()
+    {
+        if ($this->getProxyHost() === null) {
+            return false;
+        }
+        
+        if ($this->getProxyPort() === null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    protected function hasProxyAuthentication()
+    {
+        if ($this->getProxyAuthentication() === null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
      * Gets the proxy host
      *
      * @return string The proxy host
