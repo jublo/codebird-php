@@ -127,6 +127,11 @@ class Codebird
     protected $_connectionTimeout = 3000;
 
     /**
+     * Proxy
+     */
+    protected $_proxy = array();
+
+    /**
      *
      * Class constructor
      *
@@ -253,6 +258,32 @@ class Codebird
     public function setReturnFormat($return_format)
     {
         $this->_return_format = $return_format;
+    }
+
+    /**
+     * Sets the proxy
+     *
+     * @param string $host Proxy host
+     * @param int    $port Proxy port
+     *
+     * @return void
+     */
+    public function setProxy($host, $port)
+    {
+        $this->_proxy['host'] = $host;
+        $this->_proxy['port'] = $port;
+    }
+
+    /**
+     * Sets the proxy authentication
+     *
+     * @param string $authentication Proxy authentication
+     *
+     * @return void
+     */
+    public function setProxyAuthentication($authentication)
+    {
+        $this->_proxy['authentication'] = $authentication;
     }
 
     /**
