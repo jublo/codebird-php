@@ -714,7 +714,7 @@ class Codebird
             curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
             
             if ($this->hasProxyAuthentication()) {
-                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
                 curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
             }
         }
