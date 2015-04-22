@@ -912,7 +912,7 @@ class Codebird
         // find HTTP status
         $httpstatus = '500';
         $match      = array();
-        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+        if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
             $httpstatus = $match[1];
         }
 
@@ -1531,7 +1531,7 @@ class Codebird
         // find HTTP status
         $httpstatus = '500';
         $match      = array();
-        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+        if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
             $httpstatus = $match[1];
         }
 
