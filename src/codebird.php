@@ -738,7 +738,7 @@ class Codebird
             
             if ($this->hasProxyAuthentication()) {
                 $httpOptions['header'] = array(
-                    'Proxy-Authorization: Basic ' . $this->getProxyAuthentication(),
+                    'Proxy-Authorization: Basic ' . base64_encode($this->getProxyAuthentication()),
                 );
             }
         }
