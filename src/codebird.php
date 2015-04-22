@@ -880,7 +880,7 @@ class Codebird
         $url      = self::$_endpoint_oauth . 'oauth2/token';
         $hostname = parse_url($url, PHP_URL_HOST);
 
-        $context = stream_context_create(array(
+        $contextOptions = array(
             'http' => array(
                 'method'           => 'POST',
                 'protocol_version' => '1.1',
@@ -901,9 +901,8 @@ class Codebird
                 'verify_depth' => 5,
                 'peer_name'    => $hostname
             )
-        ));
-        $reply   = @file_get_contents($url, false, $context);
-        $headers = $http_response_header;
+        );
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
@@ -1286,7 +1285,7 @@ class Codebird
                             $value = $result;
                         }
                     } else {
-                        $context = stream_context_create(array(
+                        $contextOptions = array(
                             'http' => array(
                                 'method'           => 'GET',
                                 'protocol_version' => '1.1',
@@ -1295,8 +1294,8 @@ class Codebird
                             'ssl' => array(
                                 'verify_peer'  => false
                             )
-                        ));
-                        $result  = @file_get_contents($value, false, $context);
+                        );
+                        list($result) = $this->getNoCurlInitialization($value, $contextOptions);
                         if ($result !== false) {
                             $value = $result;
                         }
@@ -1505,7 +1504,7 @@ class Codebird
             $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
         }
 
-        $context = stream_context_create(array(
+        $contextOptions = array(
             'http' => array(
                 'method'           => $httpmethod,
                 'protocol_version' => '1.1',
@@ -1520,10 +1519,9 @@ class Codebird
                 'verify_depth' => 5,
                 'peer_name'    => $hostname
             )
-        ));
+        );
 
-        $reply   = @file_get_contents($url, false, $context);
-        $headers = $http_response_header;
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
