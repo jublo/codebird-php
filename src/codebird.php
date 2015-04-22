@@ -722,6 +722,48 @@ class Codebird
         return $ch;
     }
 
+    /**
+     * Gets a non cURL initialization
+     * @param string $url            the URL for the curl initialization
+     * @param array  $contextOptions the options for the stream context
+     * @return the read data
+     */
+    protected function getNoCurlInitialization($url, $contextOptions)
+    {
+        $httpOptions = array();
+        
+        if ($this->hasProxy()) {
+            $httpOptions['request_fulluri'] = true;
+            $httpOptions['proxy'] = $this->getProxyHost() . ':' . $this->getProxyPort();
+            
+            if ($this->hasProxyAuthentication()) {
+                $httpOptions['header'] = array(
+                    'Proxy-Authorization: Basic ' . $this->getProxyAuthentication(),
+                );
+            }
+        }
+        
+        // merge the http options with the context options
+        $options = array_merge_recursive(
+            $contextOptions,
+            array('http' => $httpOptions)
+        );
+        
+        // silent the file_get_contents function
+        $content = @file_get_contents($url, false, stream_context_create($options));
+        
+        $headers = array();
+        // API is responding
+        if (isset($http_response_header)) {
+            $headers = $http_response_header;
+        }
+        
+        return array(
+            $content,
+            $headers,
+        );
+    }
+
     protected function hasProxy()
     {
         if ($this->getProxyHost() === null) {
