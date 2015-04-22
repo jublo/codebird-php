@@ -489,3 +489,20 @@ You may also manually disable cURL.  Use the following call:
 ```php
 $cb->setUseCurl(false);
 ```
+
+### …use a proxy?
+
+Codebird allow a proxy support for both cURL handle and socket.
+
+To activate proxy. Use the following call:
+
+```php
+$cb->setProxy('<host>', '<port>');
+```
+
+You may also use an authenticate proxy. Use the following call:
+
+```php
+$cb->setProxy('<host>', '<port>');
+$cb->setProxyAuthentication('<username>:<password>');
+```
