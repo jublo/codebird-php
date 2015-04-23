@@ -492,15 +492,15 @@ $cb->setUseCurl(false);
 
 ### …use a proxy?
 
-Codebird allow a proxy support for both cURL handle and socket.
+Codebird allows proxy support for both cURL handles and sockets.
 
-To activate proxy. Use the following call:
+To activate proxy mode, use the following call:
 
 ```php
 $cb->setProxy('<host>', '<port>');
 ```
 
-You may also use an authenticate proxy. Use the following call:
+You may also use an authenticated proxy. Use the following call:
 
 ```php
 $cb->setProxy('<host>', '<port>');
