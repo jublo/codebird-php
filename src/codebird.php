@@ -127,6 +127,11 @@ class Codebird
     protected $_connectionTimeout = 3000;
 
     /**
+     * Proxy
+     */
+    protected $_proxy = array();
+
+    /**
      *
      * Class constructor
      *
@@ -253,6 +258,32 @@ class Codebird
     public function setReturnFormat($return_format)
     {
         $this->_return_format = $return_format;
+    }
+
+    /**
+     * Sets the proxy
+     *
+     * @param string $host Proxy host
+     * @param int    $port Proxy port
+     *
+     * @return void
+     */
+    public function setProxy($host, $port)
+    {
+        $this->_proxy['host'] = $host;
+        $this->_proxy['port'] = $port;
+    }
+
+    /**
+     * Sets the proxy authentication
+     *
+     * @param string $authentication Proxy authentication
+     *
+     * @return void
+     */
+    public function setProxyAuthentication($authentication)
+    {
+        $this->_proxy['authentication'] = $authentication;
     }
 
     /**
@@ -669,6 +700,132 @@ class Codebird
     }
 
     /**
+     * Gets a cURL handle
+     * @param string $url the URL for the curl initialization
+     * @return cURL handle
+     */
+    protected function getCurlInitialization($url)
+    {
+        $ch = curl_init($url);
+        
+        if ($this->hasProxy()) {
+            curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+            curl_setopt($ch, CURLOPT_PROXY, $this->getProxyHost());
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
+            
+            if ($this->hasProxyAuthentication()) {
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
+            }
+        }
+        
+        return $ch;
+    }
+
+    /**
+     * Gets a non cURL initialization
+     * @param string $url            the URL for the curl initialization
+     * @param array  $contextOptions the options for the stream context
+     * @return the read data
+     */
+    protected function getNoCurlInitialization($url, $contextOptions)
+    {
+        $httpOptions = array();
+        
+        if ($this->hasProxy()) {
+            $httpOptions['request_fulluri'] = true;
+            $httpOptions['proxy'] = $this->getProxyHost() . ':' . $this->getProxyPort();
+            
+            if ($this->hasProxyAuthentication()) {
+                $httpOptions['header'] = array(
+                    'Proxy-Authorization: Basic ' . base64_encode($this->getProxyAuthentication()),
+                );
+            }
+        }
+        
+        // merge the http options with the context options
+        $options = array_merge_recursive(
+            $contextOptions,
+            array('http' => $httpOptions)
+        );
+        
+        // silent the file_get_contents function
+        $content = @file_get_contents($url, false, stream_context_create($options));
+        
+        $headers = array();
+        // API is responding
+        if (isset($http_response_header)) {
+            $headers = $http_response_header;
+        }
+        
+        return array(
+            $content,
+            $headers,
+        );
+    }
+
+    protected function hasProxy()
+    {
+        if ($this->getProxyHost() === null) {
+            return false;
+        }
+        
+        if ($this->getProxyPort() === null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    protected function hasProxyAuthentication()
+    {
+        if ($this->getProxyAuthentication() === null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Gets the proxy host
+     *
+     * @return string The proxy host
+     */
+    protected function getProxyHost()
+    {
+        return $this->getProxyData('host');
+    }
+
+    /**
+     * Gets the proxy port
+     *
+     * @return string The proxy port
+     */
+    protected function getProxyPort()
+    {
+        return $this->getProxyData('port');
+    }
+
+    /**
+     * Gets the proxy authentication
+     *
+     * @return string The proxy authentication
+     */
+    protected function getProxyAuthentication()
+    {
+        return $this->getProxyData('authentication');
+    }
+    
+    private function getProxyData($name)
+    {
+        if (empty($this->_proxy[$name])) {
+            return null;
+        }
+        
+        return $this->_proxy[$name];
+    }
+
+    /**
      * Gets the OAuth bearer token, using cURL
      *
      * @return string The OAuth bearer token
@@ -683,7 +840,7 @@ class Codebird
             'grant_type' => 'client_credentials'
         );
         $url = self::$_endpoint_oauth . 'oauth2/token';
-        $ch = curl_init($url);
+        $ch = $this->getCurlInitialization($url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -723,7 +880,7 @@ class Codebird
         $url      = self::$_endpoint_oauth . 'oauth2/token';
         $hostname = parse_url($url, PHP_URL_HOST);
 
-        $context = stream_context_create(array(
+        $contextOptions = array(
             'http' => array(
                 'method'           => 'POST',
                 'protocol_version' => '1.1',
@@ -744,9 +901,8 @@ class Codebird
                 'verify_depth' => 5,
                 'peer_name'    => $hostname
             )
-        ));
-        $reply   = @file_get_contents($url, false, $context);
-        $headers = $http_response_header;
+        );
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
@@ -756,7 +912,7 @@ class Codebird
         // find HTTP status
         $httpstatus = '500';
         $match      = array();
-        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+        if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
             $httpstatus = $match[1];
         }
 
@@ -1116,7 +1272,7 @@ class Codebird
                 ) {
                     // try to fetch the file
                     if ($this->_use_curl) {
-                        $ch = curl_init($value);
+                        $ch = $this->getCurlInitialization($value);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                         // no SSL validation for downloading media
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -1129,7 +1285,7 @@ class Codebird
                             $value = $result;
                         }
                     } else {
-                        $context = stream_context_create(array(
+                        $contextOptions = array(
                             'http' => array(
                                 'method'           => 'GET',
                                 'protocol_version' => '1.1',
@@ -1138,8 +1294,8 @@ class Codebird
                             'ssl' => array(
                                 'verify_peer'  => false
                             )
-                        ));
-                        $result  = @file_get_contents($value, false, $context);
+                        );
+                        list($result) = $this->getNoCurlInitialization($value, $contextOptions);
                         if ($result !== false) {
                             $value = $result;
                         }
@@ -1268,7 +1424,7 @@ class Codebird
                 $httpmethod, $method, $params, $multipart, $app_only_auth
             );
 
-        $ch                = curl_init($url);
+        $ch                = $this->getCurlInitialization($url);
         $request_headers[] = 'Authorization: ' . $authorization;
         $request_headers[] = 'Expect:';
 
@@ -1348,7 +1504,7 @@ class Codebird
             $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
         }
 
-        $context = stream_context_create(array(
+        $contextOptions = array(
             'http' => array(
                 'method'           => $httpmethod,
                 'protocol_version' => '1.1',
@@ -1363,10 +1519,9 @@ class Codebird
                 'verify_depth' => 5,
                 'peer_name'    => $hostname
             )
-        ));
+        );
 
-        $reply   = @file_get_contents($url, false, $context);
-        $headers = $http_response_header;
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
@@ -1376,7 +1531,7 @@ class Codebird
         // find HTTP status
         $httpstatus = '500';
         $match      = array();
-        if (preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+        if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
             $httpstatus = $match[1];
         }
 
