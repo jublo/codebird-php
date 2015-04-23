@@ -82,11 +82,6 @@ class Codebird
     protected static $_endpoint_oauth = 'https://api.twitter.com/';
 
     /**
-     * The API endpoint to use for old requests
-     */
-    protected static $_endpoint_old = 'https://api.twitter.com/1/';
-
-    /**
      * The Request or access token. Used to sign requests
      */
     protected $_oauth_token = null;
@@ -358,28 +353,7 @@ class Codebird
                 'users/show',
                 'users/suggestions',
                 'users/suggestions/:slug',
-                'users/suggestions/:slug/members',
-
-                // Internal
-                'users/recommendations',
-                'account/push_destinations/device',
-                'activity/about_me',
-                'activity/by_friends',
-                'statuses/media_timeline',
-                'timeline/home',
-                'help/experiments',
-                'search/typeahead',
-                'search/universal',
-                'discover/universal',
-                'conversation/show',
-                'statuses/:id/activity/summary',
-                'account/login_verification_enrollment',
-                'account/login_verification_request',
-                'prompts/suggest',
-
-                'beta/timelines/custom/list',
-                'beta/timelines/timeline',
-                'beta/timelines/custom/show'
+                'users/suggestions/:slug/members'
             ),
             'POST' => array(
                 'account/remove_profile_banner',
@@ -423,19 +397,7 @@ class Codebird
                 'statuses/update',
                 'statuses/update_with_media', // deprecated, use media/upload
                 'users/lookup',
-                'users/report_spam',
-
-                // Internal
-                'direct_messages/read',
-                'account/login_verification_enrollment__post',
-                'push_destinations/enable_login_verification',
-                'account/login_verification_request__post',
-
-                'beta/timelines/custom/create',
-                'beta/timelines/custom/update',
-                'beta/timelines/custom/destroy',
-                'beta/timelines/custom/add',
-                'beta/timelines/custom/remove'
+                'users/report_spam'
             )
         );
         return $httpmethods;
@@ -475,15 +437,13 @@ class Codebird
 
         $httpmethod = $this->_detectMethod($method_template, $apiparams);
         $multipart  = $this->_detectMultipart($method_template);
-        $internal   = $this->_detectInternal($method_template);
 
         return $this->_callApi(
             $httpmethod,
             $method,
             $apiparams,
             $multipart,
-            $app_only_auth,
-            $internal
+            $app_only_auth
         );
     }
 
@@ -1311,21 +1271,6 @@ class Codebird
         return $multipart_request;
     }
 
-
-    /**
-     * Detects if API call is internal
-     *
-     * @param string $method The API method to call
-     *
-     * @return bool Whether the method is defined in internal API
-     */
-    protected function _detectInternal($method) {
-        $internals = array(
-            'users/recommendations'
-        );
-        return in_array($method, $internals);
-    }
-
     /**
      * Detects if API call should use media endpoint
      *
@@ -1341,20 +1286,6 @@ class Codebird
     }
 
     /**
-     * Detects if API call should use old endpoint
-     *
-     * @param string $method The API method to call
-     *
-     * @return bool Whether the method is defined in old API
-     */
-    protected function _detectOld($method) {
-        $olds = array(
-            'account/push_destinations/device'
-        );
-        return in_array($method, $olds);
-    }
-
-    /**
      * Builds the complete API endpoint url
      *
      * @param string $method The API method to call
@@ -1367,8 +1298,6 @@ class Codebird
             $url = self::$_endpoint_oauth . $method;
         } elseif ($this->_detectMedia($method)) {
             $url = self::$_endpoint_media . $method . '.json';
-        } elseif ($this->_detectOld($method)) {
-            $url = self::$_endpoint_old . $method . '.json';
         } else {
             $url = self::$_endpoint . $method . '.json';
         }
@@ -1387,7 +1316,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false, $internal = false)
+    protected function _callApi($httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false)
     {
         if (! $app_only_auth
             && $this->_oauth_token === null
@@ -1396,9 +1325,9 @@ class Codebird
                 throw new \Exception('To call this API, the OAuth access token must be set.');
         }
         if ($this->_use_curl) {
-            return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+            return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth);
         }
-        return $this->_callApiNoCurl($httpmethod, $method, $params, $multipart, $app_only_auth, $internal);
+        return $this->_callApiNoCurl($httpmethod, $method, $params, $multipart, $app_only_auth);
     }
 
     /**
@@ -1409,14 +1338,12 @@ class Codebird
      * @param array  optional $params        The parameters to send along
      * @param bool   optional $multipart     Whether to use multipart/form-data
      * @param bool   optional $app_only_auth Whether to use app-only bearer authentication
-     * @param bool   optional $internal      Whether to use internal call
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
     protected function _callApiCurl(
-        $httpmethod, $method, $params = array(),
-        $multipart = false, $app_only_auth = false, $internal = false
+        $httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false
     )
     {
         list ($authorization, $url, $params, $request_headers)
@@ -1481,14 +1408,12 @@ class Codebird
      * @param array  optional $params          The parameters to send along
      * @param bool   optional $multipart       Whether to use multipart/form-data
      * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
-     * @param bool   optional $internal        Whether to use internal call
      *
      * @return mixed The API reply, encoded in the set return_format
      */
 
     protected function _callApiNoCurl(
-        $httpmethod, $method, $params = array(), $multipart = false,
-        $app_only_auth = false, $internal = false
+        $httpmethod, $method, $params = array(), $multipart = false, $app_only_auth = false
     )
     {
         list ($authorization, $url, $params, $request_headers)
