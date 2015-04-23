@@ -4,6 +4,7 @@ codebird-php - changelog
 3.0.0-dev (not yet released)
 - #92, #108 Fix issues with uploading special chars
 - #107 Decoding issue for big ints on 32-bit servers
++ #109 Proxy support
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
