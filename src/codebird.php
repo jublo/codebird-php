@@ -1642,5 +1642,3 @@ class Codebird
         return $parsed;
     }
 }
-
-?>
