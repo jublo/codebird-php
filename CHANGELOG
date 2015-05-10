@@ -6,6 +6,7 @@ codebird-php - changelog
 - #107 Decoding issue for big ints on 32-bit servers
 + #109 Proxy support
 - Drop support for internal and old API methods
++ #111 Set user agent for remote calls
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
