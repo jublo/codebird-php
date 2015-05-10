@@ -674,6 +674,10 @@ class Codebird
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+        curl_setopt(
+            $ch, CURLOPT_USERAGENT,
+            'codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+        );
 
         if ($this->hasProxy()) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
@@ -699,6 +703,10 @@ class Codebird
     protected function getNoCurlInitialization($url, $contextOptions, $hostname = '')
     {
         $httpOptions = array();
+        
+        $httpOptions['header'] = array(
+            'User-Agent: codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+        );
 
         $httpOptions['ssl'] = array(
             'verify_peer'  => true,
@@ -712,9 +720,8 @@ class Codebird
             $httpOptions['proxy'] = $this->getProxyHost() . ':' . $this->getProxyPort();
 
             if ($this->hasProxyAuthentication()) {
-                $httpOptions['header'] = array(
-                    'Proxy-Authorization: Basic ' . base64_encode($this->getProxyAuthentication()),
-                );
+                $httpOptions['header'][] =
+                    'Proxy-Authorization: Basic ' . base64_encode($this->getProxyAuthentication());
             }
         }
 
