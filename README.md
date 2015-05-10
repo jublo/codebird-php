@@ -48,9 +48,9 @@ session_start();
 
 if (! isset($_SESSION['oauth_token'])) {
     // get the request token
-    $reply = $cb->oauth_requestToken(array(
+    $reply = $cb->oauth_requestToken([
         'oauth_callback' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-    ));
+    ]);
 
     // store the token
     $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
@@ -69,9 +69,9 @@ if (! isset($_SESSION['oauth_token'])) {
     unset($_SESSION['oauth_verify']);
 
     // get the access token
-    $reply = $cb->oauth_accessToken(array(
+    $reply = $cb->oauth_accessToken([
         'oauth_verifier' => $_GET['oauth_verifier']
-    ));
+    ]);
 
     // store the token (which is different from the request token!)
     $_SESSION['oauth_token'] = $reply->oauth_token;
@@ -142,25 +142,25 @@ In most cases, giving all parameters in an array is easier,
 because no encoding is needed:
 
 ```php
-$params = array(
+$params = [
     'status' => 'Fish & chips'
-);
+];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
-$params = array(
+$params = [
     'status' => 'I love London',
     'lat'    => 51.5033,
     'long'   => 0.1197
-);
+];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
-$params = array(
+$params = [
     'screen_name' => 'jublonet'
-);
+];
 $reply = $cb->users_show($params);
 ```
 This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
@@ -173,17 +173,17 @@ Tweet media can be uploaded in a 2-step process.
 
 ```php
 // these files to upload. You can also just upload 1 image!
-$media_files = array(
+$media_files = [
     'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
-);
+];
 // will hold the uploaded IDs
-$media_ids = array();
+$media_ids = [];
 
 foreach ($media_files as $file) {
     // upload all media files
-    $reply = $cb->media_upload(array(
+    $reply = $cb->media_upload([
         'media' => $file
-    ));
+    ]);
     // and collect their IDs
     $media_ids[] = $reply->media_id_string;
 }
@@ -197,10 +197,10 @@ to ```statuses/update```, like this:
 $media_ids = implode(',', $media_ids);
 
 // send tweet with these medias
-$reply = $cb->statuses_update(array(
+$reply = $cb->statuses_update([
     'status' => 'These are some of my relatives.',
     'media_ids' => $media_ids
-));
+]);
 print_r($reply);
 );
 ```
@@ -214,9 +214,9 @@ More [documentation for tweeting with media](https://dev.twitter.com/rest/public
 
 Remote files received from `http` and `https` servers are supported, too:
 ```php
-$reply = $cb->media_upload(array(
+$reply = $cb->media_upload([
     'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
-));
+]);
 ```
 
 :warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
@@ -425,11 +425,11 @@ Remember that your application needs to be whitelisted to be able to use xAuth.
 
 Here’s an example:
 ```php
-$reply = $cb->oauth_accessToken(array(
+$reply = $cb->oauth_accessToken([
     'x_auth_username' => 'username',
     'x_auth_password' => '4h3_p4$$w0rd',
     'x_auth_mode' => 'client_auth'
-));
+]);
 ```
 
 Are you getting a strange error message?  If the user is enrolled in
