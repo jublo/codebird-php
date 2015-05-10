@@ -527,7 +527,7 @@ class Codebird
      * @param string $fn              Function called
      * @param array  $apiparams byref API parameters
      *
-     * @return array (string method, string method_template)
+     * @return string[] (string method, string method_template)
      */
     protected function _mapFnToApiMethod($fn, &$apiparams)
     {
@@ -662,7 +662,7 @@ class Codebird
     /**
      * Gets a cURL handle
      * @param string $url the URL for the curl initialization
-     * @return cURL handle
+     * @return resource handle
      */
     protected function getCurlInitialization($url)
     {
@@ -798,6 +798,9 @@ class Codebird
         return $this->getProxyData('authentication');
     }
 
+    /**
+     * @param string $name
+     */
     private function getProxyData($name)
     {
         if (empty($this->_proxy[$name])) {
@@ -1589,7 +1592,7 @@ class Codebird
      *
      * @param string $reply The actual HTTP body, JSON-encoded or URL-encoded
      *
-     * @return array|object|string The parsed reply
+     * @return string The parsed reply
      */
     protected function _parseApiReply($reply)
     {
