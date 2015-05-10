@@ -667,18 +667,25 @@ class Codebird
     protected function getCurlInitialization($url)
     {
         $ch = curl_init($url);
-        
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+
         if ($this->hasProxy()) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
             curl_setopt($ch, CURLOPT_PROXY, $this->getProxyHost());
             curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
-            
+
             if ($this->hasProxyAuthentication()) {
                 curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
                 curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
             }
         }
-        
+
         return $ch;
     }
 
@@ -686,41 +693,49 @@ class Codebird
      * Gets a non cURL initialization
      * @param string $url            the URL for the curl initialization
      * @param array  $contextOptions the options for the stream context
+     * @param string $hostname       the hostname to verify the SSL FQDN for
      * @return the read data
      */
-    protected function getNoCurlInitialization($url, $contextOptions)
+    protected function getNoCurlInitialization($url, $contextOptions, $hostname = '')
     {
         $httpOptions = array();
-        
+
+        $httpOptions['ssl'] = array(
+            'verify_peer'  => true,
+            'cafile'       => __DIR__ . '/cacert.pem',
+            'verify_depth' => 5,
+            'peer_name'    => $hostname
+        );
+
         if ($this->hasProxy()) {
             $httpOptions['request_fulluri'] = true;
             $httpOptions['proxy'] = $this->getProxyHost() . ':' . $this->getProxyPort();
-            
+
             if ($this->hasProxyAuthentication()) {
                 $httpOptions['header'] = array(
                     'Proxy-Authorization: Basic ' . base64_encode($this->getProxyAuthentication()),
                 );
             }
         }
-        
+
         // merge the http options with the context options
         $options = array_merge_recursive(
             $contextOptions,
             array('http' => $httpOptions)
         );
-        
+
         // silent the file_get_contents function
         $content = @file_get_contents($url, false, stream_context_create($options));
-        
+
         $headers = array();
         // API is responding
         if (isset($http_response_header)) {
             $headers = $http_response_header;
         }
-        
+
         return array(
             $content,
-            $headers,
+            $headers
         );
     }
 
@@ -729,11 +744,11 @@ class Codebird
         if ($this->getProxyHost() === null) {
             return false;
         }
-        
+
         if ($this->getProxyPort() === null) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -742,7 +757,7 @@ class Codebird
         if ($this->getProxyAuthentication() === null) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -775,13 +790,13 @@ class Codebird
     {
         return $this->getProxyData('authentication');
     }
-    
+
     private function getProxyData($name)
     {
         if (empty($this->_proxy[$name])) {
             return null;
         }
-        
+
         return $this->_proxy[$name];
     }
 
@@ -803,12 +818,6 @@ class Codebird
         $ch = $this->getCurlInitialization($url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 
         curl_setopt($ch, CURLOPT_USERPWD, self::$_oauth_consumer_key . ':' . self::$_oauth_consumer_secret);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -854,15 +863,9 @@ class Codebird
                 'timeout'          => $this->_timeout / 1000,
                 'content'          => 'grant_type=client_credentials',
                 'ignore_errors'    => true
-            ),
-            'ssl' => array(
-                'verify_peer'  => true,
-                'cafile'       => __DIR__ . '/cacert.pem',
-                'verify_depth' => 5,
-                'peer_name'    => $hostname
             )
         );
-        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions, $hostname);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
@@ -1360,13 +1363,7 @@ class Codebird
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 
         if (isset($this->_timeout)) {
             curl_setopt($ch, _CURLOPT_TIMEOUT_MS, $this->_timeout);
@@ -1437,16 +1434,10 @@ class Codebird
                 'timeout'          => $this->_timeout / 1000,
                 'content'          => $httpmethod === 'POST' ? $params : null,
                 'ignore_errors'    => true
-            ),
-            'ssl' => array(
-                'verify_peer'  => false,
-                'cafile'       => __DIR__ . '/cacert.pem',
-                'verify_depth' => 5,
-                'peer_name'    => $hostname
             )
         );
 
-        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions);
+        list($reply, $headers) = $this->getNoCurlInitialization($url, $contextOptions, $hostname);
         $result  = '';
         foreach ($headers as $header) {
             $result .= $header . "\r\n";
