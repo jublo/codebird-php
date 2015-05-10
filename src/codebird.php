@@ -409,7 +409,7 @@ class Codebird
      * @param string $fn    The member function you called
      * @param array $params The parameters you sent along
      *
-     * @return mixed The API reply encoded in the set return_format
+     * @return string The API reply encoded in the set return_format
      */
 
     public function __call($fn, $params)
@@ -904,7 +904,7 @@ class Codebird
      * @param string $result     Raw HTTP response
      * @param int    $httpstatus HTTP status code
      *
-     * @return array|object reply
+     * @return string reply
      */
     protected function _parseBearerReply($result, $httpstatus)
     {
@@ -1326,7 +1326,7 @@ class Codebird
      * @param bool   optional $multipart       Whether to use multipart/form-data
      * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
      *
-     * @return mixed The API reply, encoded in the set return_format
+     * @return string The API reply, encoded in the set return_format
      */
 
     protected function _callApi($httpmethod, $method, $params = [], $multipart = false, $app_only_auth = false)
@@ -1352,7 +1352,7 @@ class Codebird
      * @param bool   optional $multipart     Whether to use multipart/form-data
      * @param bool   optional $app_only_auth Whether to use app-only bearer authentication
      *
-     * @return mixed The API reply, encoded in the set return_format
+     * @return string The API reply, encoded in the set return_format
      */
 
     protected function _callApiCurl(
@@ -1416,7 +1416,7 @@ class Codebird
      * @param bool   optional $multipart       Whether to use multipart/form-data
      * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
      *
-     * @return mixed The API reply, encoded in the set return_format
+     * @return string The API reply, encoded in the set return_format
      */
 
     protected function _callApiNoCurl(
