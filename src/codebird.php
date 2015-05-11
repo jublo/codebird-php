@@ -918,7 +918,7 @@ class Codebird
                 break;
             case CODEBIRD_RETURNFORMAT_JSON:
                 if ($httpstatus === 200) {
-                    $parsed = json_decode($reply, false, 512, JSON_BIGINT_AS_STRING);
+                    $parsed = json_decode($reply);
                     self::setBearerToken($parsed->access_token);
                 }
                 break;
@@ -1605,7 +1605,7 @@ class Codebird
                     return new \stdClass;
             }
         }
-        if (! $parsed = json_decode($reply, $need_array, 512, JSON_BIGINT_AS_STRING)) {
+        if (! $parsed = json_decode($reply, $need_array)) {
             if ($reply) {
                 if (stripos($reply, '<' . '?xml version="1.0" encoding="UTF-8"?' . '>') === 0) {
                     // we received XML...
