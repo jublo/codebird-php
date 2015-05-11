@@ -1247,6 +1247,7 @@ class Codebird
                     if ($this->_use_curl) {
                         $ch = $this->getCurlInitialization($value);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_HEADER, 0);
                         // no SSL validation for downloading media
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
