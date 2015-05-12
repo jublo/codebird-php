@@ -8,6 +8,7 @@ codebird-php - changelog
 - Drop support for internal and old API methods
 + #111 Set user agent for remote calls
 + #106 Add logout method
++ #86 Return exception for failed cURL requests
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
