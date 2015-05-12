@@ -494,19 +494,6 @@ class Codebird
             $apiparams = [];
         }
 
-        if (! get_magic_quotes_gpc()) {
-            return $apiparams;
-        }
-
-        // remove auto-added slashes recursively if on magic quotes steroids
-        foreach($apiparams as $key => $value) {
-            if (is_array($value)) {
-                $apiparams[$key] = array_map('stripslashes', $value);
-            } else {
-                $apiparams[$key] = stripslashes($value);
-            }
-        }
-
         return $apiparams;
     }
 
@@ -1085,6 +1072,34 @@ class Codebird
         }
         return substr(md5(microtime(true)), 0, $length);
     }
+    
+    /**
+     * Signature helper
+     *
+     * @param string $httpmethod   Usually either 'GET' or 'POST' or 'DELETE'
+     * @param string $method       The API method to call
+     * @param array  $base_params  The signature base parameters
+     *
+     * @return string signature
+     */
+    protected function _getSignature($httpmethod, $method, $base_params)
+    {
+        // convert params to string
+        $base_string = '';
+        foreach ($base_params as $key => $value) {
+            $base_string .= $key . '=' . $value . '&';
+        }
+
+        // trim last ampersand
+        $base_string = substr($base_string, 0, -1);
+
+        // hash it
+        return $this->_sha1(
+            $httpmethod . '&' .
+            $this->_url($method) . '&' .
+            $this->_url($base_string)
+        );
+    }
 
     /**
      * Generates an OAuth signature
@@ -1101,45 +1116,43 @@ class Codebird
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To generate a signature, the consumer key must be set.');
         }
-        $sign_params      = [
-            'consumer_key'     => self::$_oauth_consumer_key,
-            'version'          => '1.0',
-            'timestamp'        => time(),
-            'nonce'            => $this->_nonce(),
-            'signature_method' => 'HMAC-SHA1'
-        ];
-        $sign_base_params = [];
-        foreach ($sign_params as $key => $value) {
-            $sign_base_params['oauth_' . $key] = $this->_url($value);
-        }
+        $sign_base_params = array_map(
+            [$this, '_url'],
+            [
+                'oauth_consumer_key'     => self::$_oauth_consumer_key,
+                'oauth_version'          => '1.0',
+                'oauth_timestamp'        => time(),
+                'oauth_nonce'            => $this->_nonce(),
+                'oauth_signature_method' => 'HMAC-SHA1'
+            ]
+        );
         if ($this->_oauth_token !== null) {
             $sign_base_params['oauth_token'] = $this->_url($this->_oauth_token);
         }
         $oauth_params = $sign_base_params;
-        foreach ($params as $key => $value) {
-            $sign_base_params[$key] = $this->_url($value);
-        }
+
+        // merge in the non-OAuth params
+        $sign_base_params = array_merge(
+            $sign_base_params,
+            array_map([$this, '_url'], $params)
+        );
         ksort($sign_base_params);
-        $sign_base_string = '';
-        foreach ($sign_base_params as $key => $value) {
-            $sign_base_string .= $key . '=' . $value . '&';
-        }
-        $sign_base_string = substr($sign_base_string, 0, -1);
-        $signature        = $this->_sha1($httpmethod . '&' . $this->_url($method) . '&' . $this->_url($sign_base_string));
+
+        $signature = $this->_getSignature($httpmethod, $method, $sign_base_params);
 
         $params = $append_to_get ? $sign_base_params : $oauth_params;
         $params['oauth_signature'] = $signature;
-        $keys = $params;
-        ksort($keys);
+
+        ksort($params);
         if ($append_to_get) {
             $authorization = '';
-            foreach ($keys as $key => $value) {
+            foreach ($params as $key => $value) {
                 $authorization .= $key . '="' . $this->_url($value) . '", ';
             }
             return substr($authorization, 0, -1);
         }
         $authorization = 'OAuth ';
-        foreach ($keys as $key => $value) {
+        foreach ($params as $key => $value) {
             $authorization .= $key . "=\"" . $this->_url($value) . "\", ";
         }
         return substr($authorization, 0, -2);
@@ -1196,48 +1209,24 @@ class Codebird
     }
 
     /**
-     * Detect filenames in upload parameters,
-     * build multipart request from upload params
+     * Merge multipart string from parameters array
      *
-     * @param string $method  The API method to call
-     * @param array  $params  The parameters to send along
+     * @param array  $possible_files List of possible filename parameters
+     * @param string $border         The multipart border
+     * @param array  $params         The parameters to send along
      *
-     * @return null|string
+     * @return string request
      */
-    protected function _buildMultipart($method, $params)
+    protected function _getMultipartRequestFromParams($possible_files, $border, $params)
     {
-        // well, files will only work in multipart methods
-        if (! $this->_detectMultipart($method)) {
-            return;
-        }
-
-        // only check specific parameters
-        $possible_files = [
-            // Tweets
-            'statuses/update_with_media' => 'media[]',
-            'media/upload' => 'media',
-            // Accounts
-            'account/update_profile_background_image' => 'image',
-            'account/update_profile_image' => 'image',
-            'account/update_profile_banner' => 'banner'
-        ];
-        // method might have files?
-        if (! in_array($method, array_keys($possible_files))) {
-            return;
-        }
-
-        $possible_files = explode(' ', $possible_files[$method]);
-
-        $multipart_border = '--------------------' . $this->_nonce();
-        $multipart_request = '';
-
+        $request = '';
         foreach ($params as $key => $value) {
             // is it an array?
             if (is_array($value)) {
                 throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
             }
-            $multipart_request .=
-                '--' . $multipart_border . "\r\n"
+            $request .=
+                '--' . $border . "\r\n"
                 . 'Content-Disposition: form-data; name="' . $key . '"';
 
             // check for filenames
@@ -1252,11 +1241,8 @@ class Codebird
                     // is it a supported image format?
                     if (in_array($data[2], $this->_supported_media_files)) {
                         // try to read the file
-                        ob_start();
-                        readfile($value);
-                        $data = ob_get_contents();
-                        ob_end_clean();
-                        if (strlen($data) === 0) {
+                        $data = @file_get_contents($value);
+                        if ($data === false || strlen($data) === 0) {
                             continue;
                         }
                         $value = $data;
@@ -1299,10 +1285,50 @@ class Codebird
                 }
             }
 
-            $multipart_request .=
-                "\r\n\r\n" . $value . "\r\n";
+            $request .= "\r\n\r\n" . $value . "\r\n";
         }
-        $multipart_request .= '--' . $multipart_border . '--';
+        
+        return $request;
+    }
+
+
+    /**
+     * Detect filenames in upload parameters,
+     * build multipart request from upload params
+     *
+     * @param string $method  The API method to call
+     * @param array  $params  The parameters to send along
+     *
+     * @return null|string
+     */
+    protected function _buildMultipart($method, $params)
+    {
+        // well, files will only work in multipart methods
+        if (! $this->_detectMultipart($method)) {
+            return;
+        }
+
+        // only check specific parameters
+        $possible_files = [
+            // Tweets
+            'statuses/update_with_media' => 'media[]',
+            'media/upload' => 'media',
+            // Accounts
+            'account/update_profile_background_image' => 'image',
+            'account/update_profile_image' => 'image',
+            'account/update_profile_banner' => 'banner'
+        ];
+        // method might have files?
+        if (! in_array($method, array_keys($possible_files))) {
+            return;
+        }
+
+        $possible_files = explode(' ', $possible_files[$method]);
+
+        $multipart_border = '--------------------' . $this->_nonce();
+        $multipart_request =
+            $this->_getMultipartRequestFromParams($possible_files, $multipart_border, $params)
+            . '--' . $multipart_border . '--';
 
         return $multipart_request;
     }
@@ -1510,6 +1536,81 @@ class Codebird
     }
 
     /**
+     * Do preparations to make the API GET call
+     *
+     * @param string  $httpmethod      The HTTP method to use for making the request
+     * @param string  $url             The URL to call
+     * @param array   $params          The parameters to send along
+     * @param bool    $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return array (string authorization, string url)
+     */
+    protected function _callApiPreparationsGet(
+        $httpmethod, $url, $params, $app_only_auth
+    ) {
+        return [
+            $app_only_auth                ? null : $this->_sign($httpmethod, $url, $params),
+            json_encode($params) === '[]' ? $url : $url . '?' . http_build_query($params)
+        ];
+    }
+
+    /**
+     * Do preparations to make the API POST call
+     *
+     * @param string  $httpmethod      The HTTP method to use for making the request
+     * @param string  $url             The URL to call
+     * @param string  $method          The API method to call
+     * @param array   $params          The parameters to send along
+     * @param bool    $multipart       Whether to use multipart/form-data
+     * @param bool    $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return array (string authorization, array params, array request_headers)
+     */
+    protected function _callApiPreparationsPost(
+        $httpmethod, $url, $method, $params, $multipart, $app_only_auth
+    ) {
+        $authorization   = null;
+        $request_headers = [];
+        if ($multipart) {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, []);
+            }
+            $params = $this->_buildMultipart($method, $params);
+        } else {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
+            $params = http_build_query($params);
+        }
+        if ($multipart) {
+            $first_newline      = strpos($params, "\r\n");
+            $multipart_boundary = substr($params, 2, $first_newline - 2);
+            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
+                . $multipart_boundary;
+        }
+        return [$authorization, $params, $request_headers];
+    }
+    
+    /**
+     * Get Bearer authorization string
+     *
+     * @return string authorization
+     */
+    protected function _getBearerAuthorization()
+    {
+        if (self::$_oauth_consumer_key === null
+            && self::$_oauth_bearer_token === null
+        ) {
+            throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
+        }
+        // automatically fetch bearer token, if necessary
+        if (self::$_oauth_bearer_token === null) {
+            $this->oauth2_token();
+        }
+        return 'Bearer ' . self::$_oauth_bearer_token;
+    }
+
+    /**
      * Do preparations to make the API call
      *
      * @param string  $httpmethod      The HTTP method to use for making the request
@@ -1524,48 +1625,18 @@ class Codebird
         $httpmethod, $method, $params, $multipart, $app_only_auth
     )
     {
-        $authorization = null;
-        $url           = $this->_getEndpoint($method);
-        $request_headers = [];
+        $url = $this->_getEndpoint($method);
         if ($httpmethod === 'GET') {
-            if (! $app_only_auth) {
-                $authorization = $this->_sign($httpmethod, $url, $params);
-            }
-            if (json_encode($params) !== '{}'
-                && json_encode($params) !== '[]'
-            ) {
-                $url .= '?' . http_build_query($params);
-            }
+            // GET
+            list ($authorization, $url) =
+                $this->_callApiPreparationsGet($httpmethod, $url, $params, $app_only_auth);
         } else {
-            if ($multipart) {
-                if (! $app_only_auth) {
-                    $authorization = $this->_sign($httpmethod, $url, []);
-                }
-                $params = $this->_buildMultipart($method, $params);
-            } else {
-                if (! $app_only_auth) {
-                    $authorization = $this->_sign($httpmethod, $url, $params);
-                }
-                $params        = http_build_query($params);
-            }
-            if ($multipart) {
-                $first_newline      = strpos($params, "\r\n");
-                $multipart_boundary = substr($params, 2, $first_newline - 2);
-                $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
-                    . $multipart_boundary;
-            }
+            // POST
+            list ($authorization, $params, $request_headers) =
+                $this->_callApiPreparationsPost($httpmethod, $url, $method, $params, $multipart, $app_only_auth);
         }
         if ($app_only_auth) {
-            if (self::$_oauth_consumer_key === null
-                && self::$_oauth_bearer_token === null
-            ) {
-                throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
-            }
-            // automatically fetch bearer token, if necessary
-            if (self::$_oauth_bearer_token === null) {
-                $this->oauth2_token();
-            }
-            $authorization = 'Bearer ' . self::$_oauth_bearer_token;
+            $authorization = $this->_getBearerAuthorization();
         }
 
         return [
@@ -1586,10 +1657,10 @@ class Codebird
         $reply = explode("\r\n\r\n", $reply, 4);
 
         // check if using proxy
-        $proxy_strings = [];
-        $proxy_strings[strtolower('HTTP/1.0 200 Connection Established')] = true;
-        $proxy_strings[strtolower('HTTP/1.1 200 Connection Established')] = true;
-        if (array_key_exists(strtolower(substr($reply[0], 0, 35)), $proxy_strings)) {
+        $proxy_tester = strtolower(substr($reply[0], 0, 35));
+        if ($proxy_tester === 'http/1.0 200 connection established'
+            || $proxy_tester === 'http/1.1 200 connection established'
+        ) {
             array_shift($reply);
         } elseif (count($reply) > 2) {
             $headers = array_shift($reply);
