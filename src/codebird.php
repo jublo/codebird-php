@@ -77,6 +77,15 @@ class Codebird
     protected static $_endpoint_media = 'https://upload.twitter.com/1.1/';
 
     /**
+     * The Streaming API endpoints to use
+     */
+    protected static $_endpoints_streaming = [
+        'public' => 'https://stream.twitter.com/1.1/',
+        'user'   => 'https://userstream.twitter.com/1.1/',
+        'site'   => 'https://sitestream.twitter.com/1.1/'
+    ];
+
+    /**
      * The API endpoint base to use
      */
     protected static $_endpoint_oauth = 'https://api.twitter.com/';
