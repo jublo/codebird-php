@@ -1536,6 +1536,81 @@ class Codebird
     }
 
     /**
+     * Do preparations to make the API GET call
+     *
+     * @param string  $httpmethod      The HTTP method to use for making the request
+     * @param string  $url             The URL to call
+     * @param array   $params          The parameters to send along
+     * @param bool    $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return array (string authorization, string url)
+     */
+    protected function _callApiPreparationsGet(
+        $httpmethod, $url, $params, $app_only_auth
+    ) {
+        return [
+            $app_only_auth                ? null : $this->_sign($httpmethod, $url, $params),
+            json_encode($params) === '[]' ? $url : $url . '?' . http_build_query($params)
+        ];
+    }
+
+    /**
+     * Do preparations to make the API POST call
+     *
+     * @param string  $httpmethod      The HTTP method to use for making the request
+     * @param string  $url             The URL to call
+     * @param string  $method          The API method to call
+     * @param array   $params          The parameters to send along
+     * @param bool    $multipart       Whether to use multipart/form-data
+     * @param bool    $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return array (string authorization, array params, array request_headers)
+     */
+    protected function _callApiPreparationsPost(
+        $httpmethod, $url, $method, $params, $multipart, $app_only_auth
+    ) {
+        $authorization   = null;
+        $request_headers = [];
+        if ($multipart) {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, []);
+            }
+            $params = $this->_buildMultipart($method, $params);
+        } else {
+            if (! $app_only_auth) {
+                $authorization = $this->_sign($httpmethod, $url, $params);
+            }
+            $params = http_build_query($params);
+        }
+        if ($multipart) {
+            $first_newline      = strpos($params, "\r\n");
+            $multipart_boundary = substr($params, 2, $first_newline - 2);
+            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
+                . $multipart_boundary;
+        }
+        return [$authorization, $params, $request_headers];
+    }
+    
+    /**
+     * Get Bearer authorization string
+     *
+     * @return string authorization
+     */
+    protected function _getBearerAuthorization()
+    {
+        if (self::$_oauth_consumer_key === null
+            && self::$_oauth_bearer_token === null
+        ) {
+            throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
+        }
+        // automatically fetch bearer token, if necessary
+        if (self::$_oauth_bearer_token === null) {
+            $this->oauth2_token();
+        }
+        return 'Bearer ' . self::$_oauth_bearer_token;
+    }
+
+    /**
      * Do preparations to make the API call
      *
      * @param string  $httpmethod      The HTTP method to use for making the request
@@ -1550,48 +1625,18 @@ class Codebird
         $httpmethod, $method, $params, $multipart, $app_only_auth
     )
     {
-        $authorization = null;
-        $url           = $this->_getEndpoint($method);
-        $request_headers = [];
+        $url = $this->_getEndpoint($method);
         if ($httpmethod === 'GET') {
-            if (! $app_only_auth) {
-                $authorization = $this->_sign($httpmethod, $url, $params);
-            }
-            if (json_encode($params) !== '{}'
-                && json_encode($params) !== '[]'
-            ) {
-                $url .= '?' . http_build_query($params);
-            }
+            // GET
+            list ($authorization, $url) =
+                $this->_callApiPreparationsGet($httpmethod, $url, $params, $app_only_auth);
         } else {
-            if ($multipart) {
-                if (! $app_only_auth) {
-                    $authorization = $this->_sign($httpmethod, $url, []);
-                }
-                $params = $this->_buildMultipart($method, $params);
-            } else {
-                if (! $app_only_auth) {
-                    $authorization = $this->_sign($httpmethod, $url, $params);
-                }
-                $params        = http_build_query($params);
-            }
-            if ($multipart) {
-                $first_newline      = strpos($params, "\r\n");
-                $multipart_boundary = substr($params, 2, $first_newline - 2);
-                $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
-                    . $multipart_boundary;
-            }
+            // POST
+            list ($authorization, $params, $request_headers) =
+                $this->_callApiPreparationsPost($httpmethod, $url, $method, $params, $multipart, $app_only_auth);
         }
         if ($app_only_auth) {
-            if (self::$_oauth_consumer_key === null
-                && self::$_oauth_bearer_token === null
-            ) {
-                throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
-            }
-            // automatically fetch bearer token, if necessary
-            if (self::$_oauth_bearer_token === null) {
-                $this->oauth2_token();
-            }
-            $authorization = 'Bearer ' . self::$_oauth_bearer_token;
+            $authorization = $this->_getBearerAuthorization();
         }
 
         return [
