@@ -1085,6 +1085,34 @@ class Codebird
         }
         return substr(md5(microtime(true)), 0, $length);
     }
+    
+    /**
+     * Signature helper
+     *
+     * @param string $httpmethod   Usually either 'GET' or 'POST' or 'DELETE'
+     * @param string $method       The API method to call
+     * @param array  $base_params  The signature base parameters
+     *
+     * @return string signature
+     */
+    protected function _getSignature($httpmethod, $method, $base_params)
+    {
+        // convert params to string
+        $base_string = '';
+        foreach ($base_params as $key => $value) {
+            $base_string .= $key . '=' . $value . '&';
+        }
+
+        // trim last ampersand
+        $base_string = substr($base_string, 0, -1);
+
+        // hash it
+        return $this->_sha1(
+            $httpmethod . '&' .
+            $this->_url($method) . '&' .
+            $this->_url($base_string)
+        );
+    }
 
     /**
      * Generates an OAuth signature
@@ -1101,45 +1129,43 @@ class Codebird
         if (self::$_oauth_consumer_key === null) {
             throw new \Exception('To generate a signature, the consumer key must be set.');
         }
-        $sign_params      = [
-            'consumer_key'     => self::$_oauth_consumer_key,
-            'version'          => '1.0',
-            'timestamp'        => time(),
-            'nonce'            => $this->_nonce(),
-            'signature_method' => 'HMAC-SHA1'
-        ];
-        $sign_base_params = [];
-        foreach ($sign_params as $key => $value) {
-            $sign_base_params['oauth_' . $key] = $this->_url($value);
-        }
+        $sign_base_params = array_map(
+            [$this, '_url'],
+            [
+                'oauth_consumer_key'     => self::$_oauth_consumer_key,
+                'oauth_version'          => '1.0',
+                'oauth_timestamp'        => time(),
+                'oauth_nonce'            => $this->_nonce(),
+                'oauth_signature_method' => 'HMAC-SHA1'
+            ]
+        );
         if ($this->_oauth_token !== null) {
             $sign_base_params['oauth_token'] = $this->_url($this->_oauth_token);
         }
         $oauth_params = $sign_base_params;
-        foreach ($params as $key => $value) {
-            $sign_base_params[$key] = $this->_url($value);
-        }
+
+        // merge in the non-OAuth params
+        $sign_base_params = array_merge(
+            $sign_base_params,
+            array_map([$this, '_url'], $params)
+        );
         ksort($sign_base_params);
-        $sign_base_string = '';
-        foreach ($sign_base_params as $key => $value) {
-            $sign_base_string .= $key . '=' . $value . '&';
-        }
-        $sign_base_string = substr($sign_base_string, 0, -1);
-        $signature        = $this->_sha1($httpmethod . '&' . $this->_url($method) . '&' . $this->_url($sign_base_string));
+
+        $signature = $this->_getSignature($httpmethod, $method, $sign_base_params);
 
         $params = $append_to_get ? $sign_base_params : $oauth_params;
         $params['oauth_signature'] = $signature;
-        $keys = $params;
-        ksort($keys);
+
+        ksort($params);
         if ($append_to_get) {
             $authorization = '';
-            foreach ($keys as $key => $value) {
+            foreach ($params as $key => $value) {
                 $authorization .= $key . '="' . $this->_url($value) . '", ';
             }
             return substr($authorization, 0, -1);
         }
         $authorization = 'OAuth ';
-        foreach ($keys as $key => $value) {
+        foreach ($params as $key => $value) {
             $authorization .= $key . "=\"" . $this->_url($value) . "\", ";
         }
         return substr($authorization, 0, -2);
