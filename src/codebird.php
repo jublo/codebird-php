@@ -685,7 +685,7 @@ class Codebird
         curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
         curl_setopt(
             $ch, CURLOPT_USERAGENT,
-            'codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+            'codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
         );
 
         if ($this->hasProxy()) {
@@ -714,7 +714,7 @@ class Codebird
         $httpOptions = [];
         
         $httpOptions['header'] = [
-            'User-Agent: codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+            'User-Agent: codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
         ];
 
         $httpOptions['ssl'] = [
