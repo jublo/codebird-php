@@ -494,19 +494,6 @@ class Codebird
             $apiparams = [];
         }
 
-        if (! get_magic_quotes_gpc()) {
-            return $apiparams;
-        }
-
-        // remove auto-added slashes recursively if on magic quotes steroids
-        foreach($apiparams as $key => $value) {
-            if (is_array($value)) {
-                $apiparams[$key] = array_map('stripslashes', $value);
-            } else {
-                $apiparams[$key] = stripslashes($value);
-            }
-        }
-
         return $apiparams;
     }
 
