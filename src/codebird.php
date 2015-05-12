@@ -202,6 +202,19 @@ class Codebird
     }
 
     /**
+     * Forgets the OAuth request or access token and secret (User key)
+     *
+     * @return bool
+     */
+    public function logout()
+    {
+        $this->_oauth_token =
+        $this->_oauth_token_secret = null;
+
+        return true;
+    }
+
+    /**
      * Sets if codebird should use cURL
      *
      * @param bool $use_curl Request uses cURL or not
