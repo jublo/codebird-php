@@ -877,6 +877,10 @@ class Codebird
         $url      = self::$_endpoint_oauth . 'oauth2/token';
         $hostname = parse_url($url, PHP_URL_HOST);
 
+        if ($hostname === false) {
+            throw new \Exception('Incorrect API endpoint host.');
+        }
+
         $contextOptions = [
             'http' => [
                 'method'           => 'POST',
@@ -1059,7 +1063,7 @@ class Codebird
             $data,
             self::$_oauth_consumer_secret
             . '&'
-            . ($this->_oauth_token_secret != null
+            . ($this->_oauth_token_secret !== null
                 ? $this->_oauth_token_secret
                 : ''
             ),
@@ -1108,7 +1112,7 @@ class Codebird
         foreach ($sign_params as $key => $value) {
             $sign_base_params['oauth_' . $key] = $this->_url($value);
         }
-        if ($this->_oauth_token != null) {
+        if ($this->_oauth_token !== null) {
             $sign_base_params['oauth_token'] = $this->_url($this->_oauth_token);
         }
         $oauth_params = $sign_base_params;
@@ -1452,7 +1456,11 @@ class Codebird
                 $httpmethod, $method, $params, $multipart, $app_only_auth
             );
 
-        $hostname          = parse_url($url, PHP_URL_HOST);
+        $hostname = parse_url($url, PHP_URL_HOST);
+        if ($hostname === false) {
+            throw new \Exception('Incorrect API endpoint host.');
+        }
+
         $request_headers[] = 'Authorization: ' . $authorization;
         $request_headers[] = 'Accept: */*';
         $request_headers[] = 'Connection: Close';
@@ -1616,7 +1624,7 @@ class Codebird
      *
      * @param string $reply The actual HTTP body, JSON-encoded or URL-encoded
      *
-     * @return string The parsed reply
+     * @return array|string|object The parsed reply
      */
     protected function _parseApiReply($reply)
     {
