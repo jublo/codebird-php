@@ -7,6 +7,7 @@ codebird-php - changelog
 + #109 Proxy support
 - Drop support for internal and old API methods
 + #111 Set user agent for remote calls
++ #106 Add logout method
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
