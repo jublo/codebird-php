@@ -86,6 +86,15 @@ if (! isset($_SESSION['oauth_token'])) {
 $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
 ```
 
+### Logging out
+
+In case you want to log out the current user (to log in a different user without
+creating a new Codebird object), just call the `logout()` method.
+
+```
+$cb->logout();
+```
+
 ### Application-only auth
 
 Some API methods also support authenticating on a per-application level.

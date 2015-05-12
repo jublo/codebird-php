@@ -202,6 +202,19 @@ class Codebird
     }
 
     /**
+     * Forgets the OAuth request or access token and secret (User key)
+     *
+     * @return bool
+     */
+    public function logout()
+    {
+        $this->_oauth_token =
+        $this->_oauth_token_secret = null;
+
+        return true;
+    }
+
+    /**
      * Sets if codebird should use cURL
      *
      * @param bool $use_curl Request uses cURL or not
@@ -832,6 +845,11 @@ class Codebird
         ));
         $result = curl_exec($ch);
 
+        // catch request errors
+        if ($result === false) {
+            throw new \Exception('Request error for bearer token: ' . curl_error($ch));
+        }
+
         // certificate validation results
         $validation_result = curl_errno($ch);
         $this->_validateSslCertificate($validation_result);
@@ -1382,6 +1400,11 @@ class Codebird
         }
 
         $result = curl_exec($ch);
+
+        // catch request errors
+        if ($result === false) {
+            throw new \Exception('Request error for API call: ' . curl_error($ch));
+        }
 
         // certificate validation results
         $validation_result = curl_errno($ch);
