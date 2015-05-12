@@ -1180,8 +1180,6 @@ class Codebird
         // multi-HTTP method endpoints
         switch ($method) {
             case 'account/settings':
-            case 'account/login_verification_enrollment':
-            case 'account/login_verification_request':
                 $method = count($params) > 0 ? $method . '__post' : $method;
                 break;
         }
