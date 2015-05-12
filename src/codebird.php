@@ -1543,7 +1543,7 @@ class Codebird
      * @param array   $params          The parameters to send along
      * @param bool    $app_only_auth   Whether to use app-only bearer authentication
      *
-     * @return array (string authorization, string url)
+     * @return string[] (string authorization, string url)
      */
     protected function _callApiPreparationsGet(
         $httpmethod, $url, $params, $app_only_auth
@@ -1625,7 +1625,8 @@ class Codebird
         $httpmethod, $method, $params, $multipart, $app_only_auth
     )
     {
-        $url = $this->_getEndpoint($method);
+        $url             = $this->_getEndpoint($method);
+        $request_headers = [];
         if ($httpmethod === 'GET') {
             // GET
             list ($authorization, $url) =
