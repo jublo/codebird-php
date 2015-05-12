@@ -1657,10 +1657,10 @@ class Codebird
         $reply = explode("\r\n\r\n", $reply, 4);
 
         // check if using proxy
-        $proxy_strings = [];
-        $proxy_strings[strtolower('HTTP/1.0 200 Connection Established')] = true;
-        $proxy_strings[strtolower('HTTP/1.1 200 Connection Established')] = true;
-        if (array_key_exists(strtolower(substr($reply[0], 0, 35)), $proxy_strings)) {
+        $proxy_tester = strtolower(substr($reply[0], 0, 35));
+        if ($proxy_tester === 'http/1.0 200 connection established'
+            || $proxy_tester === 'http/1.1 200 connection established'
+        ) {
             array_shift($reply);
         } elseif (count($reply) > 2) {
             $headers = array_shift($reply);
