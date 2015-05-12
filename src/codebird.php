@@ -1222,48 +1222,24 @@ class Codebird
     }
 
     /**
-     * Detect filenames in upload parameters,
-     * build multipart request from upload params
+     * Merge multipart string from parameters array
      *
-     * @param string $method  The API method to call
-     * @param array  $params  The parameters to send along
+     * @param array  $possible_files List of possible filename parameters
+     * @param string $border         The multipart border
+     * @param array  $params         The parameters to send along
      *
-     * @return null|string
+     * @return string request
      */
-    protected function _buildMultipart($method, $params)
+    protected function _getMultipartRequestFromParams($possible_files, $border, $params)
     {
-        // well, files will only work in multipart methods
-        if (! $this->_detectMultipart($method)) {
-            return;
-        }
-
-        // only check specific parameters
-        $possible_files = [
-            // Tweets
-            'statuses/update_with_media' => 'media[]',
-            'media/upload' => 'media',
-            // Accounts
-            'account/update_profile_background_image' => 'image',
-            'account/update_profile_image' => 'image',
-            'account/update_profile_banner' => 'banner'
-        ];
-        // method might have files?
-        if (! in_array($method, array_keys($possible_files))) {
-            return;
-        }
-
-        $possible_files = explode(' ', $possible_files[$method]);
-
-        $multipart_border = '--------------------' . $this->_nonce();
-        $multipart_request = '';
-
+        $request = '';
         foreach ($params as $key => $value) {
             // is it an array?
             if (is_array($value)) {
                 throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
             }
-            $multipart_request .=
-                '--' . $multipart_border . "\r\n"
+            $request .=
+                '--' . $border . "\r\n"
                 . 'Content-Disposition: form-data; name="' . $key . '"';
 
             // check for filenames
@@ -1278,11 +1254,8 @@ class Codebird
                     // is it a supported image format?
                     if (in_array($data[2], $this->_supported_media_files)) {
                         // try to read the file
-                        ob_start();
-                        readfile($value);
-                        $data = ob_get_contents();
-                        ob_end_clean();
-                        if (strlen($data) === 0) {
+                        $data = @file_get_contents($value);
+                        if ($data === false || strlen($data) === 0) {
                             continue;
                         }
                         $value = $data;
@@ -1325,10 +1298,50 @@ class Codebird
                 }
             }
 
-            $multipart_request .=
-                "\r\n\r\n" . $value . "\r\n";
+            $request .= "\r\n\r\n" . $value . "\r\n";
         }
-        $multipart_request .= '--' . $multipart_border . '--';
+        
+        return $request;
+    }
+
+
+    /**
+     * Detect filenames in upload parameters,
+     * build multipart request from upload params
+     *
+     * @param string $method  The API method to call
+     * @param array  $params  The parameters to send along
+     *
+     * @return null|string
+     */
+    protected function _buildMultipart($method, $params)
+    {
+        // well, files will only work in multipart methods
+        if (! $this->_detectMultipart($method)) {
+            return;
+        }
+
+        // only check specific parameters
+        $possible_files = [
+            // Tweets
+            'statuses/update_with_media' => 'media[]',
+            'media/upload' => 'media',
+            // Accounts
+            'account/update_profile_background_image' => 'image',
+            'account/update_profile_image' => 'image',
+            'account/update_profile_banner' => 'banner'
+        ];
+        // method might have files?
+        if (! in_array($method, array_keys($possible_files))) {
+            return;
+        }
+
+        $possible_files = explode(' ', $possible_files[$method]);
+
+        $multipart_border = '--------------------' . $this->_nonce();
+        $multipart_request =
+            $this->_getMultipartRequestFromParams($possible_files, $multipart_border, $params)
+            . '--' . $multipart_border . '--';
 
         return $multipart_request;
     }
