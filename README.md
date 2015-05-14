@@ -23,6 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - OpenSSL extension
 
 
+Summary
+-------
+
+Use Codebird to connect to the Twitter REST **and Streaming API :sparkles:** from your PHP code.  
+Codebird supports full 3-way OAuth as well as application-only auth.
+
+
 Authentication
 --------------
 
@@ -338,6 +345,57 @@ $cb2 = new \Codebird\Codebird;
 Please note that your OAuth consumer key and secret is shared within
 multiple Codebird instances, while the OAuth request and access tokens with their
 secrets are *not* shared.
+
+
+Consuming the Twitter Streaming API
+-----------------------------------
+
+The Streaming APIs give developers low latency access to Twitter’s global stream of
+Tweet data. A proper implementation of a streaming client will be pushed messages
+indicating Tweets and other events have occurred, without any of the overhead
+associated with polling a REST endpoint.
+
+To consume one of the available Twitter streams, follow these **two steps:**
+
+```php
+// First, create a callback function:
+
+function some_callback($message)
+{
+    // gets called for every new streamed message
+
+    print_r($message);
+    flush();
+
+    // return false to continue streaming
+    // return true to close the stream
+
+    // close streaming after 1 minute for this sample
+    if (false /* some condition to close the stream */) {
+        return true;
+    }
+
+    return false;
+}
+
+// set the streaming callback in Codebird
+$cb->setStreamingCallback('some_callback');
+
+// any callable is accepted:
+// $cb->setStreamingCallback(['MyClass', 'some_callback']);
+```
+
+```php
+// Second, start consuming the stream:
+$reply = $cb->user();
+
+// See the *Mapping API methods to Codebird function calls* section for method names.
+// $reply = $cb->statuses_filter('track=Windows');
+```
+
+Find more information on the [Streaming API](https://dev.twitter.com/streaming/overview)
+in the developer documentation website.
+
 
 How Do I…?
 ----------
