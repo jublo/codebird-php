@@ -1,7 +1,7 @@
 codebird-php - changelog
 ========================
 
-3.0.0-dev (not yet released)
+2.7.0 (2015-05-14)
 - #92, #108 Fix issues with uploading special chars
 + #109 Proxy support
 - Drop support for internal and old API methods
