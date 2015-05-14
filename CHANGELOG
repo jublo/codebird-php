@@ -9,6 +9,7 @@ codebird-php - changelog
 + #111 Set user agent for remote calls
 + #106 Add logout method
 + #86 Return exception for failed cURL requests
++ #32 Add support for streaming API
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
