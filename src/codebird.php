@@ -77,6 +77,15 @@ class Codebird
     protected static $_endpoint_media = 'https://upload.twitter.com/1.1/';
 
     /**
+     * The Streaming API endpoints to use
+     */
+    protected static $_endpoints_streaming = [
+        'public' => 'https://stream.twitter.com/1.1/',
+        'user'   => 'https://userstream.twitter.com/1.1/',
+        'site'   => 'https://sitestream.twitter.com/1.1/'
+    ];
+
+    /**
      * The API endpoint base to use
      */
     protected static $_endpoint_oauth = 'https://api.twitter.com/';
@@ -100,6 +109,11 @@ class Codebird
      * The file formats that Twitter accepts as image uploads
      */
     protected $_supported_media_files = [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG];
+
+    /**
+     * The callback to call with any new streaming messages
+     */
+    protected $_streaming_callback = null;
 
     /**
      * The current Codebird version
@@ -295,6 +309,21 @@ class Codebird
     }
 
     /**
+     * Sets streaming callback
+     *
+     * @param callable $callback The streaming callback
+     *
+     * @return void
+     */
+    public function setStreamingCallback($callback)
+    {
+        if (!is_callable($callback)) {
+            throw new \Exception('This is not a proper callback.');
+        }
+        $this->_streaming_callback = $callback;
+    }
+
+    /**
      * Get allowed API methods, sorted by GET or POST
      * Watch out for multiple-method "account/settings"!
      *
@@ -348,17 +377,21 @@ class Codebird
                 'saved_searches/list',
                 'saved_searches/show/:id',
                 'search/tweets',
+                'site',
+                'statuses/firehose',
                 'statuses/home_timeline',
                 'statuses/mentions_timeline',
                 'statuses/oembed',
                 'statuses/retweeters/ids',
                 'statuses/retweets/:id',
                 'statuses/retweets_of_me',
+                'statuses/sample',
                 'statuses/show/:id',
                 'statuses/user_timeline',
                 'trends/available',
                 'trends/closest',
                 'trends/place',
+                'user',
                 'users/contributees',
                 'users/contributors',
                 'users/profile_banner',
@@ -405,6 +438,7 @@ class Codebird
                 'saved_searches/create',
                 'saved_searches/destroy/:id',
                 'statuses/destroy/:id',
+                'statuses/filter',
                 'statuses/lookup',
                 'statuses/retweet/:id',
                 'statuses/update',
@@ -676,7 +710,7 @@ class Codebird
         curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
         curl_setopt(
             $ch, CURLOPT_USERAGENT,
-            'codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+            'codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
         );
 
         if ($this->hasProxy()) {
@@ -695,17 +729,19 @@ class Codebird
 
     /**
      * Gets a non cURL initialization
+     *
      * @param string $url            the URL for the curl initialization
      * @param array  $contextOptions the options for the stream context
      * @param string $hostname       the hostname to verify the SSL FQDN for
-     * @return the read data
+     *
+     * @return array the read data
      */
     protected function getNoCurlInitialization($url, $contextOptions, $hostname = '')
     {
         $httpOptions = [];
         
         $httpOptions['header'] = [
-            'User-Agent: codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
+            'User-Agent: codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
         ];
 
         $httpOptions['ssl'] = [
@@ -1171,8 +1207,6 @@ class Codebird
         // multi-HTTP method endpoints
         switch ($method) {
             case 'account/settings':
-            case 'account/login_verification_enrollment':
-            case 'account/login_verification_request':
                 $method = count($params) > 0 ? $method . '__post' : $method;
                 break;
         }
@@ -1348,6 +1382,32 @@ class Codebird
     }
 
     /**
+     * Detects if API call should use streaming endpoint, and if yes, which one
+     *
+     * @param string $method The API method to call
+     *
+     * @return string|bool Variant of streaming API to be used
+     */
+    protected function _detectStreaming($method) {
+        $streamings = [
+            'public' => [
+                'statuses/sample',
+                'statuses/filter',
+                'statuses/firehose'
+            ],
+            'user' => ['user'],
+            'site' => ['site']
+        ];
+        foreach ($streamings as $key => $values) {
+            if (in_array($method, $values)) {
+                return $key;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
      * Builds the complete API endpoint url
      *
      * @param string $method The API method to call
@@ -1360,6 +1420,8 @@ class Codebird
             $url = self::$_endpoint_oauth . $method;
         } elseif ($this->_detectMedia($method)) {
             $url = self::$_endpoint_media . $method . '.json';
+        } elseif ($variant = $this->_detectStreaming($method)) {
+            $url = self::$_endpoints_streaming[$variant] . $method . '.json';
         } else {
             $url = self::$_endpoint . $method . '.json';
         }
@@ -1386,6 +1448,11 @@ class Codebird
         ) {
                 throw new \Exception('To call this API, the OAuth access token must be set.');
         }
+        // use separate API access for streaming API
+        if ($this->_detectStreaming($method)) {
+            return $this->_callApiStreaming($httpmethod, $method, $params, $app_only_auth);
+        }
+
         if ($this->_use_curl) {
             return $this->_callApiCurl($httpmethod, $method, $params, $multipart, $app_only_auth);
         }
@@ -1590,7 +1657,7 @@ class Codebird
         }
         return [$authorization, $params, $request_headers];
     }
-    
+
     /**
      * Get Bearer authorization string
      *
@@ -1643,6 +1710,157 @@ class Codebird
         return [
             $authorization, $url, $params, $request_headers
         ];
+    }
+
+    /**
+     * Calls the streaming API
+     *
+     * @param string          $httpmethod      The HTTP method to use for making the request
+     * @param string          $method          The API method to call
+     * @param array  optional $params          The parameters to send along
+     * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
+     *
+     * @return void
+     */
+
+    protected function _callApiStreaming(
+        $httpmethod, $method, $params = [], $app_only_auth = false
+    )
+    {
+        if ($this->_streaming_callback === null) {
+            throw new \Exception('Set streaming callback before consuming a stream.');
+        }
+
+        $params['delimited'] = 'length';
+
+        list ($authorization, $url, $params, $request_headers)
+            = $this->_callApiPreparations(
+                $httpmethod, $method, $params, false, $app_only_auth
+            );
+
+        $hostname = parse_url($url, PHP_URL_HOST);
+        $path     = parse_url($url, PHP_URL_PATH);
+        $query    = parse_url($url, PHP_URL_QUERY);
+        if ($hostname === false) {
+            throw new \Exception('Incorrect API endpoint host.');
+        }
+
+        $request_headers[] = 'Authorization: ' . $authorization;
+        $request_headers[] = 'Accept: */*';
+        if ($httpmethod !== 'GET') {
+            $request_headers[]  = 'Content-Type: application/x-www-form-urlencoded';
+            $request_headers[]  = 'Content-Length: ' . strlen($params);
+        }
+
+        $errno   = 0;
+        $errstr  = '';
+        $timeout = $this->_connectionTimeout;
+        $ch = stream_socket_client(
+            'ssl://' . $hostname . ':443',
+            $errno, $errstr,
+            $this->_connectionTimeout,
+            STREAM_CLIENT_CONNECT
+        );
+
+        // send request
+        $request = $httpmethod . ' '
+            . $path . ($query ? '?' . $query : '') . " HTTP/1.1\r\n"
+            . 'Host: ' . $hostname . "\r\n"
+            . implode("\r\n", $request_headers)
+            . "\r\n\r\n";
+        if ($httpmethod !== 'GET') {
+            $request .= $params;
+        }
+        fputs($ch, $request);
+        stream_set_blocking($ch, 0);
+        stream_set_timeout($ch, 0);
+
+        // collect headers
+        $result  = stream_get_line($ch, 1048576, "\r\n\r\n");
+        $headers = explode("\r\n", $result);
+
+        // find HTTP status
+        $httpstatus = '500';
+        $match      = [];
+        if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+            $httpstatus = $match[1];
+        }
+
+        list($headers, $none) = $this->_parseApiHeaders($result);
+        $rate                 = $this->_getRateLimitInfo($headers);
+
+        if ($httpstatus !== '200') {
+            $reply = [
+                'httpstatus' => $httpstatus,
+                'rate'       => $rate
+            ];
+            switch ($this->_return_format) {
+                case CODEBIRD_RETURNFORMAT_ARRAY:
+                    return $reply;
+                case CODEBIRD_RETURNFORMAT_OBJECT:
+                    return (object) $reply;
+                case CODEBIRD_RETURNFORMAT_JSON:
+                    return json_encode($reply);
+            }
+        }
+
+        $ch_array        = [$ch];
+        $null            = null;
+        $data            = '';
+        $signal_function = function_exists('pcntl_signal_dispatch');
+
+        while (!feof($ch)) {
+            // call signal handlers, if any
+            if ($signal_function) {
+                pcntl_signal_dispatch();
+            }
+
+            $chunk_length = fgets($ch, 10);
+            if ($chunk_length == '' || !$chunk_length = hexdec($chunk_length)) {
+                continue;
+            }
+
+            $chunk = fread($ch, $chunk_length + 4);
+            $data .= $chunk;
+
+            // extract object to parse
+            list($object_length, $temp) = explode("\r\n", $data, 2);
+            if ($object_length < 1
+            || strlen($temp) < $object_length) {
+                continue;
+            }
+
+            $reply = substr($temp, 0, $object_length);
+            $data  = substr($temp, $object_length + 2);
+
+            $reply = $this->_parseApiReply($reply);
+            switch ($this->_return_format) {
+                case CODEBIRD_RETURNFORMAT_ARRAY:
+                    $reply['httpstatus'] = $httpstatus;
+                    $reply['rate']       = $rate;
+                    break;
+                case CODEBIRD_RETURNFORMAT_OBJECT:
+                    $reply->httpstatus = $httpstatus;
+                    $reply->rate       = $rate;
+                    break;
+            }
+
+            $this->_deliverStreamingMessage($reply);
+        }
+
+        return;
+    }
+    
+    /**
+     * Calls streaming callback with received message
+     *
+     * @param string|array|object message
+     *
+     * @return bool Whether to cancel streaming
+     */
+    protected function _deliverStreamingMessage($message)
+    {
+        return call_user_func($this->_streaming_callback, $message);
     }
 
     /**
