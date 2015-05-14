@@ -1449,7 +1449,7 @@ class Codebird
                 throw new \Exception('To call this API, the OAuth access token must be set.');
         }
         // use separate API access for streaming API
-        if ($this->_detectStreaming($method)) {
+        if ($this->_detectStreaming($method) !== false) {
             return $this->_callApiStreaming($httpmethod, $method, $params, $app_only_auth);
         }
 
@@ -1754,7 +1754,6 @@ class Codebird
 
         $errno   = 0;
         $errstr  = '';
-        $timeout = $this->_connectionTimeout;
         $ch = stream_socket_client(
             'ssl://' . $hostname . ':443',
             $errno, $errstr,
@@ -1786,8 +1785,8 @@ class Codebird
             $httpstatus = $match[1];
         }
 
-        list($headers, $none) = $this->_parseApiHeaders($result);
-        $rate                 = $this->_getRateLimitInfo($headers);
+        list($headers,) = $this->_parseApiHeaders($result);
+        $rate           = $this->_getRateLimitInfo($headers);
 
         if ($httpstatus !== '200') {
             $reply = [
@@ -1804,10 +1803,8 @@ class Codebird
             }
         }
 
-        $ch_array        = [$ch];
-        $null            = null;
-        $data            = '';
         $signal_function = function_exists('pcntl_signal_dispatch');
+        $data            = '';
 
         while (!feof($ch)) {
             // call signal handlers, if any
