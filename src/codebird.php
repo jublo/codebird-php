@@ -1386,7 +1386,7 @@ class Codebird
      *
      * @param string $method The API method to call
      *
-     * @return string|bool Variant of streaming API to be used
+     * @return string|false Variant of streaming API to be used
      */
     protected function _detectStreaming($method) {
         $streamings = [
