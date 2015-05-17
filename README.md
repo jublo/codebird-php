@@ -357,21 +357,31 @@ associated with polling a REST endpoint.
 
 To consume one of the available Twitter streams, follow these **two steps:**
 
+1. Set up a callback function that gets called for every new streaming message that arrives.
+
+   Codebird also calls this function once per second, to allow you to work on any due tasks, and to give you the chance to cancel the stream even if no new messages appear.
+
+2. After creating the callback, tell Codebird about it using a [callable](http://php.net/manual/en/language.types.callable.php). Then start consuming the stream.
+
 ```php
 // First, create a callback function:
 
 function some_callback($message)
 {
     // gets called for every new streamed message
+    // gets called with $message = NULL once per second
 
-    print_r($message);
-    flush();
+    if ($message !== null) {
+        print_r($message);
+        flush();
+    }
 
     // return false to continue streaming
     // return true to close the stream
 
-    // close streaming after 1 minute for this sample
-    if (false /* some condition to close the stream */) {
+    // close streaming after 1 minute for this simple sample
+    // don't rely on globals in your code!
+    if (time() - $GLOBALS['time_start'] >= 60) {
         return true;
     }
 
@@ -383,9 +393,11 @@ $cb->setStreamingCallback('some_callback');
 
 // any callable is accepted:
 // $cb->setStreamingCallback(['MyClass', 'some_callback']);
-```
 
-```php
+// for canceling, see callback function body
+// not considered good practice in real world!
+$GLOBALS['time_start'] = time();
+
 // Second, start consuming the stream:
 $reply = $cb->user();
 

@@ -1805,6 +1805,7 @@ class Codebird
 
         $signal_function = function_exists('pcntl_signal_dispatch');
         $data            = '';
+        $last_message    = time();
 
         while (!feof($ch)) {
             // call signal handlers, if any
@@ -1812,8 +1813,26 @@ class Codebird
                 pcntl_signal_dispatch();
             }
 
+            $cha = [$ch];
+            $write = $except = null;
+            if (false === ($num_changed_streams = stream_select($cha, $write, $except, 0, 200000))) {
+                break;
+            } elseif ($num_changed_streams === 0) {
+                if (time() - $last_message >= 1) {
+                    // deliver empty message, allow callback to cancel stream
+                    $cancel_stream = $this->_deliverStreamingMessage(null);
+                    if ($cancel_stream) {
+                        break;
+                    }
+
+                    $last_message = time();
+                }
+                continue;
+            }
+
             $chunk_length = fgets($ch, 10);
-            if ($chunk_length == '' || !$chunk_length = hexdec($chunk_length)) {
+
+            if ($chunk_length === '' || !$chunk_length = hexdec($chunk_length)) {
                 continue;
             }
 
@@ -1842,7 +1861,12 @@ class Codebird
                     break;
             }
 
-            $this->_deliverStreamingMessage($reply);
+            $cancel_stream = $this->_deliverStreamingMessage($reply);
+            if ($cancel_stream) {
+                break;
+            }
+
+            $last_message = time();
         }
 
         return;
