@@ -3,6 +3,7 @@ codebird-php - changelog
 
 3.0.0 (not yet released)
 - #107 Decoding issue for big ints on 32-bit servers
++ #32 Add support for streaming API
 
 2.7.0 (2015-05-14)
 - #92, #108 Fix issues with uploading special chars
@@ -11,7 +12,6 @@ codebird-php - changelog
 + #111 Set user agent for remote calls
 + #106 Add logout method
 + #86 Return exception for failed cURL requests
-+ #32 Add support for streaming API
 
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
