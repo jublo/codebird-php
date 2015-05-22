@@ -177,8 +177,9 @@ sent with the code above.
 
 ### Uploading media to Twitter
 
-Tweet media can be uploaded in a 2-step process.
-**First** you send each image to Twitter, like this:
+Tweet media can be uploaded in a 2-step process:
+
+**First** you send each media to Twitter. For **images**, it works like this:
 
 ```php
 // these files to upload. You can also just upload 1 image!
@@ -197,6 +198,8 @@ foreach ($media_files as $file) {
     $media_ids[] = $reply->media_id_string;
 }
 ```
+
+Uploading **videos** requires you to send the data in chunks. See the next section on this.
 
 **Second,** you attach the collected media ids for all images to your call
 to ```statuses/update```, like this:
@@ -217,7 +220,7 @@ print_r($reply);
 Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
 sent with the code above.
 
-More [documentation for tweeting with media](https://dev.twitter.com/rest/public/uploading-media-multiple-photos) is available on the Twitter Developer site.
+More [documentation for uploading media](https://dev.twitter.com/rest/public/uploading-media) is available on the Twitter Developer site.
 
 #### Remote files
 
@@ -229,6 +232,78 @@ $reply = $cb->media_upload(array(
 ```
 
 :warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
+
+#### Video files
+
+Uploading videos to Twitter (≤ 15MB, MP4) requires you to send them in chunks.
+You need to perform at least 3 calls to obtain your `media_id` for the video:
+
+1. Send an `INIT` event to get a `media_id` draft.
+2. Upload your chunks with `APPEND` events, each one up to 5MB in size.
+3. Send a `FINALIZE` event to convert the draft to a ready-to-tweet `media_id`.
+4. Post your tweet with video attached.
+
+Here’s a sample for video uploads:
+
+```php
+$file       = 'demo-video.mp4';
+$size_bytes = filesize($file);
+$fp         = fopen($file, 'r');
+
+// INIT the upload
+
+$reply = $cb->media_upload([
+    'command'     => 'INIT',
+    'media_type'  => 'video/mp4',
+    'total_bytes' => $size_bytes
+]);
+
+$media_id = $reply->media_id_string;
+
+// APPEND data to the upload
+
+$segment_id = 0;
+
+while (! feof($fp)) {
+    $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+
+    $reply = $cb->media_upload([
+        'command'       => 'APPEND',
+        'media_id'      => $media_id,
+        'segment_index' => $segment_id,
+        'media'         => $chunk
+    ]);
+
+    $segment_id++;
+}
+
+fclose($fp);
+
+// FINALIZE the upload
+
+$reply = $cb->media_upload([
+    'command'       => 'FINALIZE',
+    'media_id'      => $media_id
+]);
+
+var_dump($reply);
+
+if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
+    die();
+}
+
+// Now use the media_id in a tweet
+$reply = $cb->statuses_update([
+    'status'    => 'Twitter now accepts video uploads.',
+    'media_ids' => $media_id
+]);
+
+```
+
+:warning: The Twitter API reproducibly rejected some MP4 videos even though they are valid. It’s currently undocumented which video codecs are supported and which are not.
+
+:warning: When uploading a video in multiple chunks, you may run into an error `The validation of media ids failed.` even though the `media_id` is correct. This is known. Please check back with this [Twitter community forums thread](https://twittercommunity.com/t/video-uploads-via-rest-api/38177/5).
+
 
 ### Requests with app-only auth
 
