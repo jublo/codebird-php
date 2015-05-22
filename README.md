@@ -252,11 +252,11 @@ $fp         = fopen($file, 'r');
 
 // INIT the upload
 
-$reply = $cb->media_upload([
+$reply = $cb->media_upload(array(
     'command'     => 'INIT',
     'media_type'  => 'video/mp4',
     'total_bytes' => $size_bytes
-]);
+));
 
 $media_id = $reply->media_id_string;
 
@@ -267,12 +267,12 @@ $segment_id = 0;
 while (! feof($fp)) {
     $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
 
-    $reply = $cb->media_upload([
+    $reply = $cb->media_upload(array(
         'command'       => 'APPEND',
         'media_id'      => $media_id,
         'segment_index' => $segment_id,
         'media'         => $chunk
-    ]);
+    ));
 
     $segment_id++;
 }
@@ -281,10 +281,10 @@ fclose($fp);
 
 // FINALIZE the upload
 
-$reply = $cb->media_upload([
+$reply = $cb->media_upload(array(
     'command'       => 'FINALIZE',
     'media_id'      => $media_id
-]);
+));
 
 var_dump($reply);
 
@@ -293,11 +293,10 @@ if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
 }
 
 // Now use the media_id in a tweet
-$reply = $cb->statuses_update([
+$reply = $cb->statuses_update(array(
     'status'    => 'Twitter now accepts video uploads.',
     'media_ids' => $media_id
-]);
-
+));
 ```
 
 :warning: The Twitter API reproducibly rejected some MP4 videos even though they are valid. It’s currently undocumented which video codecs are supported and which are not.
