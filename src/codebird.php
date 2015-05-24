@@ -1775,7 +1775,9 @@ class Codebird
         stream_set_timeout($ch, 0);
 
         // collect headers
-        $result  = stream_get_line($ch, 1048576, "\r\n\r\n");
+        do{
+            $result  = stream_get_line($ch, 1048576, "\r\n\r\n");
+        }while(!$result);
         $headers = explode("\r\n", $result);
 
         // find HTTP status
@@ -1806,50 +1808,58 @@ class Codebird
         $signal_function = function_exists('pcntl_signal_dispatch');
         $data            = '';
         $last_message    = time();
-
+        $chunk_length    = 0;
+        $message_length  = 0;
+        
         while (!feof($ch)) {
             // call signal handlers, if any
             if ($signal_function) {
                 pcntl_signal_dispatch();
             }
-
             $cha = [$ch];
             $write = $except = null;
             if (false === ($num_changed_streams = stream_select($cha, $write, $except, 0, 200000))) {
                 break;
             } elseif ($num_changed_streams === 0) {
                 if (time() - $last_message >= 1) {
-                    // deliver empty message, allow callback to cancel stream
+                    //deliver empty message, allow callback to cancel stream
                     $cancel_stream = $this->_deliverStreamingMessage(null);
                     if ($cancel_stream) {
                         break;
                     }
-
                     $last_message = time();
                 }
                 continue;
             }
-
-            $chunk_length = fgets($ch, 10);
-
+            $chunk_length_raw = $chunk_length = fgets($ch, 10);
             if ($chunk_length === '' || !$chunk_length = hexdec($chunk_length)) {
                 continue;
             }
 
-            $chunk = fread($ch, $chunk_length + 4);
-            $data .= $chunk;
+            $chunk = '';
+            do{
+                $chunk .= fread($ch, $chunk_length);
+                $chunk_length -= strlen($chunk); 
+            } while( $chunk_length > 0);
+            
+            if(0 === $message_length){
+                $message_length = (int) strstr($chunk, "\r\n", true);
+                if($message_length){
+                    $chunk = substr($chunk, strpos( $chunk, "\r\n") + 2);
+                }else{
+                    continue;
+                }
 
-            // extract object to parse
-            list($object_length, $temp) = explode("\r\n", $data, 2);
-            if ($object_length < 1
-            || strlen($temp) < $object_length) {
+                $data = $chunk;
+            }else{
+                $data .= $chunk;    
+            }
+
+            if(strlen($data) < $message_length){
                 continue;
             }
 
-            $reply = substr($temp, 0, $object_length);
-            $data  = substr($temp, $object_length + 2);
-
-            $reply = $this->_parseApiReply($reply);
+            $reply = $this->_parseApiReply($data);
             switch ($this->_return_format) {
                 case CODEBIRD_RETURNFORMAT_ARRAY:
                     $reply['httpstatus'] = $httpstatus;
@@ -1866,6 +1876,8 @@ class Codebird
                 break;
             }
 
+            $data =  '';
+            $message_length = 0;
             $last_message = time();
         }
 
@@ -1881,7 +1893,7 @@ class Codebird
      */
     protected function _deliverStreamingMessage($message)
     {
-        return call_user_func($this->_streaming_callback, $message);
+        return call_user_func($this->_streaming_callback, $message);    
     }
 
     /**
