@@ -1808,7 +1808,6 @@ class Codebird
         $signal_function = function_exists('pcntl_signal_dispatch');
         $data            = '';
         $last_message    = time();
-        $chunk_length    = 0;
         $message_length  = 0;
 
         while (!feof($ch)) {
@@ -1831,7 +1830,7 @@ class Codebird
                 }
                 continue;
             }
-            $chunk_length_raw = $chunk_length = fgets($ch, 10);
+            $chunk_length = fgets($ch, 10);
             if ($chunk_length === '' || !$chunk_length = hexdec($chunk_length)) {
                 continue;
             }
