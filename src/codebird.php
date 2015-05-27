@@ -26,10 +26,7 @@ $constants = [
     'CURLE_SSL_CACERT' => 60,
     'CURLE_SSL_CACERT_BADFILE' => 77,
     'CURLE_SSL_CRL_BADFILE' => 82,
-    'CURLE_SSL_ISSUER_ERROR' => 83,
-    // workaround for http://php.net/manual/en/function.curl-setopt.php#107314
-    '_CURLOPT_TIMEOUT_MS' => 155,
-    '_CURLOPT_CONNECTTIMEOUT_MS' => 156
+    'CURLE_SSL_ISSUER_ERROR' => 83
 ];
 foreach ($constants as $id => $i) {
     defined($id) or define($id, $i);
@@ -1294,8 +1291,8 @@ class Codebird
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
                         // use hardcoded download timeouts for now
-                        curl_setopt($ch, _CURLOPT_TIMEOUT_MS, 5000);
-                        curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 5000);
+                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 2000);
                         $result = curl_exec($ch);
                         if ($result !== false) {
                             $value = $result;
@@ -1492,11 +1489,11 @@ class Codebird
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
 
         if (isset($this->_timeout)) {
-            curl_setopt($ch, _CURLOPT_TIMEOUT_MS, $this->_timeout);
+            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
         }
 
         if (isset($this->_connectionTimeout)) {
-            curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
         }
 
         $result = curl_exec($ch);
