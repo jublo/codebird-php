@@ -1775,9 +1775,9 @@ class Codebird
         stream_set_timeout($ch, 0);
 
         // collect headers
-        do{
+        do {
             $result  = stream_get_line($ch, 1048576, "\r\n\r\n");
-        }while(!$result);
+        } while(!$result);
         $headers = explode("\r\n", $result);
 
         // find HTTP status
@@ -1810,7 +1810,7 @@ class Codebird
         $last_message    = time();
         $chunk_length    = 0;
         $message_length  = 0;
-        
+
         while (!feof($ch)) {
             // call signal handlers, if any
             if ($signal_function) {
@@ -1822,7 +1822,7 @@ class Codebird
                 break;
             } elseif ($num_changed_streams === 0) {
                 if (time() - $last_message >= 1) {
-                    //deliver empty message, allow callback to cancel stream
+                    // deliver empty message, allow callback to cancel stream
                     $cancel_stream = $this->_deliverStreamingMessage(null);
                     if ($cancel_stream) {
                         break;
@@ -1837,25 +1837,25 @@ class Codebird
             }
 
             $chunk = '';
-            do{
+            do {
                 $chunk .= fread($ch, $chunk_length);
                 $chunk_length -= strlen($chunk); 
-            } while( $chunk_length > 0);
-            
-            if(0 === $message_length){
+            } while($chunk_length > 0);
+
+            if(0 === $message_length) {
                 $message_length = (int) strstr($chunk, "\r\n", true);
-                if($message_length){
-                    $chunk = substr($chunk, strpos( $chunk, "\r\n") + 2);
-                }else{
+                if ($message_length) {
+                    $chunk = substr($chunk, strpos($chunk, "\r\n") + 2);
+                } else {
                     continue;
                 }
 
                 $data = $chunk;
-            }else{
-                $data .= $chunk;    
+            } else {
+                $data .= $chunk;
             }
 
-            if(strlen($data) < $message_length){
+            if (strlen($data) < $message_length) {
                 continue;
             }
 
@@ -1876,9 +1876,9 @@ class Codebird
                 break;
             }
 
-            $data =  '';
+            $data           = '';
             $message_length = 0;
-            $last_message = time();
+            $last_message   = time();
         }
 
         return;
