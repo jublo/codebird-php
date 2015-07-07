@@ -571,7 +571,7 @@ class Codebird
         // replace AA by URL parameters
         $method_template = $method;
         $match           = [];
-        if (preg_match('/[A-Z_]{2,}/', $method, $match)) {
+        if (preg_match_all('/[A-Z_]{2,}/', $method, $match)) {
             foreach ($match as $param) {
                 $param_l = strtolower($param);
                 $method_template = str_replace($param, ':' . $param_l, $method_template);
