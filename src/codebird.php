@@ -1269,6 +1269,8 @@ class Codebird
                         // use hardcoded download timeouts for now
                         curl_setopt($ch, _CURLOPT_TIMEOUT_MS, 5000);
                         curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        // find files that have been redirected
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $result = curl_exec($ch);
                         if ($result !== false) {
                             $value = $result;
