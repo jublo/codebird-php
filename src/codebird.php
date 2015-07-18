@@ -513,9 +513,6 @@ class Codebird
         if (is_array($params[0])) {
             // given parameters are array
             $apiparams = $params[0];
-            if (! is_array($apiparams)) {
-                $apiparams = [];
-            }
             return $apiparams;
         }
 
