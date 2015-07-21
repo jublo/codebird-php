@@ -1,6 +1,14 @@
 codebird-php - changelog
 ========================
 
+2.7.0 (2015-05-14)
+- #92, #108 Fix issues with uploading special chars
++ #109 Proxy support
+- Drop support for internal and old API methods
++ #111 Set user agent for remote calls
++ #106 Add logout method
++ #86 Return exception for failed cURL requests
+
 2.6.1 (2014-12-13)
 - #90 Allow uploading media with special chars
 

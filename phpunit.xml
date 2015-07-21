@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="true"
+         backupStaticAttributes="false"
+         strict="true"
+         colors="true"
+         verbose="true">
+
+    <php>
+        <const name="TESTSUITE_CONSUMER_KEY" value="PNVfyHvoowa9h0Tt4fF3VQ"/>
+        <const name="TESTSUITE_CONSUMER_SECRET" value="rny1vPxJ02H8VSaJCxv3QVVU44Kb41Sy3w7EJHmg"/>
+        <const name="TESTSUITE_ACCESS_TOKEN" value="14648265-rPn8EJwfBG1FAzGmYUd1YxJB18LJwdEpzlNvEM8SZ"/>
+        <const name="TESTSUITE_ACCESS_TOKEN_SECRET" value="agvf3L3ebF1vXx8VOmofBZvrJBB1KKIPWfLl5TQLk"/>
+        <const name="TESTSUITE_CODEBIRD_HOST" value="http://localhost" />
+        <const name="TESTSUITE_CODEBIRD_URL" value="/codebird-php" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Environment">
+            <file>test/environment_test.php</file>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory suffix="_tests.php">test</directory>
+        </testsuite>
+    </testsuites>
+<!--
+    <logging>
+        <log type="coverage-html" target="build/coverage" title="codebird-php"
+             charset="UTF-8" yui="true" highlight="true"
+             lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+    </logging>
+-->
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">.</directory>
+        </whitelist>
+    </filter>
+</phpunit>
