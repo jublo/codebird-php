@@ -733,7 +733,7 @@ class Codebird
     protected function getNoCurlInitialization($url, $contextOptions, $hostname = '')
     {
         $httpOptions = [];
-        
+
         $httpOptions['header'] = [
             'User-Agent: codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
         ];
@@ -1290,6 +1290,8 @@ class Codebird
                         // use hardcoded download timeouts for now
                         curl_setopt($ch, CURLOPT_TIMEOUT_MS, 5000);
                         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        // find files that have been redirected
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $result = curl_exec($ch);
                         if ($result !== false) {
                             $value = $result;

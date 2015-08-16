@@ -9,6 +9,9 @@ codebird-php - changelog
 + #121 Allow for multiple parameters in templated methods
   by replacing preg_match with preg_match_all
 
+2.7.1 (2015-08-16)
++ #124 Download redirected remote images
+
 2.7.0 (2015-05-14)
 - #92, #108 Fix issues with uploading special chars
 + #109 Proxy support
