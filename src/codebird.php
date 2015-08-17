@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   2.7.0
+ * @version   2.7.1
  * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2015 Jublo Solutions <support@jublo.net>
  * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
@@ -104,7 +104,7 @@ class Codebird
     /**
      * The current Codebird version
      */
-    protected $_version = '2.7.0';
+    protected $_version = '2.7.1';
 
     /**
      * Auto-detect cURL absence
@@ -716,7 +716,7 @@ class Codebird
     protected function getNoCurlInitialization($url, $contextOptions, $hostname = '')
     {
         $httpOptions = array();
-        
+
         $httpOptions['header'] = array(
             'User-Agent: codebird-php ' . $this->getVersion() . ' by Jublo Solutions <support@jublo.net>'
         );
@@ -1269,6 +1269,8 @@ class Codebird
                         // use hardcoded download timeouts for now
                         curl_setopt($ch, _CURLOPT_TIMEOUT_MS, 5000);
                         curl_setopt($ch, _CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        // find files that have been redirected
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         $result = curl_exec($ch);
                         if ($result !== false) {
                             $value = $result;
