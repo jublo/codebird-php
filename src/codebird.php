@@ -570,6 +570,7 @@ class Codebird
         $match           = [];
         if (preg_match_all('/[A-Z_]{2,}/', $method, $match)) {
             foreach ($match as $param) {
+                $param = $param[0];
                 $param_l = strtolower($param);
                 $method_template = str_replace($param, ':' . $param_l, $method_template);
                 if (! isset($apiparams[$param_l])) {
@@ -1102,7 +1103,7 @@ class Codebird
         }
         return substr(md5(microtime(true)), 0, $length);
     }
-    
+
     /**
      * Signature helper
      *
@@ -1317,7 +1318,7 @@ class Codebird
 
             $request .= "\r\n\r\n" . $value . "\r\n";
         }
-        
+
         return $request;
     }
 
@@ -1399,7 +1400,7 @@ class Codebird
                 return $key;
             }
         }
-        
+
         return false;
     }
 
@@ -1834,7 +1835,7 @@ class Codebird
             $chunk = '';
             do {
                 $chunk .= fread($ch, $chunk_length);
-                $chunk_length -= strlen($chunk); 
+                $chunk_length -= strlen($chunk);
             } while($chunk_length > 0);
 
             if(0 === $message_length) {
@@ -1878,7 +1879,7 @@ class Codebird
 
         return;
     }
-    
+
     /**
      * Calls streaming callback with received message
      *
@@ -1888,7 +1889,7 @@ class Codebird
      */
     protected function _deliverStreamingMessage($message)
     {
-        return call_user_func($this->_streaming_callback, $message);    
+        return call_user_func($this->_streaming_callback, $message);
     }
 
     /**
