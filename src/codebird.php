@@ -762,6 +762,9 @@ class Codebird
             ['http' => $httpOptions]
         );
 
+        // concatenate $options['http']['header']
+        $options['http']['header'] = implode("\r\n", $options['http']['header']);
+
         // silent the file_get_contents function
         $content = @file_get_contents($url, false, stream_context_create($options));
 
