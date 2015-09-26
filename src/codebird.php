@@ -1296,6 +1296,8 @@ class Codebird
                         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 2000);
                         // find files that have been redirected
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                        // process compressed images
+                        curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
                         $result = curl_exec($ch);
                         if ($result !== false) {
                             $value = $result;
