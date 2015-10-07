@@ -1324,7 +1324,7 @@ class Codebird
                             'http' => [
                                 'method'           => 'GET',
                                 'protocol_version' => '1.1',
-                                'timeout'          => $this->_remote_download_timeout
+                                'timeout'          => $this->_remoteDownloadTimeout
                             ],
                             'ssl' => [
                                 'verify_peer'  => false
