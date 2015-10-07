@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Summary
 -------
 
-Use Codebird to connect to the Twitter REST **and Streaming API :sparkles:** from your PHP code.  
+Use Codebird to connect to the Twitter REST **and Streaming API :sparkles:** from your PHP code.
 Codebird supports full 3-way OAuth as well as application-only auth.
 
 
@@ -239,6 +239,13 @@ $reply = $cb->media_upload(array(
 ```
 
 :warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
+
+To circumvent download issues when remote servers are slow to respond,
+you may customise the remote download timeout, like this:
+
+```php
+$cb->setRemoteDownloadTimeout(10000); // milliseconds
+```
 
 #### Video files
 

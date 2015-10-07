@@ -133,6 +133,11 @@ class Codebird
     protected $_connectionTimeout = 3000;
 
     /**
+     * Remote media download timeout
+     */
+    protected $_remoteDownloadTimeout = 5000;
+
+    /**
      * Proxy
      */
     protected $_proxy = [];
@@ -263,6 +268,18 @@ class Codebird
     public function setConnectionTimeout($timeout)
     {
         $this->_connectionTimeout = (int) $timeout;
+    }
+
+    /**
+     * Sets remote media download timeout in milliseconds
+     *
+     * @param int $timeout Remote media timeout in milliseconds
+     *
+     * @return void
+     */
+    public function setRemoteDownloadTimeout($timeout)
+    {
+        $this->_remoteDownloadTimeout = (int) $timeout;
     }
 
     /**
@@ -1292,8 +1309,8 @@ class Codebird
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
                         // use hardcoded download timeouts for now
-                        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 5000);
-                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 2000);
+                        curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_remoteDownloadTimeout);
+                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_remoteDownloadTimeout / 2);
                         // find files that have been redirected
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         // process compressed images
@@ -1307,7 +1324,7 @@ class Codebird
                             'http' => [
                                 'method'           => 'GET',
                                 'protocol_version' => '1.1',
-                                'timeout'          => 5000
+                                'timeout'          => $this->_remote_download_timeout
                             ],
                             'ssl' => [
                                 'verify_peer'  => false
