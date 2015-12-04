@@ -352,6 +352,9 @@ class Codebird
                 'application/rate_limit_status',
                 'blocks/ids',
                 'blocks/list',
+                'collections/entries',
+                'collections/list',
+                'collections/show',
                 'direct_messages',
                 'direct_messages/sent',
                 'direct_messages/show',
@@ -426,6 +429,13 @@ class Codebird
                 'account/update_profile_image',
                 'blocks/create',
                 'blocks/destroy',
+                'collections/create',
+                'collections/destroy',
+                'collections/entries/add',
+                'collections/entries/curate',
+                'collections/entries/move',
+                'collections/entries/remove',
+                'collections/update',
                 'direct_messages/destroy',
                 'direct_messages/new',
                 'favorites/create',
@@ -1401,6 +1411,20 @@ class Codebird
     }
 
     /**
+     * Detects if API call should use JSON body
+     *
+     * @param string $method The API method to call
+     *
+     * @return bool Whether the method is defined as accepting JSON body
+     */
+    protected function _detectJsonBody($method) {
+        $json_bodies = [
+            'collections/entries/curate'
+        ];
+        return in_array($method, $json_bodies);
+    }
+
+    /**
      * Detects if API call should use streaming endpoint, and if yes, which one
      *
      * @param string $method The API method to call
@@ -1662,17 +1686,19 @@ class Codebird
                 $authorization = $this->_sign($httpmethod, $url, []);
             }
             $params = $this->_buildMultipart($method, $params);
+            $first_newline      = strpos($params, "\r\n");
+            $multipart_boundary = substr($params, 2, $first_newline - 2);
+            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
+                . $multipart_boundary;
+        } elseif ($this->_detectJsonBody($method)) {
+            $authorization = $this->_sign($httpmethod, $url, []);
+            $params = json_encode($params);
+            $request_headers[] = 'Content-Type: application/json';
         } else {
             if (! $app_only_auth) {
                 $authorization = $this->_sign($httpmethod, $url, $params);
             }
             $params = http_build_query($params);
-        }
-        if ($multipart) {
-            $first_newline      = strpos($params, "\r\n");
-            $multipart_boundary = substr($params, 2, $first_newline - 2);
-            $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
-                . $multipart_boundary;
         }
         return [$authorization, $params, $request_headers];
     }

@@ -667,3 +667,31 @@ You may also use an authenticated proxy. Use the following call:
 $cb->setProxy('<host>', '<port>');
 $cb->setProxyAuthentication('<username>:<password>');
 ```
+
+### …access the Collections API?
+
+Collections are a type of timeline that you control and can be hand curated
+and/or programmed using an API.
+
+Pay close attention to the differences in how collections are presented —
+often they will be decomposed, efficient objects with information about users,
+Tweets, and timelines grouped, simplified, and stripped of unnecessary repetition.
+
+Never care about the OAuth signing specialities and the JSON POST body
+for POST collections/entries/curate.json. Codebird takes off the work for you
+and will always send the correct Content-Type automatically.
+
+Find out more about the [Collections API](https://dev.twitter.com/rest/collections/about) in the Twitter API docs.
+
+Here’s a sample for adding a tweet using that API method:
+
+```php
+$reply = $cb->collections_entries_curate([
+  "id" => "custom-672852634622144512",
+  "changes" => [
+    ["op" => "add", "tweet_id" => "672727928262828032"]
+  ]
+]);
+
+var_dump($reply);
+```
