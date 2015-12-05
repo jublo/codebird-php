@@ -103,6 +103,19 @@ class Codebird
   protected static $_endpoint_oauth = 'https://api.twitter.com/';
 
   /**
+   * Possible file name parameters
+   */
+  protected static $_possible_files = [
+    // Tweets
+    'statuses/update_with_media' => ['media[]'],
+    'media/upload' => ['media'],
+    // Accounts
+    'account/update_profile_background_image' => ['image'],
+    'account/update_profile_image' => ['image'],
+    'account/update_profile_banner' => ['banner']
+  ];
+
+  /**
    * The Request or access token. Used to sign requests
    */
   protected $_oauth_token = null;
@@ -1639,9 +1652,10 @@ class Codebird
       'media/upload',
 
       // Users
-      'account/update_profile_background_image',
-      'account/update_profile_image',
-      'account/update_profile_banner'
+      // no multipart for these, for now:
+      //'account/update_profile_background_image',
+      //'account/update_profile_image',
+      //'account/update_profile_banner'
     ];
     return in_array($method, $multiparts);
   }
@@ -1649,13 +1663,13 @@ class Codebird
   /**
    * Merge multipart string from parameters array
    *
-   * @param array  $possible_files List of possible filename parameters
-   * @param string $border         The multipart border
-   * @param array  $params         The parameters to send along
+   * @param string $method_template The method template to call
+   * @param string $border          The multipart border
+   * @param array  $params          The parameters to send along
    *
    * @return string request
    */
-  protected function _getMultipartRequestFromParams($possible_files, $border, $params)
+  protected function _getMultipartRequestFromParams($method_template, $border, $params)
   {
     $request = '';
     foreach ($params as $key => $value) {
@@ -1668,38 +1682,55 @@ class Codebird
         . 'Content-Disposition: form-data; name="' . $key . '"';
 
       // check for filenames
-      if (in_array($key, $possible_files)) {
-        if (// is it a file, a readable one?
-          @file_exists($value)
-          && @is_readable($value)
-        ) {
-          // is it a supported image format?
-          $data = @getimagesize($value);
-          if ((is_array($data) && in_array($data[2], $this->_supported_media_files))
-            || imagecreatefromwebp($data) // A WebP image! :-) —why won’t getimagesize support this?
-          ) {
-            // try to read the file
-            $data = @file_get_contents($value);
-            if ($data === false || strlen($data) === 0) {
-              continue;
-            }
-            $value = $data;
-          }
-        } elseif (// is it a remote file?
-          filter_var($value, FILTER_VALIDATE_URL)
-          && preg_match('/^https?:\/\//', $value)
-        ) {
-          $data = $this->_fetchRemoteFile($value);
-          if ($data !== false) {
-            $value = $data;
-          }
-        }
+      $data = $this->_checkForFiles($method_template, $key, $value);
+      if ($data !== false) {
+        $value = $data;
       }
 
       $request .= "\r\n\r\n" . $value . "\r\n";
     }
 
     return $request;
+  }
+
+  /**
+   * Check for files
+   *
+   * @param string $method_template The method template to call
+   * @param string $key             The parameter name
+   * @param array  $value           The possible file name or URL
+   *
+   * @return mixed
+   */
+  protected function _checkForFiles($method_template, $key, $value) {
+    if (!in_array($key, self::$_possible_files[$method_template])) {
+      return false;
+    }
+    if (// is it a file, a readable one?
+      @file_exists($value)
+      && @is_readable($value)
+    ) {
+      // is it a supported image format?
+      $data = @getimagesize($value);
+      if ((is_array($data) && in_array($data[2], $this->_supported_media_files))
+        || imagecreatefromwebp($data) // A WebP image! :-) —why won’t getimagesize support this?
+      ) {
+        // try to read the file
+        $data = @file_get_contents($value);
+        if ($data !== false && strlen($data) !== 0) {
+          return $data;
+        }
+      }
+    } elseif (// is it a remote file?
+      filter_var($value, FILTER_VALIDATE_URL)
+      && preg_match('/^https?:\/\//', $value)
+    ) {
+      $data = $this->_fetchRemoteFile($value);
+      if ($data !== false) {
+        return $data;
+      }
+    }
+    return false;
   }
 
 
@@ -1720,25 +1751,14 @@ class Codebird
     }
 
     // only check specific parameters
-    $possible_files = [
-      // Tweets
-      'statuses/update_with_media' => 'media[]',
-      'media/upload' => 'media',
-      // Accounts
-      'account/update_profile_background_image' => 'image',
-      'account/update_profile_image' => 'image',
-      'account/update_profile_banner' => 'banner'
-    ];
     // method might have files?
-    if (! in_array($method, array_keys($possible_files))) {
+    if (! in_array($method, array_keys(self::$_possible_files))) {
       return;
     }
 
-    $possible_files = explode(' ', $possible_files[$method]);
-
     $multipart_border = '--------------------' . $this->_nonce();
     $multipart_request =
-      $this->_getMultipartRequestFromParams($possible_files, $multipart_border, $params)
+      $this->_getMultipartRequestFromParams($method, $multipart_border, $params)
       . '--' . $multipart_border . '--';
 
     return $multipart_request;
@@ -2178,6 +2198,13 @@ class Codebird
         $params = [];
       }
     } else {
+      // check for possible files in non-multipart methods
+      foreach ($params as $key => $value) {
+        $data = $this->_checkForFiles($method_template, $key, $value);
+        if ($data !== false) {
+          $params[$key] = base64_encode($data);
+        }
+      }
       if (! $app_only_auth) {
         $authorization = $this->_sign($httpmethod, $url, $params);
       }
@@ -2494,8 +2521,9 @@ class Codebird
       if (isset($headers['Range'])) {
         $reply['Range'] = $headers['Range'];
       }
+      $reply = json_encode($reply);
     }
-    return json_encode($reply);
+    return $reply;
   }
 
   /**
