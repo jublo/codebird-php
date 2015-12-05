@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Summary
 -------
 
-Use Codebird to connect to the Twitter REST **and Streaming API :sparkles:** from your PHP code.
+Use Codebird to connect to the Twitter **REST, Streaming, Collections, TON**
+and **Ads API :sparkles:** from your PHP code.
 Codebird supports full 3-way OAuth as well as application-only auth.
 
 
