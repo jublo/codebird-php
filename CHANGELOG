@@ -13,6 +13,7 @@ codebird-php - changelog
 + #144 Support Collections API
 + #145 Support TON API
 + #120 Support Ads API
++ Support WebP media format
 
 2.7.2 (2015-09-23)
 - #135 Invalid HTTP request headers in non-cURL mode
