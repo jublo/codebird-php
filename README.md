@@ -780,3 +780,45 @@ while (! feof($fp)) {
 
 fclose($fp);
 ```
+
+### …access the Twitter Ads API?
+
+The [Twitter Ads API](https://dev.twitter.com/ads/overview) allows partners to
+integrate with the Twitter advertising platform in their own advertising solutions.
+Selected partners have the ability to create custom tools to manage and execute
+Twitter Ad campaigns.
+
+When accessing the Ads API or Ads Sandbox API, access it by prefixing your call
+with `ads_`. Watch out for the usual replacements for in-url parameters,
+particularly `:account_id`.
+
+**Tip:** For accessing the Ads Sandbox API, use the `ads_sandbox_` prefix,
+like shown further down.
+
+Here is an example for calling the Twitter Ads API:
+
+```php
+$reply = $cb->ads_accounts_ACCOUNT_ID_cards_appDownload([
+  'account_id' => '123456789',
+  'name' => 'Test',
+  'app_country_code' => 'DE'
+]);
+```
+
+#### Multiple-method API calls
+
+In the Twitter Ads API, there are multiple methods that can be reached by
+HTTP `GET`, `POST`, `PUT` and/or `DELETE`. While Codebird does its best to guess
+which HTTP verb you’ll want to use, it’s the safest bet to give a hint yourself,
+like this:
+
+```php
+$reply = $cb->ads_sandbox_accounts_ACCOUNT_ID_cards_imageConversation_CARD_ID([
+  'httpmethod' => 'DELETE',
+  'account_id' => '123456789',
+  'card_id' => '2468013579'
+]);
+```
+
+Codebird will remove the `httpmethod` parameter from the parameters list automatically,
+and set the corresponding HTTP verb.

@@ -12,6 +12,7 @@ codebird-php - changelog
 + #129 Allow to change remote media download timeout
 + #144 Support Collections API
 + #145 Support TON API
++ #120 Support Ads API
 
 2.7.2 (2015-09-23)
 - #135 Invalid HTTP request headers in non-cURL mode
