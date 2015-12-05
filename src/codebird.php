@@ -51,56 +51,427 @@ class Codebird
   /**
    * The OAuth consumer key of your registered app
    */
-  protected static $_oauth_consumer_key = null;
+  protected static $_consumer_key = null;
 
   /**
    * The corresponding consumer secret
    */
-  protected static $_oauth_consumer_secret = null;
+  protected static $_consumer_secret = null;
 
   /**
    * The app-only bearer token. Used to authorize app-only requests
    */
-  protected static $_oauth_bearer_token = null;
+  protected static $_bearer_token = null;
 
   /**
-   * The API endpoint to use
+   * The API endpoints to use
    */
-  protected static $_endpoint = 'https://api.twitter.com/1.1/';
-
-  /**
-   * The media API endpoint to use
-   */
-  protected static $_endpoint_media = 'https://upload.twitter.com/1.1/';
-
-  /**
-   * The Streaming API endpoints to use
-   */
-  protected static $_endpoints_streaming = [
-    'public' => 'https://stream.twitter.com/1.1/',
-    'user'   => 'https://userstream.twitter.com/1.1/',
-    'site'   => 'https://sitestream.twitter.com/1.1/'
+  protected static $_endpoints = [
+    'ads'          => [
+      'production' => 'https://ads-api.twitter.com/0/',
+      'sandbox'    => 'https://ads-api-sandbox.twitter.com/0/'
+    ],
+    'media'        => 'https://upload.twitter.com/1.1/',
+    'oauth'        => 'https://api.twitter.com/',
+    'rest'         => 'https://api.twitter.com/1.1/',
+    'streaming'    => [
+      'public'     => 'https://stream.twitter.com/1.1/',
+      'user'       => 'https://userstream.twitter.com/1.1/',
+      'site'       => 'https://sitestream.twitter.com/1.1/'
+    ],
+    'ton'          => 'https://ton.twitter.com/1.1/'
   ];
 
   /**
-   * The TON API endpoint to use
+   * Supported API methods
    */
-  protected static $_endpoint_ton = 'https://ton.twitter.com/1.1/';
-
-  /**
-   * The Ads API endpoint to use
-   */
-  protected static $_endpoint_ads = 'https://ads-api.twitter.com/0/';
-
-  /**
-   * The Ads Sandbox API endpoint to use
-   */
-  protected static $_endpoint_ads_sandbox = 'https://ads-api-sandbox.twitter.com/0/';
-
-  /**
-   * The API endpoint base to use
-   */
-  protected static $_endpoint_oauth = 'https://api.twitter.com/';
+  protected static $_api_methods = [
+    'GET' => [
+      'account/settings',
+      'account/verify_credentials',
+      'ads/accounts',
+      'ads/accounts/:account_id',
+      'ads/accounts/:account_id/app_event_provider_configurations',
+      'ads/accounts/:account_id/app_event_provider_configurations/:id',
+      'ads/accounts/:account_id/app_event_tags',
+      'ads/accounts/:account_id/app_event_tags/:id',
+      'ads/accounts/:account_id/app_lists',
+      'ads/accounts/:account_id/authenticated_user_access',
+      'ads/accounts/:account_id/campaigns',
+      'ads/accounts/:account_id/campaigns/:campaign_id',
+      'ads/accounts/:account_id/cards/app_download',
+      'ads/accounts/:account_id/cards/app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_app_download',
+      'ads/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_conversation',
+      'ads/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/accounts/:account_id/cards/lead_gen',
+      'ads/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/accounts/:account_id/cards/video_app_download',
+      'ads/accounts/:account_id/cards/video_app_download/:id',
+      'ads/accounts/:account_id/cards/video_conversation',
+      'ads/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/accounts/:account_id/cards/website',
+      'ads/accounts/:account_id/cards/website/:card_id',
+      'ads/accounts/:account_id/features',
+      'ads/accounts/:account_id/funding_instruments',
+      'ads/accounts/:account_id/funding_instruments/:id',
+      'ads/accounts/:account_id/line_items',
+      'ads/accounts/:account_id/line_items/:line_item_id',
+      'ads/accounts/:account_id/promotable_users',
+      'ads/accounts/:account_id/promoted_accounts',
+      'ads/accounts/:account_id/promoted_tweets',
+      'ads/accounts/:account_id/reach_estimate',
+      'ads/accounts/:account_id/scoped_timeline',
+      'ads/accounts/:account_id/tailored_audience_changes',
+      'ads/accounts/:account_id/tailored_audience_changes/:id',
+      'ads/accounts/:account_id/tailored_audiences',
+      'ads/accounts/:account_id/tailored_audiences/:id',
+      'ads/accounts/:account_id/targeting_criteria',
+      'ads/accounts/:account_id/targeting_criteria/:id',
+      'ads/accounts/:account_id/targeting_suggestions',
+      'ads/accounts/:account_id/tweet/preview',
+      'ads/accounts/:account_id/tweet/preview/:tweet_id',
+      'ads/accounts/:account_id/videos',
+      'ads/accounts/:account_id/videos/:id',
+      'ads/accounts/:account_id/web_event_tags',
+      'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'ads/bidding_rules',
+      'ads/iab_categories',
+      'ads/insights/accounts/:account_id',
+      'ads/insights/accounts/:account_id/available_audiences',
+      'ads/line_items/placements',
+      'ads/sandbox/accounts',
+      'ads/sandbox/accounts/:account_id',
+      'ads/sandbox/accounts/:account_id/app_event_provider_configurations',
+      'ads/sandbox/accounts/:account_id/app_event_provider_configurations/:id',
+      'ads/sandbox/accounts/:account_id/app_event_tags',
+      'ads/sandbox/accounts/:account_id/app_event_tags/:id',
+      'ads/sandbox/accounts/:account_id/app_lists',
+      'ads/sandbox/accounts/:account_id/authenticated_user_access',
+      'ads/sandbox/accounts/:account_id/campaigns',
+      'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
+      'ads/sandbox/accounts/:account_id/cards/app_download',
+      'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_app_download',
+      'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_conversation',
+      'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/lead_gen',
+      'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/video_app_download',
+      'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
+      'ads/sandbox/accounts/:account_id/cards/video_conversation',
+      'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/website',
+      'ads/sandbox/accounts/:account_id/cards/website/:card_id',
+      'ads/sandbox/accounts/:account_id/features',
+      'ads/sandbox/accounts/:account_id/funding_instruments',
+      'ads/sandbox/accounts/:account_id/funding_instruments/:id',
+      'ads/sandbox/accounts/:account_id/line_items',
+      'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
+      'ads/sandbox/accounts/:account_id/promotable_users',
+      'ads/sandbox/accounts/:account_id/promoted_accounts',
+      'ads/sandbox/accounts/:account_id/promoted_tweets',
+      'ads/sandbox/accounts/:account_id/reach_estimate',
+      'ads/sandbox/accounts/:account_id/scoped_timeline',
+      'ads/sandbox/accounts/:account_id/tailored_audience_changes',
+      'ads/sandbox/accounts/:account_id/tailored_audience_changes/:id',
+      'ads/sandbox/accounts/:account_id/tailored_audiences',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
+      'ads/sandbox/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
+      'ads/sandbox/accounts/:account_id/targeting_suggestions',
+      'ads/sandbox/accounts/:account_id/tweet/preview',
+      'ads/sandbox/accounts/:account_id/tweet/preview/:tweet_id',
+      'ads/sandbox/accounts/:account_id/videos',
+      'ads/sandbox/accounts/:account_id/videos/:id',
+      'ads/sandbox/accounts/:account_id/web_event_tags',
+      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'ads/sandbox/bidding_rules',
+      'ads/sandbox/iab_categories',
+      'ads/sandbox/insights/accounts/:account_id',
+      'ads/sandbox/insights/accounts/:account_id/available_audiences',
+      'ads/sandbox/line_items/placements',
+      'ads/sandbox/stats/accounts/:account_id',
+      'ads/sandbox/stats/accounts/:account_id/campaigns',
+      'ads/sandbox/stats/accounts/:account_id/campaigns/:id',
+      'ads/sandbox/stats/accounts/:account_id/funding_instruments',
+      'ads/sandbox/stats/accounts/:account_id/funding_instruments/:id',
+      'ads/sandbox/stats/accounts/:account_id/line_items',
+      'ads/sandbox/stats/accounts/:account_id/line_items/:id',
+      'ads/sandbox/stats/accounts/:account_id/promoted_accounts',
+      'ads/sandbox/stats/accounts/:account_id/promoted_accounts/:id',
+      'ads/sandbox/stats/accounts/:account_id/promoted_tweets',
+      'ads/sandbox/stats/accounts/:account_id/promoted_tweets/:id',
+      'ads/sandbox/stats/accounts/:account_id/reach/campaigns',
+      'ads/sandbox/targeting_criteria/app_store_categories',
+      'ads/sandbox/targeting_criteria/behavior_taxonomies',
+      'ads/sandbox/targeting_criteria/behaviors',
+      'ads/sandbox/targeting_criteria/devices',
+      'ads/sandbox/targeting_criteria/events',
+      'ads/sandbox/targeting_criteria/interests',
+      'ads/sandbox/targeting_criteria/languages',
+      'ads/sandbox/targeting_criteria/locations',
+      'ads/sandbox/targeting_criteria/network_operators',
+      'ads/sandbox/targeting_criteria/platform_versions',
+      'ads/sandbox/targeting_criteria/platforms',
+      'ads/sandbox/targeting_criteria/tv_channels',
+      'ads/sandbox/targeting_criteria/tv_genres',
+      'ads/sandbox/targeting_criteria/tv_markets',
+      'ads/sandbox/targeting_criteria/tv_shows',
+      'ads/stats/accounts/:account_id',
+      'ads/stats/accounts/:account_id/campaigns',
+      'ads/stats/accounts/:account_id/campaigns/:id',
+      'ads/stats/accounts/:account_id/funding_instruments',
+      'ads/stats/accounts/:account_id/funding_instruments/:id',
+      'ads/stats/accounts/:account_id/line_items',
+      'ads/stats/accounts/:account_id/line_items/:id',
+      'ads/stats/accounts/:account_id/promoted_accounts',
+      'ads/stats/accounts/:account_id/promoted_accounts/:id',
+      'ads/stats/accounts/:account_id/promoted_tweets',
+      'ads/stats/accounts/:account_id/promoted_tweets/:id',
+      'ads/stats/accounts/:account_id/reach/campaigns',
+      'ads/targeting_criteria/app_store_categories',
+      'ads/targeting_criteria/behavior_taxonomies',
+      'ads/targeting_criteria/behaviors',
+      'ads/targeting_criteria/devices',
+      'ads/targeting_criteria/events',
+      'ads/targeting_criteria/interests',
+      'ads/targeting_criteria/languages',
+      'ads/targeting_criteria/locations',
+      'ads/targeting_criteria/network_operators',
+      'ads/targeting_criteria/platform_versions',
+      'ads/targeting_criteria/platforms',
+      'ads/targeting_criteria/tv_channels',
+      'ads/targeting_criteria/tv_genres',
+      'ads/targeting_criteria/tv_markets',
+      'ads/targeting_criteria/tv_shows',
+      'application/rate_limit_status',
+      'blocks/ids',
+      'blocks/list',
+      'collections/entries',
+      'collections/list',
+      'collections/show',
+      'direct_messages',
+      'direct_messages/sent',
+      'direct_messages/show',
+      'favorites/list',
+      'followers/ids',
+      'followers/list',
+      'friends/ids',
+      'friends/list',
+      'friendships/incoming',
+      'friendships/lookup',
+      'friendships/lookup',
+      'friendships/no_retweets/ids',
+      'friendships/outgoing',
+      'friendships/show',
+      'geo/id/:place_id',
+      'geo/reverse_geocode',
+      'geo/search',
+      'geo/similar_places',
+      'help/configuration',
+      'help/languages',
+      'help/privacy',
+      'help/tos',
+      'lists/list',
+      'lists/members',
+      'lists/members/show',
+      'lists/memberships',
+      'lists/ownerships',
+      'lists/show',
+      'lists/statuses',
+      'lists/subscribers',
+      'lists/subscribers/show',
+      'lists/subscriptions',
+      'mutes/users/ids',
+      'mutes/users/list',
+      'oauth/authenticate',
+      'oauth/authorize',
+      'saved_searches/list',
+      'saved_searches/show/:id',
+      'search/tweets',
+      'site',
+      'statuses/firehose',
+      'statuses/home_timeline',
+      'statuses/mentions_timeline',
+      'statuses/oembed',
+      'statuses/retweeters/ids',
+      'statuses/retweets/:id',
+      'statuses/retweets_of_me',
+      'statuses/sample',
+      'statuses/show/:id',
+      'statuses/user_timeline',
+      'trends/available',
+      'trends/closest',
+      'trends/place',
+      'user',
+      'users/contributees',
+      'users/contributors',
+      'users/profile_banner',
+      'users/search',
+      'users/show',
+      'users/suggestions',
+      'users/suggestions/:slug',
+      'users/suggestions/:slug/members'
+    ],
+    'POST' => [
+      'account/remove_profile_banner',
+      'account/settings',
+      'account/update_delivery_device',
+      'account/update_profile',
+      'account/update_profile_background_image',
+      'account/update_profile_banner',
+      'account/update_profile_colors',
+      'account/update_profile_image',
+      'ads/accounts/:account_id/app_lists',
+      'ads/accounts/:account_id/campaigns',
+      'ads/accounts/:account_id/cards/app_download',
+      'ads/accounts/:account_id/cards/image_app_download',
+      'ads/accounts/:account_id/cards/image_conversation',
+      'ads/accounts/:account_id/cards/lead_gen',
+      'ads/accounts/:account_id/cards/video_app_download',
+      'ads/accounts/:account_id/cards/video_conversation',
+      'ads/accounts/:account_id/cards/website',
+      'ads/accounts/:account_id/line_items',
+      'ads/accounts/:account_id/promoted_accounts',
+      'ads/accounts/:account_id/promoted_tweets',
+      'ads/accounts/:account_id/tailored_audience_changes',
+      'ads/accounts/:account_id/tailored_audiences',
+      'ads/accounts/:account_id/targeting_criteria',
+      'ads/accounts/:account_id/tweet',
+      'ads/accounts/:account_id/videos',
+      'ads/accounts/:account_id/web_event_tags',
+      'ads/batch/accounts/:account_id/campaigns',
+      'ads/batch/accounts/:account_id/line_items',
+      'ads/sandbox/accounts/:account_id/app_lists',
+      'ads/sandbox/accounts/:account_id/campaigns',
+      'ads/sandbox/accounts/:account_id/cards/app_download',
+      'ads/sandbox/accounts/:account_id/cards/image_app_download',
+      'ads/sandbox/accounts/:account_id/cards/image_conversation',
+      'ads/sandbox/accounts/:account_id/cards/lead_gen',
+      'ads/sandbox/accounts/:account_id/cards/video_app_download',
+      'ads/sandbox/accounts/:account_id/cards/video_conversation',
+      'ads/sandbox/accounts/:account_id/cards/website',
+      'ads/sandbox/accounts/:account_id/line_items',
+      'ads/sandbox/accounts/:account_id/promoted_accounts',
+      'ads/sandbox/accounts/:account_id/promoted_tweets',
+      'ads/sandbox/accounts/:account_id/tailored_audience_changes',
+      'ads/sandbox/accounts/:account_id/tailored_audiences',
+      'ads/sandbox/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/accounts/:account_id/tweet',
+      'ads/sandbox/accounts/:account_id/videos',
+      'ads/sandbox/accounts/:account_id/web_event_tags',
+      'ads/sandbox/batch/accounts/:account_id/campaigns',
+      'ads/sandbox/batch/accounts/:account_id/line_items',
+      'blocks/create',
+      'blocks/destroy',
+      'collections/create',
+      'collections/destroy',
+      'collections/entries/add',
+      'collections/entries/curate',
+      'collections/entries/move',
+      'collections/entries/remove',
+      'collections/update',
+      'direct_messages/destroy',
+      'direct_messages/new',
+      'favorites/create',
+      'favorites/destroy',
+      'friendships/create',
+      'friendships/destroy',
+      'friendships/update',
+      'lists/create',
+      'lists/destroy',
+      'lists/members/create',
+      'lists/members/create_all',
+      'lists/members/destroy',
+      'lists/members/destroy_all',
+      'lists/subscribers/create',
+      'lists/subscribers/destroy',
+      'lists/update',
+      'media/upload',
+      'mutes/users/create',
+      'mutes/users/destroy',
+      'oauth/access_token',
+      'oauth/request_token',
+      'oauth2/invalidate_token',
+      'oauth2/token',
+      'saved_searches/create',
+      'saved_searches/destroy/:id',
+      'statuses/destroy/:id',
+      'statuses/filter',
+      'statuses/lookup',
+      'statuses/retweet/:id',
+      'statuses/update',
+      'statuses/update_with_media', // deprecated, use media/upload
+      'ton/bucket/:bucket',
+      'ton/bucket/:bucket?resumable=true',
+      'users/lookup',
+      'users/report_spam'
+    ],
+    'PUT' => [
+      'ads/accounts/:account_id/campaigns/:campaign_id',
+      'ads/accounts/:account_id/cards/app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/accounts/:account_id/cards/video_app_download/:id',
+      'ads/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/accounts/:account_id/cards/website/:card_id',
+      'ads/accounts/:account_id/line_items/:line_item_id',
+      'ads/accounts/:account_id/promoted_tweets/:id',
+      'ads/accounts/:account_id/tailored_audiences/global_opt_out',
+      'ads/accounts/:account_id/targeting_criteria',
+      'ads/accounts/:account_id/videos/:id',
+      'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
+      'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
+      'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/website/:card_id',
+      'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
+      'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/global_opt_out',
+      'ads/sandbox/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/accounts/:account_id/videos/:id',
+      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'ton/bucket/:bucket/:file?resumable=true&resumeId=:resumeId'
+    ],
+    'DELETE' => [
+      'ads/accounts/:account_id/campaigns/:campaign_id',
+      'ads/accounts/:account_id/cards/app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/accounts/:account_id/cards/video_app_download/:id',
+      'ads/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/accounts/:account_id/cards/website/:card_id',
+      'ads/accounts/:account_id/line_items/:line_item_id',
+      'ads/accounts/:account_id/promoted_tweets/:id',
+      'ads/accounts/:account_id/tailored_audiences/:id',
+      'ads/accounts/:account_id/targeting_criteria/:id',
+      'ads/accounts/:account_id/videos/:id',
+      'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
+      'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
+      'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
+      'ads/sandbox/accounts/:account_id/cards/website/:card_id',
+      'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
+      'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
+      'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
+      'ads/sandbox/accounts/:account_id/videos/:id',
+      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id'
+    ]
+  ];
 
   /**
    * Possible file name parameters
@@ -131,14 +502,6 @@ class Codebird
   protected $_return_format = CODEBIRD_RETURNFORMAT_OBJECT;
 
   /**
-   * The file formats that Twitter accepts as image uploads
-   */
-  protected $_supported_media_files = [
-    IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_BMP,
-    IMAGETYPE_GIF //, IMAGETYPE_WEBP
-  ];
-
-  /**
    * The callback to call with any new streaming messages
    */
   protected $_streaming_callback = null;
@@ -154,19 +517,13 @@ class Codebird
   protected $_use_curl = true;
 
   /**
-   * Request timeout
+   * Timeouts
    */
-  protected $_timeout = 10000;
-
-  /**
-   * Connection timeout
-   */
-  protected $_connectionTimeout = 3000;
-
-  /**
-   * Remote media download timeout
-   */
-  protected $_remoteDownloadTimeout = 5000;
+  protected $_timeouts = [
+    'request' => 10000,
+    'connect' => 3000,
+    'remote'  => 5000
+  ];
 
   /**
    * Proxy
@@ -208,8 +565,8 @@ class Codebird
    */
   public static function setConsumerKey($key, $secret)
   {
-    self::$_oauth_consumer_key    = $key;
-    self::$_oauth_consumer_secret = $secret;
+    self::$_consumer_key    = $key;
+    self::$_consumer_secret = $secret;
   }
 
   /**
@@ -221,7 +578,7 @@ class Codebird
    */
   public static function setBearerToken($token)
   {
-    self::$_oauth_bearer_token = $token;
+    self::$_bearer_token = $token;
   }
 
   /**
@@ -286,7 +643,7 @@ class Codebird
    */
   public function setTimeout($timeout)
   {
-    $this->_timeout = (int) $timeout;
+    $this->_timeouts['request'] = (int) $timeout;
   }
 
   /**
@@ -298,7 +655,7 @@ class Codebird
    */
   public function setConnectionTimeout($timeout)
   {
-    $this->_connectionTimeout = (int) $timeout;
+    $this->_timeouts['connect'] = (int) $timeout;
   }
 
   /**
@@ -310,7 +667,7 @@ class Codebird
    */
   public function setRemoteDownloadTimeout($timeout)
   {
-    $this->_remoteDownloadTimeout = (int) $timeout;
+    $this->_timeouts['remote'] = (int) $timeout;
   }
 
   /**
@@ -376,406 +733,19 @@ class Codebird
    */
   public function getApiMethods()
   {
-    static $httpmethods = [
-      'GET' => [
-        'account/settings',
-        'account/verify_credentials',
-        'ads/accounts',
-        'ads/accounts/:account_id',
-        'ads/accounts/:account_id/app_event_provider_configurations',
-        'ads/accounts/:account_id/app_event_provider_configurations/:id',
-        'ads/accounts/:account_id/app_event_tags',
-        'ads/accounts/:account_id/app_event_tags/:id',
-        'ads/accounts/:account_id/app_lists',
-        'ads/accounts/:account_id/authenticated_user_access',
-        'ads/accounts/:account_id/campaigns',
-        'ads/accounts/:account_id/campaigns/:campaign_id',
-        'ads/accounts/:account_id/cards/app_download',
-        'ads/accounts/:account_id/cards/app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_app_download',
-        'ads/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_conversation',
-        'ads/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/accounts/:account_id/cards/lead_gen',
-        'ads/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/accounts/:account_id/cards/video_app_download',
-        'ads/accounts/:account_id/cards/video_app_download/:id',
-        'ads/accounts/:account_id/cards/video_conversation',
-        'ads/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/accounts/:account_id/cards/website',
-        'ads/accounts/:account_id/cards/website/:card_id',
-        'ads/accounts/:account_id/features',
-        'ads/accounts/:account_id/funding_instruments',
-        'ads/accounts/:account_id/funding_instruments/:id',
-        'ads/accounts/:account_id/line_items',
-        'ads/accounts/:account_id/line_items/:line_item_id',
-        'ads/accounts/:account_id/promotable_users',
-        'ads/accounts/:account_id/promoted_accounts',
-        'ads/accounts/:account_id/promoted_tweets',
-        'ads/accounts/:account_id/reach_estimate',
-        'ads/accounts/:account_id/scoped_timeline',
-        'ads/accounts/:account_id/tailored_audience_changes',
-        'ads/accounts/:account_id/tailored_audience_changes/:id',
-        'ads/accounts/:account_id/tailored_audiences',
-        'ads/accounts/:account_id/tailored_audiences/:id',
-        'ads/accounts/:account_id/targeting_criteria',
-        'ads/accounts/:account_id/targeting_criteria/:id',
-        'ads/accounts/:account_id/targeting_suggestions',
-        'ads/accounts/:account_id/tweet/preview',
-        'ads/accounts/:account_id/tweet/preview/:tweet_id',
-        'ads/accounts/:account_id/videos',
-        'ads/accounts/:account_id/videos/:id',
-        'ads/accounts/:account_id/web_event_tags',
-        'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
-        'ads/bidding_rules',
-        'ads/iab_categories',
-        'ads/insights/accounts/:account_id',
-        'ads/insights/accounts/:account_id/available_audiences',
-        'ads/line_items/placements',
-        'ads/sandbox/accounts',
-        'ads/sandbox/accounts/:account_id',
-        'ads/sandbox/accounts/:account_id/app_event_provider_configurations',
-        'ads/sandbox/accounts/:account_id/app_event_provider_configurations/:id',
-        'ads/sandbox/accounts/:account_id/app_event_tags',
-        'ads/sandbox/accounts/:account_id/app_event_tags/:id',
-        'ads/sandbox/accounts/:account_id/app_lists',
-        'ads/sandbox/accounts/:account_id/authenticated_user_access',
-        'ads/sandbox/accounts/:account_id/campaigns',
-        'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
-        'ads/sandbox/accounts/:account_id/cards/app_download',
-        'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_app_download',
-        'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_conversation',
-        'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/lead_gen',
-        'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/video_app_download',
-        'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
-        'ads/sandbox/accounts/:account_id/cards/video_conversation',
-        'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/website',
-        'ads/sandbox/accounts/:account_id/cards/website/:card_id',
-        'ads/sandbox/accounts/:account_id/features',
-        'ads/sandbox/accounts/:account_id/funding_instruments',
-        'ads/sandbox/accounts/:account_id/funding_instruments/:id',
-        'ads/sandbox/accounts/:account_id/line_items',
-        'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
-        'ads/sandbox/accounts/:account_id/promotable_users',
-        'ads/sandbox/accounts/:account_id/promoted_accounts',
-        'ads/sandbox/accounts/:account_id/promoted_tweets',
-        'ads/sandbox/accounts/:account_id/reach_estimate',
-        'ads/sandbox/accounts/:account_id/scoped_timeline',
-        'ads/sandbox/accounts/:account_id/tailored_audience_changes',
-        'ads/sandbox/accounts/:account_id/tailored_audience_changes/:id',
-        'ads/sandbox/accounts/:account_id/tailored_audiences',
-        'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
-        'ads/sandbox/accounts/:account_id/targeting_criteria',
-        'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
-        'ads/sandbox/accounts/:account_id/targeting_suggestions',
-        'ads/sandbox/accounts/:account_id/tweet/preview',
-        'ads/sandbox/accounts/:account_id/tweet/preview/:tweet_id',
-        'ads/sandbox/accounts/:account_id/videos',
-        'ads/sandbox/accounts/:account_id/videos/:id',
-        'ads/sandbox/accounts/:account_id/web_event_tags',
-        'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
-        'ads/sandbox/bidding_rules',
-        'ads/sandbox/iab_categories',
-        'ads/sandbox/insights/accounts/:account_id',
-        'ads/sandbox/insights/accounts/:account_id/available_audiences',
-        'ads/sandbox/line_items/placements',
-        'ads/sandbox/stats/accounts/:account_id',
-        'ads/sandbox/stats/accounts/:account_id/campaigns',
-        'ads/sandbox/stats/accounts/:account_id/campaigns/:id',
-        'ads/sandbox/stats/accounts/:account_id/funding_instruments',
-        'ads/sandbox/stats/accounts/:account_id/funding_instruments/:id',
-        'ads/sandbox/stats/accounts/:account_id/line_items',
-        'ads/sandbox/stats/accounts/:account_id/line_items/:id',
-        'ads/sandbox/stats/accounts/:account_id/promoted_accounts',
-        'ads/sandbox/stats/accounts/:account_id/promoted_accounts/:id',
-        'ads/sandbox/stats/accounts/:account_id/promoted_tweets',
-        'ads/sandbox/stats/accounts/:account_id/promoted_tweets/:id',
-        'ads/sandbox/stats/accounts/:account_id/reach/campaigns',
-        'ads/sandbox/targeting_criteria/app_store_categories',
-        'ads/sandbox/targeting_criteria/behavior_taxonomies',
-        'ads/sandbox/targeting_criteria/behaviors',
-        'ads/sandbox/targeting_criteria/devices',
-        'ads/sandbox/targeting_criteria/events',
-        'ads/sandbox/targeting_criteria/interests',
-        'ads/sandbox/targeting_criteria/languages',
-        'ads/sandbox/targeting_criteria/locations',
-        'ads/sandbox/targeting_criteria/network_operators',
-        'ads/sandbox/targeting_criteria/platform_versions',
-        'ads/sandbox/targeting_criteria/platforms',
-        'ads/sandbox/targeting_criteria/tv_channels',
-        'ads/sandbox/targeting_criteria/tv_genres',
-        'ads/sandbox/targeting_criteria/tv_markets',
-        'ads/sandbox/targeting_criteria/tv_shows',
-        'ads/stats/accounts/:account_id',
-        'ads/stats/accounts/:account_id/campaigns',
-        'ads/stats/accounts/:account_id/campaigns/:id',
-        'ads/stats/accounts/:account_id/funding_instruments',
-        'ads/stats/accounts/:account_id/funding_instruments/:id',
-        'ads/stats/accounts/:account_id/line_items',
-        'ads/stats/accounts/:account_id/line_items/:id',
-        'ads/stats/accounts/:account_id/promoted_accounts',
-        'ads/stats/accounts/:account_id/promoted_accounts/:id',
-        'ads/stats/accounts/:account_id/promoted_tweets',
-        'ads/stats/accounts/:account_id/promoted_tweets/:id',
-        'ads/stats/accounts/:account_id/reach/campaigns',
-        'ads/targeting_criteria/app_store_categories',
-        'ads/targeting_criteria/behavior_taxonomies',
-        'ads/targeting_criteria/behaviors',
-        'ads/targeting_criteria/devices',
-        'ads/targeting_criteria/events',
-        'ads/targeting_criteria/interests',
-        'ads/targeting_criteria/languages',
-        'ads/targeting_criteria/locations',
-        'ads/targeting_criteria/network_operators',
-        'ads/targeting_criteria/platform_versions',
-        'ads/targeting_criteria/platforms',
-        'ads/targeting_criteria/tv_channels',
-        'ads/targeting_criteria/tv_genres',
-        'ads/targeting_criteria/tv_markets',
-        'ads/targeting_criteria/tv_shows',
-        'application/rate_limit_status',
-        'blocks/ids',
-        'blocks/list',
-        'collections/entries',
-        'collections/list',
-        'collections/show',
-        'direct_messages',
-        'direct_messages/sent',
-        'direct_messages/show',
-        'favorites/list',
-        'followers/ids',
-        'followers/list',
-        'friends/ids',
-        'friends/list',
-        'friendships/incoming',
-        'friendships/lookup',
-        'friendships/lookup',
-        'friendships/no_retweets/ids',
-        'friendships/outgoing',
-        'friendships/show',
-        'geo/id/:place_id',
-        'geo/reverse_geocode',
-        'geo/search',
-        'geo/similar_places',
-        'help/configuration',
-        'help/languages',
-        'help/privacy',
-        'help/tos',
-        'lists/list',
-        'lists/members',
-        'lists/members/show',
-        'lists/memberships',
-        'lists/ownerships',
-        'lists/show',
-        'lists/statuses',
-        'lists/subscribers',
-        'lists/subscribers/show',
-        'lists/subscriptions',
-        'mutes/users/ids',
-        'mutes/users/list',
-        'oauth/authenticate',
-        'oauth/authorize',
-        'saved_searches/list',
-        'saved_searches/show/:id',
-        'search/tweets',
-        'site',
-        'statuses/firehose',
-        'statuses/home_timeline',
-        'statuses/mentions_timeline',
-        'statuses/oembed',
-        'statuses/retweeters/ids',
-        'statuses/retweets/:id',
-        'statuses/retweets_of_me',
-        'statuses/sample',
-        'statuses/show/:id',
-        'statuses/user_timeline',
-        'trends/available',
-        'trends/closest',
-        'trends/place',
-        'user',
-        'users/contributees',
-        'users/contributors',
-        'users/profile_banner',
-        'users/search',
-        'users/show',
-        'users/suggestions',
-        'users/suggestions/:slug',
-        'users/suggestions/:slug/members'
-      ],
-      'POST' => [
-        'account/remove_profile_banner',
-        'account/settings',
-        'account/update_delivery_device',
-        'account/update_profile',
-        'account/update_profile_background_image',
-        'account/update_profile_banner',
-        'account/update_profile_colors',
-        'account/update_profile_image',
-        'ads/accounts/:account_id/app_lists',
-        'ads/accounts/:account_id/campaigns',
-        'ads/accounts/:account_id/cards/app_download',
-        'ads/accounts/:account_id/cards/image_app_download',
-        'ads/accounts/:account_id/cards/image_conversation',
-        'ads/accounts/:account_id/cards/lead_gen',
-        'ads/accounts/:account_id/cards/video_app_download',
-        'ads/accounts/:account_id/cards/video_conversation',
-        'ads/accounts/:account_id/cards/website',
-        'ads/accounts/:account_id/line_items',
-        'ads/accounts/:account_id/promoted_accounts',
-        'ads/accounts/:account_id/promoted_tweets',
-        'ads/accounts/:account_id/tailored_audience_changes',
-        'ads/accounts/:account_id/tailored_audiences',
-        'ads/accounts/:account_id/targeting_criteria',
-        'ads/accounts/:account_id/tweet',
-        'ads/accounts/:account_id/videos',
-        'ads/accounts/:account_id/web_event_tags',
-        'ads/batch/accounts/:account_id/campaigns',
-        'ads/batch/accounts/:account_id/line_items',
-        'ads/sandbox/accounts/:account_id/app_lists',
-        'ads/sandbox/accounts/:account_id/campaigns',
-        'ads/sandbox/accounts/:account_id/cards/app_download',
-        'ads/sandbox/accounts/:account_id/cards/image_app_download',
-        'ads/sandbox/accounts/:account_id/cards/image_conversation',
-        'ads/sandbox/accounts/:account_id/cards/lead_gen',
-        'ads/sandbox/accounts/:account_id/cards/video_app_download',
-        'ads/sandbox/accounts/:account_id/cards/video_conversation',
-        'ads/sandbox/accounts/:account_id/cards/website',
-        'ads/sandbox/accounts/:account_id/line_items',
-        'ads/sandbox/accounts/:account_id/promoted_accounts',
-        'ads/sandbox/accounts/:account_id/promoted_tweets',
-        'ads/sandbox/accounts/:account_id/tailored_audience_changes',
-        'ads/sandbox/accounts/:account_id/tailored_audiences',
-        'ads/sandbox/accounts/:account_id/targeting_criteria',
-        'ads/sandbox/accounts/:account_id/tweet',
-        'ads/sandbox/accounts/:account_id/videos',
-        'ads/sandbox/accounts/:account_id/web_event_tags',
-        'ads/sandbox/batch/accounts/:account_id/campaigns',
-        'ads/sandbox/batch/accounts/:account_id/line_items',
-        'blocks/create',
-        'blocks/destroy',
-        'collections/create',
-        'collections/destroy',
-        'collections/entries/add',
-        'collections/entries/curate',
-        'collections/entries/move',
-        'collections/entries/remove',
-        'collections/update',
-        'direct_messages/destroy',
-        'direct_messages/new',
-        'favorites/create',
-        'favorites/destroy',
-        'friendships/create',
-        'friendships/destroy',
-        'friendships/update',
-        'lists/create',
-        'lists/destroy',
-        'lists/members/create',
-        'lists/members/create_all',
-        'lists/members/destroy',
-        'lists/members/destroy_all',
-        'lists/subscribers/create',
-        'lists/subscribers/destroy',
-        'lists/update',
-        'media/upload',
-        'mutes/users/create',
-        'mutes/users/destroy',
-        'oauth/access_token',
-        'oauth/request_token',
-        'oauth2/invalidate_token',
-        'oauth2/token',
-        'saved_searches/create',
-        'saved_searches/destroy/:id',
-        'statuses/destroy/:id',
-        'statuses/filter',
-        'statuses/lookup',
-        'statuses/retweet/:id',
-        'statuses/update',
-        'statuses/update_with_media', // deprecated, use media/upload
-        'ton/bucket/:bucket',
-        'ton/bucket/:bucket?resumable=true',
-        'users/lookup',
-        'users/report_spam'
-      ],
-      'PUT' => [
-        'ads/accounts/:account_id/campaigns/:campaign_id',
-        'ads/accounts/:account_id/cards/app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/accounts/:account_id/cards/video_app_download/:id',
-        'ads/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/accounts/:account_id/cards/website/:card_id',
-        'ads/accounts/:account_id/line_items/:line_item_id',
-        'ads/accounts/:account_id/promoted_tweets/:id',
-        'ads/accounts/:account_id/tailored_audiences/global_opt_out',
-        'ads/accounts/:account_id/targeting_criteria',
-        'ads/accounts/:account_id/videos/:id',
-        'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
-        'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
-        'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
-        'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/website/:card_id',
-        'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
-        'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
-        'ads/sandbox/accounts/:account_id/tailored_audiences/global_opt_out',
-        'ads/sandbox/accounts/:account_id/targeting_criteria',
-        'ads/sandbox/accounts/:account_id/videos/:id',
-        'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
-        'ton/bucket/:bucket/:file?resumable=true&resumeId=:resumeId'
-      ],
-      'DELETE' => [
-        'ads/accounts/:account_id/campaigns/:campaign_id',
-        'ads/accounts/:account_id/cards/app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/accounts/:account_id/cards/video_app_download/:id',
-        'ads/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/accounts/:account_id/cards/website/:card_id',
-        'ads/accounts/:account_id/line_items/:line_item_id',
-        'ads/accounts/:account_id/promoted_tweets/:id',
-        'ads/accounts/:account_id/tailored_audiences/:id',
-        'ads/accounts/:account_id/targeting_criteria/:id',
-        'ads/accounts/:account_id/videos/:id',
-        'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
-        'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
-        'ads/sandbox/accounts/:account_id/cards/app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_app_download/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/image_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/lead_gen/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/video_app_download/:id',
-        'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
-        'ads/sandbox/accounts/:account_id/cards/website/:card_id',
-        'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
-        'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
-        'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
-        'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
-        'ads/sandbox/accounts/:account_id/videos/:id',
-        'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id'
-      ]
-    ];
-    return $httpmethods;
+    return self::$_api_methods;
   }
 
   /**
    * Main API handler working on any requests you issue
    *
-   * @param string $fn    The member function you called
-   * @param array $params The parameters you sent along
+   * @param string $function The member function you called
+   * @param array  $params   The parameters you sent along
    *
    * @return string The API reply encoded in the set return_format
    */
 
-  public function __call($fn, $params)
+  public function __call($function, $params)
   {
     // parse parameters
     $apiparams = $this->_parseApiParams($params);
@@ -791,12 +761,12 @@ class Codebird
 
     // reset token when requesting a new token
     // (causes 401 for signature error on subsequent requests)
-    if ($fn === 'oauth_requestToken') {
+    if ($function === 'oauth_requestToken') {
       $this->setToken(null, null);
     }
 
     // map function name to API method
-    list($method, $method_template) = $this->_mapFnToApiMethod($fn, $apiparams);
+    list($method, $method_template) = $this->_mapFnToApiMethod($function, $apiparams);
 
     $httpmethod = $this->_detectMethod($method_template, $apiparams);
     $multipart  = $this->_detectMultipart($method_template);
@@ -872,15 +842,15 @@ class Codebird
   /**
    * Maps called PHP magic method name to Twitter API method
    *
-   * @param string $fn              Function called
+   * @param string $function        Function called
    * @param array  $apiparams byref API parameters
    *
    * @return string[] (string method, string method_template)
    */
-  protected function _mapFnToApiMethod($fn, &$apiparams)
+  protected function _mapFnToApiMethod($function, &$apiparams)
   {
     // replace _ by /
-    $method = $this->_mapFnInsertSlashes($fn);
+    $method = $this->_mapFnInsertSlashes($function);
 
     // undo replacement for URL parameters
     $method = $this->_mapFnRestoreParamUnderscores($method);
@@ -923,16 +893,13 @@ class Codebird
   /**
    * API method mapping: Replaces _ with / character
    *
-   * @param string $fn Function called
+   * @param string $function Function called
    *
    * @return string API method to call
    */
-  protected function _mapFnInsertSlashes($fn)
+  protected function _mapFnInsertSlashes($function)
   {
-    $path   = explode('_', $fn);
-    $method = implode('/', $path);
-
-    return $method;
+    return str_replace('_', '/', $function);
   }
 
   /**
@@ -944,12 +911,12 @@ class Codebird
    */
   protected function _mapFnRestoreParamUnderscores($method)
   {
-    $url_parameters_with_underscore = [
+    $params = [
       'screen_name', 'place_id',
       'account_id', 'campaign_id', 'card_id', 'line_item_id',
       'tweet_id', 'web_event_tag_id'
     ];
-    foreach ($url_parameters_with_underscore as $param) {
+    foreach ($params as $param) {
       $param = strtoupper($param);
       $replacement_was = str_replace('_', '/', $param);
       $method = str_replace($replacement_was, $param, $method);
@@ -980,7 +947,7 @@ class Codebird
     if ($this->_oauth_token === null) {
       throw new \Exception('To get the ' . $type . ' URL, the OAuth token must be set.');
     }
-    $url = self::$_endpoint_oauth . 'oauth/' . $type . '?oauth_token=' . $this->_url($this->_oauth_token);
+    $url = self::$_endpoints['oauth'] . 'oauth/' . $type . '?oauth_token=' . $this->_url($this->_oauth_token);
     if ($force_login) {
       $url .= "&force_login=1";
     }
@@ -1023,31 +990,31 @@ class Codebird
    */
   protected function getCurlInitialization($url)
   {
-    $ch = curl_init($url);
+    $connection = curl_init($url);
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-    curl_setopt($ch, CURLOPT_HEADER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+    curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($connection, CURLOPT_FOLLOWLOCATION, 0);
+    curl_setopt($connection, CURLOPT_HEADER, 1);
+    curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, 1);
+    curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($connection, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
     curl_setopt(
-      $ch, CURLOPT_USERAGENT,
+      $connection, CURLOPT_USERAGENT,
       'codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
     );
 
     if ($this->hasProxy()) {
-      curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-      curl_setopt($ch, CURLOPT_PROXY, $this->getProxyHost());
-      curl_setopt($ch, CURLOPT_PROXYPORT, $this->getProxyPort());
+      curl_setopt($connection, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      curl_setopt($connection, CURLOPT_PROXY, $this->getProxyHost());
+      curl_setopt($connection, CURLOPT_PROXYPORT, $this->getProxyPort());
 
       if ($this->hasProxyAuthentication()) {
-        curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
+        curl_setopt($connection, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+        curl_setopt($connection, CURLOPT_PROXYUSERPWD, $this->getProxyAuthentication());
       }
     }
 
-    return $ch;
+    return $connection;
   }
 
   /**
@@ -1180,33 +1147,33 @@ class Codebird
 
   protected function _oauth2TokenCurl()
   {
-    if (self::$_oauth_consumer_key === null) {
+    if (self::$_consumer_key === null) {
       throw new \Exception('To obtain a bearer token, the consumer key must be set.');
     }
     $post_fields = [
       'grant_type' => 'client_credentials'
     ];
-    $url = self::$_endpoint_oauth . 'oauth2/token';
-    $ch = $this->getCurlInitialization($url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+    $url        = self::$_endpoints['oauth'] . 'oauth2/token';
+    $connection = $this->getCurlInitialization($url);
+    curl_setopt($connection, CURLOPT_POST, 1);
+    curl_setopt($connection, CURLOPT_POSTFIELDS, $post_fields);
 
-    curl_setopt($ch, CURLOPT_USERPWD, self::$_oauth_consumer_key . ':' . self::$_oauth_consumer_secret);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    curl_setopt($connection, CURLOPT_USERPWD, self::$_consumer_key . ':' . self::$_consumer_secret);
+    curl_setopt($connection, CURLOPT_HTTPHEADER, [
       'Expect:'
     ]);
-    $result = curl_exec($ch);
+    $result = curl_exec($connection);
 
     // catch request errors
     if ($result === false) {
-      throw new \Exception('Request error for bearer token: ' . curl_error($ch));
+      throw new \Exception('Request error for bearer token: ' . curl_error($connection));
     }
 
     // certificate validation results
-    $validation_result = curl_errno($ch);
+    $validation_result = curl_errno($connection);
     $this->_validateSslCertificate($validation_result);
 
-    $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $httpstatus = curl_getinfo($connection, CURLINFO_HTTP_CODE);
     $reply = $this->_parseBearerReply($result, $httpstatus);
     return $reply;
   }
@@ -1219,11 +1186,11 @@ class Codebird
 
   protected function _oauth2TokenNoCurl()
   {
-    if (self::$_oauth_consumer_key == null) {
+    if (self::$_consumer_key == null) {
       throw new \Exception('To obtain a bearer token, the consumer key must be set.');
     }
 
-    $url      = self::$_endpoint_oauth . 'oauth2/token';
+    $url      = self::$_endpoints['oauth'] . 'oauth2/token';
     $hostname = parse_url($url, PHP_URL_HOST);
 
     if ($hostname === false) {
@@ -1237,11 +1204,11 @@ class Codebird
         'header'           => "Accept: */*\r\n"
           . 'Authorization: Basic '
           . base64_encode(
-            self::$_oauth_consumer_key
+            self::$_consumer_key
             . ':'
-            . self::$_oauth_consumer_secret
+            . self::$_consumer_secret
           ),
-        'timeout'          => $this->_timeout / 1000,
+        'timeout'          => $this->_timeouts['request'] / 1000,
         'content'          => 'grant_type=client_credentials',
         'ignore_errors'    => true
       ]
@@ -1403,9 +1370,8 @@ class Codebird
         '%28',
         '%29'
       ], rawurlencode($data));
-    } else {
-      return '';
     }
+    return '';
   }
 
   /**
@@ -1417,7 +1383,7 @@ class Codebird
    */
   protected function _sha1($data)
   {
-    if (self::$_oauth_consumer_secret === null) {
+    if (self::$_consumer_secret === null) {
       throw new \Exception('To generate a hash, the consumer secret must be set.');
     }
     if (!function_exists('hash_hmac')) {
@@ -1426,7 +1392,7 @@ class Codebird
     return base64_encode(hash_hmac(
       'sha1',
       $data,
-      self::$_oauth_consumer_secret
+      self::$_consumer_secret
       . '&'
       . ($this->_oauth_token_secret !== null
         ? $this->_oauth_token_secret
@@ -1491,13 +1457,13 @@ class Codebird
    */
   protected function _sign($httpmethod, $method, $params = [], $append_to_get = false)
   {
-    if (self::$_oauth_consumer_key === null) {
+    if (self::$_consumer_key === null) {
       throw new \Exception('To generate a signature, the consumer key must be set.');
     }
     $sign_base_params = array_map(
       [$this, '_url'],
       [
-        'oauth_consumer_key'     => self::$_oauth_consumer_key,
+        'oauth_consumer_key'     => self::$_consumer_key,
         'oauth_version'          => '1.0',
         'oauth_timestamp'        => time(),
         'oauth_nonce'            => $this->_nonce(),
@@ -1553,7 +1519,7 @@ class Codebird
     }
     $apimethods = $this->getApiMethods();
 
-    // multi-HTTP method endpoints
+    // multi-HTTP method API methods
     switch ($method) {
       case 'ads/accounts/:account_id/campaigns':
       case 'ads/sandbox/accounts/:account_id/campaigns':
@@ -1801,20 +1767,19 @@ class Codebird
   {
     // try to fetch the file
     if ($this->_use_curl) {
-      $ch = $this->getCurlInitialization($url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($ch, CURLOPT_HEADER, 0);
+      $connection = $this->getCurlInitialization($url);
+      curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($connection, CURLOPT_HEADER, 0);
       // no SSL validation for downloading media
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-      // use hardcoded download timeouts for now
-      curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_remoteDownloadTimeout);
-      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_remoteDownloadTimeout / 2);
+      curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, 1);
+      curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, 2);
+      curl_setopt($connection, CURLOPT_TIMEOUT_MS, $this->_timeouts['remote']);
+      curl_setopt($connection, CURLOPT_CONNECTTIMEOUT_MS, $this->_timeouts['remote'] / 2);
       // find files that have been redirected
-      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+      curl_setopt($connection, CURLOPT_FOLLOWLOCATION, true);
       // process compressed images
-      curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
-      $result = curl_exec($ch);
+      curl_setopt($connection, CURLOPT_ENCODING, 'gzip,deflate,sdch');
+      $result = curl_exec($connection);
       if ($result !== false) {
         return $result;
       }
@@ -1825,7 +1790,7 @@ class Codebird
       'http' => [
         'method'           => 'GET',
         'protocol_version' => '1.1',
-        'timeout'          => $this->_remoteDownloadTimeout
+        'timeout'          => $this->_timeouts['remote']
       ],
       'ssl' => [
         'verify_peer'  => false
@@ -1918,20 +1883,19 @@ class Codebird
    */
   protected function _getEndpoint($method, $method_template)
   {
+    $url = self::$_endpoints['rest'] . $method . '.json';
     if (substr($method_template, 0, 5) === 'oauth') {
-      $url = self::$_endpoint_oauth . $method;
+      $url = self::$_endpoints['oauth'] . $method;
     } elseif ($this->_detectMedia($method_template)) {
-      $url = self::$_endpoint_media . $method . '.json';
+      $url = self::$_endpoints['media'] . $method . '.json';
     } elseif ($variant = $this->_detectStreaming($method_template)) {
-      $url = self::$_endpoints_streaming[$variant] . $method . '.json';
+      $url = self::$_endpoints['streaming'][$variant] . $method . '.json';
     } elseif ($this->_detectBinaryBody($method_template)) {
-      $url = self::$_endpoint_ton . $method;
+      $url = self::$_endpoints['ton'] . $method;
     } elseif (substr($method_template, 0, 12) === 'ads/sandbox/') {
-      $url = self::$_endpoint_ads_sandbox . substr($method, 12);
+      $url = self::$_endpoints['ads']['sandbox'] . substr($method, 12);
     } elseif (substr($method_template, 0, 4) === 'ads/') {
-      $url = self::$_endpoint_ads . substr($method, 4);
-    } else {
-      $url = self::$_endpoint . $method . '.json';
+      $url = self::$_endpoints['ads']['production'] . substr($method, 4);
     }
     return $url;
   }
@@ -1990,40 +1954,34 @@ class Codebird
         $httpmethod, $method, $method_template, $params, $multipart, $app_only_auth
       );
 
-    $ch                = $this->getCurlInitialization($url);
+    $connection        = $this->getCurlInitialization($url);
     $request_headers[] = 'Authorization: ' . $authorization;
     $request_headers[] = 'Expect:';
 
     if ($httpmethod !== 'GET') {
-      curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+      curl_setopt($connection, CURLOPT_POST, 1);
+      curl_setopt($connection, CURLOPT_POSTFIELDS, $params);
       if (in_array($httpmethod, ['POST', 'PUT', 'DELETE'])) {
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpmethod);
+        curl_setopt($connection, CURLOPT_CUSTOMREQUEST, $httpmethod);
       }
     }
 
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+    curl_setopt($connection, CURLOPT_HTTPHEADER, $request_headers);
+    curl_setopt($connection, CURLOPT_TIMEOUT_MS, $this->_timeouts['request']);
+    curl_setopt($connection, CURLOPT_CONNECTTIMEOUT_MS, $this->_timeouts['connect']);
 
-    if (isset($this->_timeout)) {
-      curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
-    }
-
-    if (isset($this->_connectionTimeout)) {
-      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectionTimeout);
-    }
-
-    $result = curl_exec($ch);
+    $result = curl_exec($connection);
 
     // catch request errors
     if ($result === false) {
-      throw new \Exception('Request error for API call: ' . curl_error($ch));
+      throw new \Exception('Request error for API call: ' . curl_error($connection));
     }
 
     // certificate validation results
-    $validation_result = curl_errno($ch);
+    $validation_result = curl_errno($connection);
     $this->_validateSslCertificate($validation_result);
 
-    $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $httpstatus            = curl_getinfo($connection, CURLINFO_HTTP_CODE);
     list($headers, $reply) = $this->_parseApiHeaders($result);
     // TON API & redirects
     $reply                 = $this->_parseApiReplyPrefillHeaders($headers, $reply);
@@ -2073,7 +2031,7 @@ class Codebird
         'method'           => $httpmethod,
         'protocol_version' => '1.1',
         'header'           => implode("\r\n", $request_headers),
-        'timeout'          => $this->_timeout / 1000,
+        'timeout'          => $this->_timeouts['request'] / 1000,
         'content'          => in_array($httpmethod, ['POST', 'PUT']) ? $params : null,
         'ignore_errors'    => true
       ]
@@ -2222,16 +2180,16 @@ class Codebird
    */
   protected function _getBearerAuthorization()
   {
-    if (self::$_oauth_consumer_key === null
-      && self::$_oauth_bearer_token === null
+    if (self::$_consumer_key === null
+      && self::$_bearer_token === null
     ) {
       throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
     }
     // automatically fetch bearer token, if necessary
-    if (self::$_oauth_bearer_token === null) {
+    if (self::$_bearer_token === null) {
       $this->oauth2_token();
     }
-    return 'Bearer ' . self::$_oauth_bearer_token;
+    return 'Bearer ' . self::$_bearer_token;
   }
 
   /**
@@ -2313,10 +2271,10 @@ class Codebird
 
     $errno   = 0;
     $errstr  = '';
-    $ch = stream_socket_client(
+    $connection = stream_socket_client(
       'ssl://' . $hostname . ':443',
       $errno, $errstr,
-      $this->_connectionTimeout,
+      $this->_timeouts['connect'],
       STREAM_CLIENT_CONNECT
     );
 
@@ -2329,13 +2287,13 @@ class Codebird
     if ($httpmethod !== 'GET') {
       $request .= $params;
     }
-    fputs($ch, $request);
-    stream_set_blocking($ch, 0);
-    stream_set_timeout($ch, 0);
+    fputs($connection, $request);
+    stream_set_blocking($connection, 0);
+    stream_set_timeout($connection, 0);
 
     // collect headers
     do {
-      $result  = stream_get_line($ch, 1048576, "\r\n\r\n");
+      $result  = stream_get_line($connection, 1048576, "\r\n\r\n");
     } while(!$result);
     $headers = explode("\r\n", $result);
 
@@ -2364,14 +2322,14 @@ class Codebird
     $last_message    = time();
     $message_length  = 0;
 
-    while (!feof($ch)) {
+    while (!feof($connection)) {
       // call signal handlers, if any
       if ($signal_function) {
         pcntl_signal_dispatch();
       }
-      $cha = [$ch];
-      $write = $except = null;
-      if (false === ($num_changed_streams = stream_select($cha, $write, $except, 0, 200000))) {
+      $connection_array = [$connection];
+      $write            = $except = null;
+      if (false === ($num_changed_streams = stream_select($connection_array, $write, $except, 0, 200000))) {
         break;
       } elseif ($num_changed_streams === 0) {
         if (time() - $last_message >= 1) {
@@ -2384,14 +2342,14 @@ class Codebird
         }
         continue;
       }
-      $chunk_length = fgets($ch, 10);
+      $chunk_length = fgets($connection, 10);
       if ($chunk_length === '' || !$chunk_length = hexdec($chunk_length)) {
         continue;
       }
 
       $chunk = '';
       do {
-        $chunk .= fread($ch, $chunk_length);
+        $chunk .= fread($connection, $chunk_length);
         $chunk_length -= strlen($chunk);
       } while($chunk_length > 0);
 
@@ -2426,6 +2384,7 @@ class Codebird
 
       $cancel_stream = $this->_deliverStreamingMessage($reply);
       if ($cancel_stream) {
+        fclose($connection);
         break;
       }
 
