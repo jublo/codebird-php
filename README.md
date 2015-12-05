@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Requirements
 
-- PHP 5.4.0 or higher
+- PHP 5.5.0 or higher
 - OpenSSL extension
 
 
@@ -54,39 +54,39 @@ Or you authenticate, like this:
 session_start();
 
 if (! isset($_SESSION['oauth_token'])) {
-    // get the request token
-    $reply = $cb->oauth_requestToken([
-        'oauth_callback' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-    ]);
+  // get the request token
+  $reply = $cb->oauth_requestToken([
+    'oauth_callback' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+  ]);
 
-    // store the token
-    $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
-    $_SESSION['oauth_token'] = $reply->oauth_token;
-    $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
-    $_SESSION['oauth_verify'] = true;
+  // store the token
+  $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
+  $_SESSION['oauth_token'] = $reply->oauth_token;
+  $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+  $_SESSION['oauth_verify'] = true;
 
-    // redirect to auth website
-    $auth_url = $cb->oauth_authorize();
-    header('Location: ' . $auth_url);
-    die();
+  // redirect to auth website
+  $auth_url = $cb->oauth_authorize();
+  header('Location: ' . $auth_url);
+  die();
 
 } elseif (isset($_GET['oauth_verifier']) && isset($_SESSION['oauth_verify'])) {
-    // verify the token
-    $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
-    unset($_SESSION['oauth_verify']);
+  // verify the token
+  $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+  unset($_SESSION['oauth_verify']);
 
-    // get the access token
-    $reply = $cb->oauth_accessToken([
-        'oauth_verifier' => $_GET['oauth_verifier']
-    ]);
+  // get the access token
+  $reply = $cb->oauth_accessToken([
+    'oauth_verifier' => $_GET['oauth_verifier']
+  ]);
 
-    // store the token (which is different from the request token!)
-    $_SESSION['oauth_token'] = $reply->oauth_token;
-    $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+  // store the token (which is different from the request token!)
+  $_SESSION['oauth_token'] = $reply->oauth_token;
+  $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
 
-    // send to same URL, without oauth GET parameters
-    header('Location: ' . basename(__FILE__));
-    die();
+  // send to same URL, without oauth GET parameters
+  header('Location: ' . basename(__FILE__));
+  die();
 }
 
 // assign access token on each page load
@@ -159,23 +159,23 @@ because no encoding is needed:
 
 ```php
 $params = [
-    'status' => 'Fish & chips'
+  'status' => 'Fish & chips'
 ];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
 $params = [
-    'status' => 'I love London',
-    'lat'    => 51.5033,
-    'long'   => 0.1197
+  'status' => 'I love London',
+  'lat'    => 51.5033,
+  'long'   => 0.1197
 ];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
 $params = [
-    'screen_name' => 'jublonet'
+  'screen_name' => 'jublonet'
 ];
 $reply = $cb->users_show($params);
 ```
@@ -184,6 +184,14 @@ sent with the code above.
 
 ### Uploading media to Twitter
 
+Twitter will accept the following media types, all of which are supported by Codebird:
+- PNG
+- JPEG
+- BMP
+- WebP
+- GIF
+- Animated GIF
+
 Tweet media can be uploaded in a 2-step process:
 
 **First** you send each media to Twitter. For **images**, it works like this:
@@ -191,18 +199,18 @@ Tweet media can be uploaded in a 2-step process:
 ```php
 // these files to upload. You can also just upload 1 image!
 $media_files = [
-    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
+  'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
 ];
 // will hold the uploaded IDs
 $media_ids = [];
 
 foreach ($media_files as $file) {
-    // upload all media files
-    $reply = $cb->media_upload([
-        'media' => $file
-    ]);
-    // and collect their IDs
-    $media_ids[] = $reply->media_id_string;
+  // upload all media files
+  $reply = $cb->media_upload([
+    'media' => $file
+  ]);
+  // and collect their IDs
+  $media_ids[] = $reply->media_id_string;
 }
 ```
 
@@ -217,8 +225,8 @@ $media_ids = implode(',', $media_ids);
 
 // send tweet with these medias
 $reply = $cb->statuses_update([
-    'status' => 'These are some of my relatives.',
-    'media_ids' => $media_ids
+  'status' => 'These are some of my relatives.',
+  'media_ids' => $media_ids
 ]);
 print_r($reply);
 );
@@ -234,7 +242,7 @@ More [documentation for uploading media](https://dev.twitter.com/rest/public/upl
 Remote files received from `http` and `https` servers are supported, too:
 ```php
 $reply = $cb->media_upload(array(
-    'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
+  'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
 ));
 ```
 
@@ -267,9 +275,9 @@ $fp         = fopen($file, 'r');
 // INIT the upload
 
 $reply = $cb->media_upload([
-    'command'     => 'INIT',
-    'media_type'  => 'video/mp4',
-    'total_bytes' => $size_bytes
+  'command'     => 'INIT',
+  'media_type'  => 'video/mp4',
+  'total_bytes' => $size_bytes
 ]);
 
 $media_id = $reply->media_id_string;
@@ -279,16 +287,16 @@ $media_id = $reply->media_id_string;
 $segment_id = 0;
 
 while (! feof($fp)) {
-    $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+  $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
 
-    $reply = $cb->media_upload([
-        'command'       => 'APPEND',
-        'media_id'      => $media_id,
-        'segment_index' => $segment_id,
-        'media'         => $chunk
-    ]);
+  $reply = $cb->media_upload([
+    'command'       => 'APPEND',
+    'media_id'      => $media_id,
+    'segment_index' => $segment_id,
+    'media'         => $chunk
+  ]);
 
-    $segment_id++;
+  $segment_id++;
 }
 
 fclose($fp);
@@ -296,20 +304,20 @@ fclose($fp);
 // FINALIZE the upload
 
 $reply = $cb->media_upload([
-    'command'       => 'FINALIZE',
-    'media_id'      => $media_id
+  'command'       => 'FINALIZE',
+  'media_id'      => $media_id
 ]);
 
 var_dump($reply);
 
 if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
-    die();
+  die();
 }
 
 // Now use the media_id in a tweet
 $reply = $cb->statuses_update([
-    'status'    => 'Twitter now accepts video uploads.',
-    'media_ids' => $media_id
+  'status'    => 'Twitter now accepts video uploads.',
+  'media_ids' => $media_id
 ]);
 
 ```
@@ -338,19 +346,19 @@ map to Codebird function calls. The general rules are:
 
 1. For each slash in a Twitter API method, use an underscore in the Codebird function.
 
-    Example: ```statuses/update``` maps to ```Codebird::statuses_update()```.
+  Example: ```statuses/update``` maps to ```Codebird::statuses_update()```.
 
 2. For each underscore in a Twitter API method, use camelCase in the Codebird function.
 
-    Example: ```statuses/home_timeline``` maps to ```Codebird::statuses_homeTimeline()```.
+  Example: ```statuses/home_timeline``` maps to ```Codebird::statuses_homeTimeline()```.
 
 3. For each parameter template in method, use UPPERCASE in the Codebird function.
-    Also don’t forget to include the parameter in your parameter list.
+  Also don’t forget to include the parameter in your parameter list.
 
-    Examples:
-    - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
-    - ```users/profile_image/:screen_name``` maps to
-      `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
+  Examples:
+  - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
+  - ```users/profile_image/:screen_name``` maps to
+    `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
 
 HTTP methods (GET, POST, DELETE etc.)
 -------------------------------------
@@ -450,24 +458,24 @@ To consume one of the available Twitter streams, follow these **two steps:**
 
 function some_callback($message)
 {
-    // gets called for every new streamed message
-    // gets called with $message = NULL once per second
+  // gets called for every new streamed message
+  // gets called with $message = NULL once per second
 
-    if ($message !== null) {
-        print_r($message);
-        flush();
-    }
+  if ($message !== null) {
+    print_r($message);
+    flush();
+  }
 
-    // return false to continue streaming
-    // return true to close the stream
+  // return false to continue streaming
+  // return true to close the stream
 
-    // close streaming after 1 minute for this simple sample
-    // don't rely on globals in your code!
-    if (time() - $GLOBALS['time_start'] >= 60) {
-        return true;
-    }
+  // close streaming after 1 minute for this simple sample
+  // don't rely on globals in your code!
+  if (time() - $GLOBALS['time_start'] >= 60) {
+    return true;
+  }
 
-    return false;
+  return false;
 }
 
 // set the streaming callback in Codebird
@@ -525,11 +533,11 @@ Take a look at the returned data as follows:
 ```
 stdClass Object
 (
-    [oauth_token] => 14648265-rPn8EJwfB**********************
-    [oauth_token_secret] => agvf3L3**************************
-    [user_id] => 14648265
-    [screen_name] => jublonet
-    [httpstatus] => 200
+  [oauth_token] => 14648265-rPn8EJwfB**********************
+  [oauth_token_secret] => agvf3L3**************************
+  [user_id] => 14648265
+  [screen_name] => jublonet
+  [httpstatus] => 200
 )
 ```
 
@@ -567,9 +575,9 @@ $nextCursor = $result1->next_cursor_str;
 
 3. If ```$nextCursor``` is not 0, use this cursor to request the next result page:
 ```php
-    if ($nextCursor > 0) {
-        $result2 = $cb->followers_list('cursor=' . $nextCursor);
-    }
+  if ($nextCursor > 0) {
+    $result2 = $cb->followers_list('cursor=' . $nextCursor);
+  }
 ```
 
 To navigate back instead of forth, use the field ```$resultX->previous_cursor_str```
@@ -587,9 +595,9 @@ Remember that your application needs to be whitelisted to be able to use xAuth.
 Here’s an example:
 ```php
 $reply = $cb->oauth_accessToken([
-    'x_auth_username' => 'username',
-    'x_auth_password' => '4h3_p4$$w0rd',
-    'x_auth_mode' => 'client_auth'
+  'x_auth_username' => 'username',
+  'x_auth_password' => '4h3_p4$$w0rd',
+  'x_auth_mode' => 'client_auth'
 ]);
 ```
 
@@ -689,7 +697,7 @@ Here’s a sample for adding a tweet using that API method:
 $reply = $cb->collections_entries_curate([
   'id' => 'custom-672852634622144512',
   'changes' => [
-    ['op' => 'add', 'tweet_id' => '672727928262828032']
+  ['op' => 'add', 'tweet_id' => '672727928262828032']
   ]
 ]);
 
@@ -711,9 +719,9 @@ For accessing the TON API, please adapt the following code samples for uploading
 // single-chunk upload
 
 $reply = $cb->ton_bucket_BUCKET([
-    'bucket' => 'ta_partner',
-    'Content-Type' => 'image/jpeg',
-    'media' => $file
+  'bucket' => 'ta_partner',
+  'Content-Type' => 'image/jpeg',
+  'media' => $file
 ]);
 
 var_dump($reply);
@@ -737,13 +745,13 @@ $fp         = fopen($file, 'r');
 // INIT the upload
 
 $reply = $cb->__call(
-    'ton/bucket/BUCKET?resumable=true',
-    [[ // note the double square braces when using __call
-        'bucket' => 'ta_partner',
-        'Content-Type' => 'video/mp4',
-        'X-Ton-Content-Type' => 'video/mp4',
-        'X-Ton-Content-Length' => $size_bytes
-    ]]
+  'ton/bucket/BUCKET?resumable=true',
+  [[ // note the double square braces when using __call
+    'bucket' => 'ta_partner',
+    'Content-Type' => 'video/mp4',
+    'X-Ton-Content-Type' => 'video/mp4',
+    'X-Ton-Content-Length' => $size_bytes
+  ]]
 );
 
 $target = $reply->Location;
@@ -759,23 +767,23 @@ list ($target, $file, $resumeId) = $match;
 $segment_id = 0;
 
 while (! feof($fp)) {
-    $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+  $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
 
-    // special way to call Codebird for the upload chunks
-    $reply = $cb->__call(
-        'ton/bucket/BUCKET/FILE?resumable=true&resumeId=RESUMEID',
-        [[ // note the double square braces when using __call
-            'bucket' => 'ta_partner',
-            'file' => $file, // you get real filename from INIT, see above
-            'Content-Type' => 'image/jpeg',
-            'Content-Range' => 'bytes '
-                . ($segment_id * 1048576) . '-' . strlen($chunk) . '/' . $size_bytes,
-            'resumeId' => $resumeId,
-            'media' => $chunk
-        ]]
-    );
+  // special way to call Codebird for the upload chunks
+  $reply = $cb->__call(
+    'ton/bucket/BUCKET/FILE?resumable=true&resumeId=RESUMEID',
+    [[ // note the double square braces when using __call
+      'bucket' => 'ta_partner',
+      'file' => $file, // you get real filename from INIT, see above
+      'Content-Type' => 'image/jpeg',
+      'Content-Range' => 'bytes '
+        . ($segment_id * 1048576) . '-' . strlen($chunk) . '/' . $size_bytes,
+      'resumeId' => $resumeId,
+      'media' => $chunk
+    ]]
+  );
 
-    $segment_id++;
+  $segment_id++;
 }
 
 fclose($fp);
