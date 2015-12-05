@@ -687,11 +687,96 @@ Here’s a sample for adding a tweet using that API method:
 
 ```php
 $reply = $cb->collections_entries_curate([
-  "id" => "custom-672852634622144512",
-  "changes" => [
-    ["op" => "add", "tweet_id" => "672727928262828032"]
+  'id' => 'custom-672852634622144512',
+  'changes' => [
+    ['op' => 'add', 'tweet_id' => '672727928262828032']
   ]
 ]);
 
 var_dump($reply);
+```
+
+### …access the TON API?
+
+The [TON (Twitter Object Nest) API](https://dev.twitter.com/rest/ton) allows implementers to upload media and various assets to Twitter.
+The TON API supports non-resumable and resumable upload methods based on the size of the file.
+For files less than 64MB, non-resumable may be used. For files greater than or equal to 64MB,
+resumable must be used. Resumable uploads require chunk sizes of less than 64MB.
+
+For accessing the TON API, please adapt the following code samples for uploading:
+
+#### Single-chunk upload
+
+```php
+// single-chunk upload
+
+$reply = $cb->ton_bucket_BUCKET([
+    'bucket' => 'ta_partner',
+    'Content-Type' => 'image/jpeg',
+    'media' => $file
+]);
+
+var_dump($reply);
+
+// use the Location header now...
+echo $reply->Location;
+```
+
+As you see from that sample, Codebird rewrites the special TON API headers into the reply,
+so you can easily access them.  This also applies to the `X-TON-Min-Chunk-Size` and
+`X-Ton-Max-Chunk-Size` for chunked uploads:
+
+#### Multi-chunk upload
+
+```php
+// multi-chunk upload
+$file       = 'demo-video.mp4';
+$size_bytes = filesize($file);
+$fp         = fopen($file, 'r');
+
+// INIT the upload
+
+$reply = $cb->__call(
+    'ton/bucket/BUCKET?resumable=true',
+    [[ // note the double square braces when using __call
+        'bucket' => 'ta_partner',
+        'Content-Type' => 'video/mp4',
+        'X-Ton-Content-Type' => 'video/mp4',
+        'X-Ton-Content-Length' => $size_bytes
+    ]]
+);
+
+$target = $reply->Location;
+// something like: '/1.1/ton/bucket/ta_partner/SzFxGfAg_Zj.mp4?resumable=true&resumeId=28401873'
+$match = [];
+
+// match the location parts
+preg_match('/ton\/bucket\/.+\/(.+)\?resumable=true&resumeId=(\d+)/', $target, $match);
+list ($target, $file, $resumeId) = $match;
+
+// APPEND data to the upload
+
+$segment_id = 0;
+
+while (! feof($fp)) {
+    $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+
+    // special way to call Codebird for the upload chunks
+    $reply = $cb->__call(
+        'ton/bucket/BUCKET/FILE?resumable=true&resumeId=RESUMEID',
+        [[ // note the double square braces when using __call
+            'bucket' => 'ta_partner',
+            'file' => $file, // you get real filename from INIT, see above
+            'Content-Type' => 'image/jpeg',
+            'Content-Range' => 'bytes '
+                . ($segment_id * 1048576) . '-' . strlen($chunk) . '/' . $size_bytes,
+            'resumeId' => $resumeId,
+            'media' => $chunk
+        ]]
+    );
+
+    $segment_id++;
+}
+
+fclose($fp);
 ```
