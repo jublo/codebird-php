@@ -1312,18 +1312,22 @@ class Codebird
    *
    * @param array $headers The CURL response headers
    *
-   * @return null|array The rate-limiting information
+   * @return null|array|object The rate-limiting information
    */
   protected function _getRateLimitInfo($headers)
   {
     if (! isset($headers['x-rate-limit-limit'])) {
       return null;
     }
-    return [
+    $rate = [
       'limit'     => $headers['x-rate-limit-limit'],
       'remaining' => $headers['x-rate-limit-remaining'],
       'reset'     => $headers['x-rate-limit-reset']
     ];
+    if ($this->_return_format === CODEBIRD_RETURNFORMAT_OBJECT) {
+      return (object) $rate;
+    }
+    return $rate;
   }
 
   /**
@@ -1698,7 +1702,7 @@ class Codebird
    *
    * @param string $method_template The method template to call
    * @param string $key             The parameter name
-   * @param array  $value           The possible file name or URL
+   * @param string $value           The possible file name or URL
    *
    * @return mixed
    */
@@ -2034,16 +2038,7 @@ class Codebird
     $reply                 = $this->_parseApiReply($reply);
     $rate                  = $this->_getRateLimitInfo($headers);
 
-    switch ($this->_return_format) {
-      case CODEBIRD_RETURNFORMAT_ARRAY:
-        $reply['httpstatus'] = $httpstatus;
-        $reply['rate']       = $rate;
-        break;
-      case CODEBIRD_RETURNFORMAT_OBJECT:
-        $reply->httpstatus = $httpstatus;
-        $reply->rate       = $rate;
-        break;
-    }
+    $reply = $this->_appendHttpStatusAndRate($reply, $httpstatus, $rate);
     return $reply;
   }
 
@@ -2111,16 +2106,8 @@ class Codebird
     $reply                 = $this->_parseApiReplyPrefillHeaders($headers, $reply);
     $reply                 = $this->_parseApiReply($reply);
     $rate                  = $this->_getRateLimitInfo($headers);
-    switch ($this->_return_format) {
-      case CODEBIRD_RETURNFORMAT_ARRAY:
-        $reply['httpstatus'] = $httpstatus;
-        $reply['rate']       = $rate;
-        break;
-      case CODEBIRD_RETURNFORMAT_OBJECT:
-        $reply->httpstatus = $httpstatus;
-        $reply->rate       = $rate;
-        break;
-    }
+
+    $reply = $this->_appendHttpStatusAndRate($reply, $httpstatus, $rate);
     return $reply;
   }
 
@@ -2211,6 +2198,34 @@ class Codebird
       $params = http_build_query($params);
     }
     return [$authorization, $params, $request_headers];
+  }
+
+  /**
+   * Appends HTTP status and rate limiting info to the reply
+   *
+   * @param array|object $reply      The reply to append to
+   * @param string       $httpstatus The HTTP status code to append
+   * @param mixed        $rate       The rate limiting info to append
+   */
+  protected function _appendHttpStatusAndRate($reply, $httpstatus, $rate)
+  {
+    switch ($this->_return_format) {
+      case CODEBIRD_RETURNFORMAT_ARRAY:
+        $reply['httpstatus'] = $httpstatus;
+        $reply['rate']       = $rate;
+        break;
+      case CODEBIRD_RETURNFORMAT_OBJECT:
+        $reply->httpstatus = $httpstatus;
+        $reply->rate       = $rate;
+        break;
+      case CODEBIRD_RETURNFORMAT_JSON:
+        $reply             = json_decode($reply);
+        $reply->httpstatus = $httpstatus;
+        $reply->rate       = $rate;
+        $reply             = json_encode($reply);
+        break;
+    }
+    return $reply;
   }
 
   /**

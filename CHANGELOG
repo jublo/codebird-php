@@ -15,6 +15,7 @@ codebird-php - changelog
 + #120 Support Ads API
 + Support WebP media format
 + Fixes for non-multipart media uploads, see #141
++ Return rate-limiting info as object, when return format = object
 
 2.7.2 (2015-09-23)
 - #135 Invalid HTTP request headers in non-cURL mode
