@@ -1722,31 +1722,11 @@ class Codebird
     if (!in_array($key, self::$_possible_files[$method_template])) {
       return false;
     }
-    if (// is it a file, a readable one?
-      @file_exists($value)
-      && @is_readable($value)
-    ) {
-      // is it a supported image format?
-      $data = @getimagesize($value);
-      if ((is_array($data) && in_array($data[2], $this->_supported_media_files))
-        || imagecreatefromwebp($data) // A WebP image! :-) —why won’t getimagesize support this?
-      ) {
-        // try to read the file
-        $data = @file_get_contents($value);
-        if ($data !== false && strlen($data) !== 0) {
-          return $data;
-        }
-      }
-    } elseif (// is it a remote file?
-      filter_var($value, FILTER_VALIDATE_URL)
-      && preg_match('/^https?:\/\//', $value)
-    ) {
-      $data = $this->_fetchRemoteFile($value);
-      if ($data !== false) {
-        return $data;
-      }
+    $data = $this->_buildBinaryBody($value);
+    if ($data === $value) {
+      return false;
     }
-    return false;
+    return $data;
   }
 
 
