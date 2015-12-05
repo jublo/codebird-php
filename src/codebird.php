@@ -1943,7 +1943,7 @@ class Codebird
     }
     // use separate API access for streaming API
     if ($this->_detectStreaming($method) !== false) {
-      return $this->_callApiStreaming($httpmethod, $method, $params, $app_only_auth);
+      return $this->_callApiStreaming($httpmethod, $method, $method_template, $params, $app_only_auth);
     }
 
     if ($this->_use_curl) {
@@ -2246,6 +2246,7 @@ class Codebird
    *
    * @param string          $httpmethod      The HTTP method to use for making the request
    * @param string          $method          The API method to call
+   * @param string          $method_template The API method template to call
    * @param array  optional $params          The parameters to send along
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
@@ -2253,7 +2254,7 @@ class Codebird
    */
 
   protected function _callApiStreaming(
-    $httpmethod, $method, $params = [], $app_only_auth = false
+    $httpmethod, $method, $method_template, $params = [], $app_only_auth = false
   )
   {
     if ($this->_streaming_callback === null) {
