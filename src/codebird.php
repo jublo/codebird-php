@@ -1254,13 +1254,8 @@ class Codebird
     $result .= "\r\n" . $reply;
 
     // find HTTP status
-    $httpstatus = '500';
-    $match      = [];
-    if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
-      $httpstatus = $match[1];
-    }
-
-    $reply = $this->_parseBearerReply($result, $httpstatus);
+    $httpstatus = $this->_getHttpStatusFromHeaders($headers);
+    $reply      = $this->_parseBearerReply($result, $httpstatus);
     return $reply;
   }
 
@@ -1268,6 +1263,23 @@ class Codebird
   /**
    * General helpers to avoid duplicate code
    */
+
+  /**
+   * Extract HTTP status code from headers
+   *
+   * @param array $headers The headers to parse
+   *
+   * @return string The HTTP status code
+   */
+  protected function _getHttpStatusFromHeaders($headers)
+  {
+    $httpstatus = '500';
+    $match      = [];
+    if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
+      $httpstatus = $match[1];
+    }
+    return $httpstatus;
+  }
 
   /**
    * Parse oauth2_token reply and set bearer token, if found
@@ -2095,12 +2107,7 @@ class Codebird
     $result .= "\r\n" . $reply;
 
     // find HTTP status
-    $httpstatus = '500';
-    $match      = [];
-    if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
-      $httpstatus = $match[1];
-    }
-
+    $httpstatus            = $this->_getHttpStatusFromHeaders($headers);
     list($headers, $reply) = $this->_parseApiHeaders($result);
     // TON API & redirects
     $reply                 = $this->_parseApiReplyPrefillHeaders($headers, $reply);
@@ -2353,12 +2360,7 @@ class Codebird
     $headers = explode("\r\n", $result);
 
     // find HTTP status
-    $httpstatus = '500';
-    $match      = [];
-    if (!empty($headers[0]) && preg_match('/HTTP\/\d\.\d (\d{3})/', $headers[0], $match)) {
-      $httpstatus = $match[1];
-    }
-
+    $httpstatus     = $this->_getHttpStatusFromHeaders($headers);
     list($headers,) = $this->_parseApiHeaders($result);
     $rate           = $this->_getRateLimitInfo($headers);
 
