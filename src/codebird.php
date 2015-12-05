@@ -1908,7 +1908,7 @@ class Codebird
       $url = self::$_endpoint_media . $method . '.json';
     } elseif ($variant = $this->_detectStreaming($method_template)) {
       $url = self::$_endpoints_streaming[$variant] . $method . '.json';
-    } elseif ($variant = $this->_detectBinaryBody($method_template)) {
+    } elseif ($this->_detectBinaryBody($method_template)) {
       $url = self::$_endpoint_ton . $method;
     } elseif (substr($method_template, 0, 12) === 'ads/sandbox/') {
       $url = self::$_endpoint_ads_sandbox . substr($method, 12);
@@ -2167,6 +2167,9 @@ class Codebird
       }
       $sign_params = [];
       parse_str(parse_url($method, PHP_URL_QUERY), $sign_params);
+      if ($sign_params === null) {
+        $sign_params = [];
+      }
       $authorization = $this->_sign($httpmethod, $url, $sign_params);
       if (isset($params['media'])) {
         $params = $this->_buildBinaryBody($params['media']);
@@ -2261,7 +2264,7 @@ class Codebird
 
     list ($authorization, $url, $params, $request_headers)
       = $this->_callApiPreparations(
-        $httpmethod, $method, $params, false, $app_only_auth
+        $httpmethod, $method, $method_template, $params, false, $app_only_auth
       );
 
     $hostname = parse_url($url, PHP_URL_HOST);
