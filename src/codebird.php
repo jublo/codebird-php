@@ -2203,9 +2203,9 @@ class Codebird
   /**
    * Appends HTTP status and rate limiting info to the reply
    *
-   * @param array|object $reply      The reply to append to
-   * @param string       $httpstatus The HTTP status code to append
-   * @param mixed        $rate       The rate limiting info to append
+   * @param array|object|string $reply      The reply to append to
+   * @param string              $httpstatus The HTTP status code to append
+   * @param mixed               $rate       The rate limiting info to append
    */
   protected function _appendHttpStatusAndRate($reply, $httpstatus, $rate)
   {
