@@ -856,28 +856,7 @@ class Codebird
     $method = $this->_mapFnRestoreParamUnderscores($method);
 
     // replace AA by URL parameters
-    $method_template = $method;
-    $match           = [];
-    if (preg_match_all('/[A-Z_]{2,}/', $method, $match)) {
-      foreach ($match[0] as $param) {
-        $param_l = strtolower($param);
-        if ($param_l === 'resumeid') {
-          $param_l = 'resumeId';
-        }
-        $method_template = str_replace($param, ':' . $param_l, $method_template);
-        if (! isset($apiparams[$param_l])) {
-          for ($i = 0; $i < 26; $i++) {
-            $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
-          }
-          throw new \Exception(
-            'To call the templated method "' . $method_template
-            . '", specify the parameter value for "' . $param_l . '".'
-          );
-        }
-        $method  = str_replace($param, $apiparams[$param_l], $method);
-        unset($apiparams[$param_l]);
-      }
-    }
+    list ($method, $method_template) = $this->_mapFnInlineParams($method, $apiparams);
 
     if (substr($method, 0, 4) !== 'ton/') {
       // replace A-Z by _a-z
@@ -923,6 +902,42 @@ class Codebird
     }
 
     return $method;
+  }
+
+  /**
+   * Inserts inline parameters into the method name
+   *
+   * @param string      $method    The method to call
+   * @param array byref $apiparams The parameters to send along
+   *
+   * @return string[] (string method, string method_template)
+   */
+  protected function _mapFnInlineParams($method, &$apiparams)
+  {
+    $method_template = $method;
+    $match           = [];
+    if (preg_match_all('/[A-Z_]{2,}/', $method, $match)) {
+      foreach ($match[0] as $param) {
+        $param_l = strtolower($param);
+        if ($param_l === 'resumeid') {
+          $param_l = 'resumeId';
+        }
+        $method_template = str_replace($param, ':' . $param_l, $method_template);
+        if (! isset($apiparams[$param_l])) {
+          for ($i = 0; $i < 26; $i++) {
+            $method_template = str_replace(chr(65 + $i), '_' . chr(97 + $i), $method_template);
+          }
+          throw new \Exception(
+            'To call the templated method "' . $method_template
+            . '", specify the parameter value for "' . $param_l . '".'
+          );
+        }
+        $method  = str_replace($param, $apiparams[$param_l], $method);
+        unset($apiparams[$param_l]);
+      }
+    }
+
+    return [$method, $method_template];
   }
 
 
