@@ -1,5 +1,7 @@
 build
+composer.lock
 RELEASE_MESSAGE*
 test*.php
+vendor
 *.jpg
 *.mp4
