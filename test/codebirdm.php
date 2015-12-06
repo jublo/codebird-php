@@ -31,91 +31,19 @@ class CodebirdM extends CodebirdT
   protected static $_mock_replies = [
     'default' => [
       'httpstatus' => 404,
-      'reply' => "HTTP/1.1 404 Not Found\r\n"
-        . "content-length: 68\r\n"
-        . "content-type: application/json;charset=utf-8\r\n"
-        . "date: Sun, 06 Dec 2015 14:43:28 GMT\r\n"
-        . "server: tsa_b\r\n"
-        . "set-cookie: guest_id=v1%3A144941300885288055; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:43:28 UTC\r\n"
-        . "strict-transport-security: max-age=631138519\r\n"
-        . "x-connection-hash: 12218aef9e9757609afb08e661fa3b9b\r\n"
-        . "x-response-time: 2\r\n"
-        . "\r\n"
-        . '{"errors":[{"message":"Sorry, that page does not exist","code":34}]}'
+      'reply' => "HTTP/1.1 404 Not Found\r\ncontent-length: 68\r\ncontent-type: application/json;charset=utf-8\r\ndate: Sun, 06 Dec 2015 14:43:28 GMT\r\nserver: tsa_b\r\nset-cookie: guest_id=v1%3A144941300885288055; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:43:28 UTC\r\nstrict-transport-security: max-age=631138519\r\nx-connection-hash: 12218aef9e9757609afb08e661fa3b9b\r\nx-response-time: 2\r\n\r\n{\"errors\":[{\"message\":\"Sorry, that page does not exist\",\"code\":34}]}"
     ],
     'proxy1' => [
       'httpstatus' => 404,
-      'reply' => "HTTP/1.1 200 Connection Established\r\n"
-        . "\r\n"
-        . "HTTP/1.1 404 Not Found\r\n"
-        . "content-length: 68\r\n"
-        . "content-type: application/json;charset=utf-8\r\n"
-        . "date: Sun, 06 Dec 2015 14:43:28 GMT\r\n"
-        . "server: tsa_b\r\n"
-        . "set-cookie: guest_id=v1%3A144941300885288055; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:43:28 UTC\r\n"
-        . "strict-transport-security: max-age=631138519\r\n"
-        . "x-connection-hash: 12218aef9e9757609afb08e661fa3b9b\r\n"
-        . "x-response-time: 2\r\n"
-        . "\r\n"
-        . '{"errors":[{"message":"Sorry, that page does not exist","code":34}]}'
+      'reply' => "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.1 404 Not Found\r\ncontent-length: 68\r\ncontent-type: application/json;charset=utf-8\r\ndate: Sun, 06 Dec 2015 14:43:28 GMT\r\nserver: tsa_b\r\nset-cookie: guest_id=v1%3A144941300885288055; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:43:28 UTC\r\nstrict-transport-security: max-age=631138519\r\nx-connection-hash: 12218aef9e9757609afb08e661fa3b9b\r\nx-response-time: 2\r\n\r\n{\"errors\":[{\"message\":\"Sorry, that page does not exist\",\"code\":34}]}"
     ],
     'GET https://api.twitter.com/1.1/users/show.json?screen_name=TwitterAPI' => [
       'httpstatus' => 200,
-      'reply' => "HTTP/1.1 200 OK"
-        . "cache-control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0\r\n"
-        . "content-disposition: attachment; filename=json.json\r\n"
-        . "content-length: 2801\r\n"
-        . "content-type: application/json;charset=utf-8\r\n"
-        . "date: Sun, 06 Dec 2015 14:55:46 GMT\r\n"
-        . "expires: Tue, 31 Mar 1981 05:00:00 GMT\r\n"
-        . "last-modified: Sun, 06 Dec 2015 14:55:46 GMT\r\n"
-        . "pragma: no-cache\r\n"
-        . "server: tsa_b\r\n"
-        . "set-cookie: lang=en-gb; Path=/\r\n"
-        . "set-cookie: guest_id=v1%3A144941374684866365; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:55:46 UTC\r\n"
-        . "status: 200 OK\r\n"
-        . "strict-transport-security: max-age=631138519\r\n"
-        . "x-access-level: read-write-directmessages\r\n"
-        . "x-connection-hash: 1906b689730b92318bccf65b496f74d0\r\n"
-        . "x-content-type-options: nosniff\r\n"
-        . "x-frame-options: SAMEORIGIN\r\n"
-        . "x-rate-limit-limit: 181\r\n"
-        . "x-rate-limit-remaining: 177\r\n"
-        . "x-rate-limit-reset: 1449414513\r\n"
-        . "x-response-time: 44\r\n"
-        . "x-transaction: 663cc05c64857ba0\r\n"
-        . "x-twitter-response-tags: BouncerCompliant\r\n"
-        . "x-xss-protection: 1; mode=block\r\n"
-        . "\r\n"
-        . '{"id":6253282,"id_str":"6253282","name":"Twitter API","screen_name":"twitterapi","location":"San Francisco, CA","profile_location":null,"description":"The Real Twitter API. I tweet about API changes, service issues and happily answer questions about Twitter and our API. Don\'t get an answer? It\'s on my website.","url":"http:\/\/t.co\/78pYTvWfJd","entities":{"url":{"urls":[{"url":"http:\/\/t.co\/78pYTvWfJd","expanded_url":"http:\/\/dev.twitter.com","display_url":"dev.twitter.com","indices":[0,22]}]},"description":{"urls":[]}},"protected":false,"followers_count":4993679,"friends_count":48,"listed_count":13001,"created_at":"Wed May 23 06:01:13 +0000 2007","favourites_count":27,"utc_offset":-28800,"time_zone":"Pacific Time (US & Canada)","geo_enabled":true,"verified":true,"statuses_count":3553,"lang":"en","status":{"created_at":"Tue Nov 24 08:56:07 +0000 2015","id":669077021138493440,"id_str":"669077021138493440","text":"Additional 64-bit entity ID migration coming in Feb 2016 https:\/\/t.co\/eQIGvw1rsJ","source":"\u003ca href=\"https:\/\/about.twitter.com\/products\/tweetdeck\" rel=\"nofollow\"\u003eTweetDeck\u003c\/a\u003e","truncated":false,"in_reply_to_status_id":null,"in_reply_to_status_id_str":null,"in_reply_to_user_id":null,"in_reply_to_user_id_str":null,"in_reply_to_screen_name":null,"geo":null,"coordinates":null,"place":null,"contributors":null,"retweet_count":67,"favorite_count":79,"entities":{"hashtags":[],"symbols":[],"user_mentions":[],"urls":[{"url":"https:\/\/t.co\/eQIGvw1rsJ","expanded_url":"https:\/\/twittercommunity.com\/t\/migration-of-twitter-core-entities-to-64-bit-ids\/56881","display_url":"twittercommunity.com\/t\/migration-of\u2026","indices":[57,80]}]},"favorited":false,"retweeted":false,"possibly_sensitive":false,"lang":"en"},"contributors_enabled":false,"is_translator":false,"is_translation_enabled":false,"profile_background_color":"C0DEED","profile_background_image_url":"http:\/\/pbs.twimg.com\/profile_background_images\/656927849\/miyt9dpjz77sc0w3d4vj.png","profile_background_image_url_https":"https:\/\/pbs.twimg.com\/profile_background_images\/656927849\/miyt9dpjz77sc0w3d4vj.png","profile_background_tile":true,"profile_image_url":"http:\/\/pbs.twimg.com\/profile_images\/2284174872\/7df3h38zabcvjylnyfe3_normal.png","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/2284174872\/7df3h38zabcvjylnyfe3_normal.png","profile_banner_url":"https:\/\/pbs.twimg.com\/profile_banners\/6253282\/1431474710","profile_link_color":"0084B4","profile_sidebar_border_color":"C0DEED","profile_sidebar_fill_color":"DDEEF6","profile_text_color":"333333","profile_use_background_image":true,"has_extended_profile":false,"default_profile":false,"default_profile_image":false,"following":true,"follow_request_sent":false,"notifications":false}'
+      'reply' => "HTTP/1.1 200 OKcache-control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0\r\ncontent-disposition: attachment; filename=json.json\r\ncontent-length: 2801\r\ncontent-type: application/json;charset=utf-8\r\ndate: Sun, 06 Dec 2015 14:55:46 GMT\r\nexpires: Tue, 31 Mar 1981 05:00:00 GMT\r\nlast-modified: Sun, 06 Dec 2015 14:55:46 GMT\r\npragma: no-cache\r\nserver: tsa_b\r\nset-cookie: lang=en-gb; Path=/\r\nset-cookie: guest_id=v1%3A144941374684866365; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 14:55:46 UTC\r\nstatus: 200 OK\r\nstrict-transport-security: max-age=631138519\r\nx-access-level: read-write-directmessages\r\nx-connection-hash: 1906b689730b92318bccf65b496f74d0\r\nx-content-type-options: nosniff\r\nx-frame-options: SAMEORIGIN\r\nx-rate-limit-limit: 181\r\nx-rate-limit-remaining: 177\r\nx-rate-limit-reset: 1449414513\r\nx-response-time: 44\r\nx-transaction: 663cc05c64857ba0\r\nx-twitter-response-tags: BouncerCompliant\r\nx-xss-protection: 1; mode=block\r\n\r\n{\"id\":6253282,\"id_str\":\"6253282\",\"name\":\"Twitter API\",\"screen_name\":\"twitterapi\",\"location\":\"San Francisco, CA\",\"profile_location\":null,\"description\":\"The Real Twitter API. I tweet about API changes, service issues and happily answer questions about Twitter and our API. Don't get an answer? It's on my website.\",\"url\":\"http:\/\/t.co\/78pYTvWfJd\",\"entities\":{\"url\":{\"urls\":[{\"url\":\"http:\/\/t.co\/78pYTvWfJd\",\"expanded_url\":\"http:\/\/dev.twitter.com\",\"display_url\":\"dev.twitter.com\",\"indices\":[0,22]}]},\"description\":{\"urls\":[]}},\"protected\":false,\"followers_count\":4993679,\"friends_count\":48,\"listed_count\":13001,\"created_at\":\"Wed May 23 06:01:13 +0000 2007\",\"favourites_count\":27,\"utc_offset\":-28800,\"time_zone\":\"Pacific Time (US & Canada)\",\"geo_enabled\":true,\"verified\":true,\"statuses_count\":3553,\"lang\":\"en\",\"status\":{\"created_at\":\"Tue Nov 24 08:56:07 +0000 2015\",\"id\":669077021138493440,\"id_str\":\"669077021138493440\",\"text\":\"Additional 64-bit entity ID migration coming in Feb 2016 https:\/\/t.co\/eQIGvw1rsJ\",\"source\":\"\u003ca href=\\\"https:\/\/about.twitter.com\/products\/tweetdeck\\\" rel=\\\"nofollow\\\"\u003eTweetDeck\u003c\/a\u003e\",\"truncated\":false,\"in_reply_to_status_id\":null,\"in_reply_to_status_id_str\":null,\"in_reply_to_user_id\":null,\"in_reply_to_user_id_str\":null,\"in_reply_to_screen_name\":null,\"geo\":null,\"coordinates\":null,\"place\":null,\"contributors\":null,\"retweet_count\":67,\"favorite_count\":79,\"entities\":{\"hashtags\":[],\"symbols\":[],\"user_mentions\":[],\"urls\":[{\"url\":\"https:\/\/t.co\/eQIGvw1rsJ\",\"expanded_url\":\"https:\/\/twittercommunity.com\/t\/migration-of-twitter-core-entities-to-64-bit-ids\/56881\",\"display_url\":\"twittercommunity.com\/t\/migration-of\u2026\",\"indices\":[57,80]}]},\"favorited\":false,\"retweeted\":false,\"possibly_sensitive\":false,\"lang\":\"en\"},\"contributors_enabled\":false,\"is_translator\":false,\"is_translation_enabled\":false,\"profile_background_color\":\"C0DEED\",\"profile_background_image_url\":\"http:\/\/pbs.twimg.com\/profile_background_images\/656927849\/miyt9dpjz77sc0w3d4vj.png\",\"profile_background_image_url_https\":\"https:\/\/pbs.twimg.com\/profile_background_images\/656927849\/miyt9dpjz77sc0w3d4vj.png\",\"profile_background_tile\":true,\"profile_image_url\":\"http:\/\/pbs.twimg.com\/profile_images\/2284174872\/7df3h38zabcvjylnyfe3_normal.png\",\"profile_image_url_https\":\"https:\/\/pbs.twimg.com\/profile_images\/2284174872\/7df3h38zabcvjylnyfe3_normal.png\",\"profile_banner_url\":\"https:\/\/pbs.twimg.com\/profile_banners\/6253282\/1431474710\",\"profile_link_color\":\"0084B4\",\"profile_sidebar_border_color\":\"C0DEED\",\"profile_sidebar_fill_color\":\"DDEEF6\",\"profile_text_color\":\"333333\",\"profile_use_background_image\":true,\"has_extended_profile\":false,\"default_profile\":false,\"default_profile_image\":false,\"following\":true,\"follow_request_sent\":false,\"notifications\":false}"
     ],
     'POST https://api.twitter.com/oauth2/token' => [
       'httpstatus' => 200,
-      'reply' => "HTTP/1.1 200 OK\r\n"
-      . "cache-control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0\r\n"
-      . "content-disposition: attachment; filename=json.json\r\n"
-      . "content-length: 52\r\n"
-      . "content-type: application/json;charset=utf-8\r\n"
-      . "date: Sun, 06 Dec 2015 15:53:02 GMT\r\n"
-      . "expires: Tue, 31 Mar 1981 05:00:00 GMT\r\n"
-      . "last-modified: Sun, 06 Dec 2015 15:53:01 GMT\r\n"
-      . "ml: S\r\n"
-      . "pragma: no-cache\r\n"
-      . "server: tsa_b\r\n"
-      . "set-cookie: guest_id=v1%3A144941718194388038; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 15:53:02 UTC\r\n"
-      . "status: 200 OK\r\n"
-      . "strict-transport-security: max-age=631138519\r\n"
-      . "x-connection-hash: 97f4d4e6a33433b477510d8c58a0b026\r\n"
-      . "x-content-type-options: nosniff\r\n"
-      . "x-frame-options: DENY\r\n"
-      . "x-response-time: 87\r\n"
-      . "x-transaction: 6a0e5e8144d7e6df\r\n"
-      . "x-tsa-request-body-time: 164\r\n"
-      . "x-twitter-response-tags: BouncerCompliant\r\n"
-      . "x-ua-compatible: IE=edge,chrome=1\r\n"
-      . "x-xss-protection: 1; mode=block\r\n"
-      . "\r\n"
-      . '{"token_type":"bearer","access_token":"VqiO0n2HrKE"}'
+      'reply' => "HTTP/1.1 200 OK\r\ncache-control: no-cache, no-store, must-revalidate, pre-check=0, post-check=0\r\ncontent-disposition: attachment; filename=json.json\r\ncontent-length: 52\r\ncontent-type: application/json;charset=utf-8\r\ndate: Sun, 06 Dec 2015 15:53:02 GMT\r\nexpires: Tue, 31 Mar 1981 05:00:00 GMT\r\nlast-modified: Sun, 06 Dec 2015 15:53:01 GMT\r\nml: S\r\npragma: no-cache\r\nserver: tsa_b\r\nset-cookie: guest_id=v1%3A144941718194388038; Domain=.twitter.com; Path=/; Expires=Tue, 05-Dec-2017 15:53:02 UTC\r\nstatus: 200 OK\r\nstrict-transport-security: max-age=631138519\r\nx-connection-hash: 97f4d4e6a33433b477510d8c58a0b026\r\nx-content-type-options: nosniff\r\nx-frame-options: DENY\r\nx-response-time: 87\r\nx-transaction: 6a0e5e8144d7e6df\r\nx-tsa-request-body-time: 164\r\nx-twitter-response-tags: BouncerCompliant\r\nx-ua-compatible: IE=edge,chrome=1\r\nx-xss-protection: 1; mode=block\r\n\r\n{\"token_type\":\"bearer\",\"access_token\":\"VqiO0n2HrKE\"}"
     ]
   ];
 
