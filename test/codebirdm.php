@@ -28,11 +28,10 @@ class CodebirdM extends CodebirdT
   /**
    * Mock API replies
    */
-  protected static $_mock_replies = [
+  protected $_mock_replies = [
     'default' => [
       'httpstatus' => 404,
-      'reply' => "HTTP/1.1 404 Not Found\r\n"
-        . "content-length: 68\r\n"
+      'reply' => "HTTP/1.1 404 Not Found\r\ncontent-length: 68\r\n"
         . "content-type: application/json;charset=utf-8\r\n"
         . "date: Sun, 06 Dec 2015 14:43:28 GMT\r\n"
         . "server: tsa_b\r\n"
@@ -167,7 +166,7 @@ class CodebirdM extends CodebirdT
 
     $request = $this->_requests[$id];
     $url     = $this->_requests[$id]['url'];
-    $reply   = self::$_mock_replies['default'];
+    $reply   = $this->_mock_replies['default'];
 
     $httpmethod = 'GET';
     if (isset($request[CURLOPT_POST]) && $request[CURLOPT_POST]) {
@@ -179,8 +178,8 @@ class CodebirdM extends CodebirdT
 
     $index = $httpmethod . ' ' . $url;
 
-    if (isset(self::$_mock_replies[$index])) {
-      $reply = self::$_mock_replies[$index];
+    if (isset($this->_mock_replies[$index])) {
+      $reply = $this->_mock_replies[$index];
     }
 
     $this->_requests[$id][CURLINFO_HTTP_CODE] = $reply['httpstatus'];

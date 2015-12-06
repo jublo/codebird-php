@@ -67,7 +67,7 @@ class Replyparse_Test extends \PHPUnit_Framework_TestCase
     $cb = $this->getCB();
     $cb->setBearerToken(null);
     // get raw reply from mock collection
-    $reply = $cb->getStatic('_mock_replies')['POST https://api.twitter.com/oauth2/token'];
+    $reply = $cb->get('_mock_replies')['POST https://api.twitter.com/oauth2/token'];
     // check that bearer token is not yet set
     $this->assertNull($cb->getStatic('_bearer_token'));
     // parse it as object
@@ -232,7 +232,7 @@ class Replyparse_Test extends \PHPUnit_Framework_TestCase
   public function testParseApiHeaders()
   {
     $cb   = $this->getCB();
-    $data = $cb->getStatic('_mock_replies')['default']['reply'];
+    $data = $cb->get('_mock_replies')['default']['reply'];
     list($headers, $reply) = $cb->call('_parseApiHeaders', [$data]);
     $expected_headers = [
       'HTTP/1.1 404 Not Found' => '',
@@ -251,7 +251,7 @@ class Replyparse_Test extends \PHPUnit_Framework_TestCase
     $this->assertEquals($expected_reply, $reply);
 
     // proxy
-    $data = $cb->getStatic('_mock_replies')['proxy1']['reply'];
+    $data = $cb->get('_mock_replies')['proxy1']['reply'];
     list($headers, $reply) = $cb->call('_parseApiHeaders', [$data]);
     $this->assertEquals($expected_headers, $headers);
     $this->assertEquals($expected_reply, $reply);
