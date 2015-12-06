@@ -35,8 +35,6 @@ matrix:
     - php: hhvm
     - php: nightly
   fast_finish: true
-  include:
-    - php: "7.0"
 cache:
   directories:
     - $HOME/.composer/cache/
