@@ -28,6 +28,7 @@
         "source": "https://github.com/jublonet/codebird-php/releases"
     },
     "require": {
+        "php": ">=5.5.0",
         "ext-hash": "*",
         "ext-json": "*",
         "lib-openssl": "*",
@@ -35,5 +36,16 @@
     },
     "autoload": {
         "classmap": ["src/"]
-    }
+    },
+    "require-dev": {
+        "satooshi/php-coveralls": ">=0.6",
+        "phpunit/phpunit": ">=3.7",
+        "squizlabs/php_codesniffer": "2.*"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://www.jublo.net/projects/codebird/php"
+        }
+    ]
 }
