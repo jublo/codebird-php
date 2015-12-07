@@ -15,7 +15,8 @@ sudo: false
 
 before_script:
   - export PATH=~/.composer/vendor/bin/:$PATH
-  - composer install --dev --no-interaction
+  - composer install --no-interaction
+  - pip install --user codecov
 
 script:
   - ant clean
@@ -28,6 +29,7 @@ script:
 
 after_script:
   - if [ -f vendor/bin/coveralls ] ; then php vendor/bin/coveralls -v || true ; fi
+  - codecov
   - if [ -f php.log ] ; then cat php.log ; fi
 
 matrix:
