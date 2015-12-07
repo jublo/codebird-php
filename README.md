@@ -17,6 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+[![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/release%2F3.0.0.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=release%2F3.0.0)
+[![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/release%2F3.0.0.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
+
 ### Requirements
 
 - PHP 5.5.0 or higher
@@ -27,7 +30,7 @@ Summary
 -------
 
 Use Codebird to connect to the Twitter **REST, Streaming, Collections, TON**
-and **Ads API :sparkles:** from your PHP code.
+and **Ads API ✨** from your PHP code.
 Codebird supports full 3-way OAuth as well as application-only auth.
 
 
