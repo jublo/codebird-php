@@ -17,6 +17,7 @@ codebird-php - changelog
 + Fixes for non-multipart media uploads, see #141
 + Return rate-limiting info as object, when return format = object
 + Add unit testing suite
+- #147 Undefined index when checking for possible media files
 
 2.7.2 (2015-09-23)
 - #135 Invalid HTTP request headers in non-cURL mode
