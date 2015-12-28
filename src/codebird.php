@@ -1700,7 +1700,9 @@ class Codebird
    * @return mixed
    */
   protected function _checkForFiles($method_template, $key, $value) {
-    if (!in_array($key, self::$_possible_files[$method_template])) {
+    if (!array_key_exists($method_template, self::$_possible_files)
+      || !in_array($key, self::$_possible_files[$method_template])
+    ) {
       return false;
     }
     $data = $this->_buildBinaryBody($value);
