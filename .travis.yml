@@ -3,6 +3,7 @@
 # - run lint for every PHP version
 
 language: php
+sudo: false
 
 php:
   - "7.0"
