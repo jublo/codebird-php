@@ -1,12 +1,12 @@
 {
   "name": "codebird-php",
-  "version": "2.7.1",
-  "homepage": "http://www.jublo.net/projects/codebird/php",
+  "version": "3.0.0",
+  "homepage": "https://www.jublo.net/projects/codebird/php",
   "authors": [
     "Joshua Atkins <joshua.atkins@jublo.net>",
     "J.M. <jm@jublo.net>"
   ],
-  "description": "A Twitter library in PHP.",
+  "description": "Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.",
   "main": "src/codebird.php",
   "moduleType": [],
   "keywords": [

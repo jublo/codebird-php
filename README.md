@@ -1,8 +1,8 @@
 codebird-php
 ============
-*A Twitter library in PHP.*
+*Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.*
 
-Copyright (C) 2010-2015 Jublo Solutions <support@jublo.net>
+Copyright (C) 2010-2016 Jublo Solutions <support@jublo.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,10 +17,21 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+[![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/master.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=master)
+[![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/master.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
+
 ### Requirements
 
-- PHP 5.3.0 or higher
+- PHP 5.5.0 or higher
 - OpenSSL extension
+
+
+Summary
+-------
+
+Use Codebird to connect to the Twitter **REST API, Streaming API, Collections API, TON (Object Nest) API**
+and **Twitter Ads API** from your PHP code — all using just one library.
+Codebird supports full 3-way OAuth as well as application-only auth.
 
 
 Authentication
@@ -31,7 +42,7 @@ To authenticate your API requests on behalf of a certain Twitter user
 
 ```php
 require_once ('codebird.php');
-\Codebird\Codebird::setConsumerKey('YOURKEY', 'YOURSECRET'); // static, see 'Using multiple Codebird instances'
+\Codebird\Codebird::setConsumerKey('YOURKEY', 'YOURSECRET'); // static, see README
 
 $cb = \Codebird\Codebird::getInstance();
 ```
@@ -47,39 +58,39 @@ Or you authenticate, like this:
 session_start();
 
 if (! isset($_SESSION['oauth_token'])) {
-    // get the request token
-    $reply = $cb->oauth_requestToken(array(
-        'oauth_callback' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
-    ));
+  // get the request token
+  $reply = $cb->oauth_requestToken([
+    'oauth_callback' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+  ]);
 
-    // store the token
-    $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
-    $_SESSION['oauth_token'] = $reply->oauth_token;
-    $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
-    $_SESSION['oauth_verify'] = true;
+  // store the token
+  $cb->setToken($reply->oauth_token, $reply->oauth_token_secret);
+  $_SESSION['oauth_token'] = $reply->oauth_token;
+  $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+  $_SESSION['oauth_verify'] = true;
 
-    // redirect to auth website
-    $auth_url = $cb->oauth_authorize();
-    header('Location: ' . $auth_url);
-    die();
+  // redirect to auth website
+  $auth_url = $cb->oauth_authorize();
+  header('Location: ' . $auth_url);
+  die();
 
 } elseif (isset($_GET['oauth_verifier']) && isset($_SESSION['oauth_verify'])) {
-    // verify the token
-    $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
-    unset($_SESSION['oauth_verify']);
+  // verify the token
+  $cb->setToken($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+  unset($_SESSION['oauth_verify']);
 
-    // get the access token
-    $reply = $cb->oauth_accessToken(array(
-        'oauth_verifier' => $_GET['oauth_verifier']
-    ));
+  // get the access token
+  $reply = $cb->oauth_accessToken([
+    'oauth_verifier' => $_GET['oauth_verifier']
+  ]);
 
-    // store the token (which is different from the request token!)
-    $_SESSION['oauth_token'] = $reply->oauth_token;
-    $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
+  // store the token (which is different from the request token!)
+  $_SESSION['oauth_token'] = $reply->oauth_token;
+  $_SESSION['oauth_token_secret'] = $reply->oauth_token_secret;
 
-    // send to same URL, without oauth GET parameters
-    header('Location: ' . basename(__FILE__));
-    die();
+  // send to same URL, without oauth GET parameters
+  header('Location: ' . basename(__FILE__));
+  die();
 }
 
 // assign access token on each page load
@@ -120,6 +131,28 @@ In this case, you don't need to set the consumer key and secret.
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
+Mapping API methods to Codebird function calls
+----------------------------------------------
+
+As you can see from the last example, there is a general way how Twitter’s API methods
+map to Codebird function calls. The general rules are:
+
+1. For each slash in a Twitter API method, use an underscore in the Codebird function.
+
+  Example: ```statuses/update``` maps to ```Codebird::statuses_update()```.
+
+2. For each underscore in a Twitter API method, use camelCase in the Codebird function.
+
+  Example: ```statuses/home_timeline``` maps to ```Codebird::statuses_homeTimeline()```.
+
+3. For each parameter template in method, use UPPERCASE in the Codebird function.
+  Also don’t forget to include the parameter in your parameter list.
+
+  Examples:
+  - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
+  - ```users/profile_image/:screen_name``` maps to
+    `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
+
 Usage examples
 --------------
 
@@ -151,158 +184,29 @@ In most cases, giving all parameters in an array is easier,
 because no encoding is needed:
 
 ```php
-$params = array(
-    'status' => 'Fish & chips'
-);
+$params = [
+  'status' => 'Fish & chips'
+];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
-$params = array(
-    'status' => 'I love London',
-    'lat'    => 51.5033,
-    'long'   => 0.1197
-);
+$params = [
+  'status' => 'I love London',
+  'lat'    => 51.5033,
+  'long'   => 0.1197
+];
 $reply = $cb->statuses_update($params);
 ```
 
 ```php
-$params = array(
-    'screen_name' => 'jublonet'
-);
+$params = [
+  'screen_name' => 'jublonet'
+];
 $reply = $cb->users_show($params);
 ```
 This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
 sent with the code above.
-
-### Uploading media to Twitter
-
-Tweet media can be uploaded in a 2-step process:
-
-**First** you send each media to Twitter. For **images**, it works like this:
-
-```php
-// these files to upload. You can also just upload 1 image!
-$media_files = array(
-    'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
-);
-// will hold the uploaded IDs
-$media_ids = array();
-
-foreach ($media_files as $file) {
-    // upload all media files
-    $reply = $cb->media_upload(array(
-        'media' => $file
-    ));
-    // and collect their IDs
-    $media_ids[] = $reply->media_id_string;
-}
-```
-
-Uploading **videos** requires you to send the data in chunks. See the next section on this.
-
-**Second,** you attach the collected media ids for all images to your call
-to ```statuses/update```, like this:
-
-```php
-// convert media ids to string list
-$media_ids = implode(',', $media_ids);
-
-// send tweet with these medias
-$reply = $cb->statuses_update(array(
-    'status' => 'These are some of my relatives.',
-    'media_ids' => $media_ids
-));
-print_r($reply);
-);
-```
-
-Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
-sent with the code above.
-
-More [documentation for uploading media](https://dev.twitter.com/rest/public/uploading-media) is available on the Twitter Developer site.
-
-#### Remote files
-
-Remote files received from `http` and `https` servers are supported, too:
-```php
-$reply = $cb->media_upload(array(
-    'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
-));
-```
-
-:warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
-
-#### Video files
-
-Uploading videos to Twitter (≤ 15MB, MP4) requires you to send them in chunks.
-You need to perform at least 3 calls to obtain your `media_id` for the video:
-
-1. Send an `INIT` event to get a `media_id` draft.
-2. Upload your chunks with `APPEND` events, each one up to 5MB in size.
-3. Send a `FINALIZE` event to convert the draft to a ready-to-tweet `media_id`.
-4. Post your tweet with video attached.
-
-Here’s a sample for video uploads:
-
-```php
-$file       = 'demo-video.mp4';
-$size_bytes = filesize($file);
-$fp         = fopen($file, 'r');
-
-// INIT the upload
-
-$reply = $cb->media_upload(array(
-    'command'     => 'INIT',
-    'media_type'  => 'video/mp4',
-    'total_bytes' => $size_bytes
-));
-
-$media_id = $reply->media_id_string;
-
-// APPEND data to the upload
-
-$segment_id = 0;
-
-while (! feof($fp)) {
-    $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
-
-    $reply = $cb->media_upload(array(
-        'command'       => 'APPEND',
-        'media_id'      => $media_id,
-        'segment_index' => $segment_id,
-        'media'         => $chunk
-    ));
-
-    $segment_id++;
-}
-
-fclose($fp);
-
-// FINALIZE the upload
-
-$reply = $cb->media_upload(array(
-    'command'       => 'FINALIZE',
-    'media_id'      => $media_id
-));
-
-var_dump($reply);
-
-if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
-    die();
-}
-
-// Now use the media_id in a tweet
-$reply = $cb->statuses_update(array(
-    'status'    => 'Twitter now accepts video uploads.',
-    'media_ids' => $media_id
-));
-```
-
-:warning: The Twitter API reproducibly rejected some MP4 videos even though they are valid. It’s currently undocumented which video codecs are supported and which are not.
-
-:warning: When uploading a video in multiple chunks, you may run into an error `The validation of media ids failed.` even though the `media_id` is correct. This is known. Please check back with this [Twitter community forums thread](https://twittercommunity.com/t/video-uploads-via-rest-api/38177/5).
-
 
 ### Requests with app-only auth
 
@@ -315,27 +219,6 @@ $reply = $cb->search_tweets('q=Twitter', true);
 
 Bear in mind that not all API methods support application-only auth.
 
-Mapping API methods to Codebird function calls
-----------------------------------------------
-
-As you can see from the last example, there is a general way how Twitter’s API methods
-map to Codebird function calls. The general rules are:
-
-1. For each slash in a Twitter API method, use an underscore in the Codebird function.
-
-    Example: ```statuses/update``` maps to ```Codebird::statuses_update()```.
-
-2. For each underscore in a Twitter API method, use camelCase in the Codebird function.
-
-    Example: ```statuses/home_timeline``` maps to ```Codebird::statuses_homeTimeline()```.
-
-3. For each parameter template in method, use UPPERCASE in the Codebird function.
-    Also don’t forget to include the parameter in your parameter list.
-
-    Examples:
-    - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
-    - ```users/profile_image/:screen_name``` maps to
-      `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
 
 HTTP methods (GET, POST, DELETE etc.)
 -------------------------------------
@@ -388,8 +271,378 @@ To get a JSON string, set the corresponding return format:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
 ```
 
-Using multiple Codebird instances
----------------------------------
+Uploading images and videos
+---------------------------
+
+Twitter will accept the following media types, all of which are supported by Codebird:
+- PNG
+- JPEG
+- BMP
+- WebP
+- GIF
+- Animated GIF
+- Video
+
+Tweet media can be uploaded in a 2-step process:
+
+**First** you send each media to Twitter. For **images**, it works like this:
+
+```php
+// these files to upload. You can also just upload 1 image!
+$media_files = [
+  'bird1.jpg', 'bird2.jpg', 'bird3.jpg'
+];
+// will hold the uploaded IDs
+$media_ids = [];
+
+foreach ($media_files as $file) {
+  // upload all media files
+  $reply = $cb->media_upload([
+    'media' => $file
+  ]);
+  // and collect their IDs
+  $media_ids[] = $reply->media_id_string;
+}
+```
+
+Uploading **videos** requires you to send the data in chunks. See the next section on this.
+
+**Second,** you attach the collected media ids for all images to your call
+to ```statuses/update```, like this:
+
+```php
+// convert media ids to string list
+$media_ids = implode(',', $media_ids);
+
+// send tweet with these medias
+$reply = $cb->statuses_update([
+  'status' => 'These are some of my relatives.',
+  'media_ids' => $media_ids
+]);
+print_r($reply);
+);
+```
+
+Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
+sent with the code above.
+
+More [documentation for uploading media](https://dev.twitter.com/rest/public/uploading-media) is available on the Twitter Developer site.
+
+### Remote files
+
+Remote files received from `http` and `https` servers are supported, too:
+```php
+$reply = $cb->media_upload(array(
+  'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
+));
+```
+
+:warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
+
+To circumvent download issues when remote servers are slow to respond,
+you may customise the remote download timeout, like this:
+
+```php
+$cb->setRemoteDownloadTimeout(10000); // milliseconds
+```
+
+### Video files
+
+Uploading videos to Twitter (≤ 15MB, MP4) requires you to send them in chunks.
+You need to perform at least 3 calls to obtain your `media_id` for the video:
+
+1. Send an `INIT` event to get a `media_id` draft.
+2. Upload your chunks with `APPEND` events, each one up to 5MB in size.
+3. Send a `FINALIZE` event to convert the draft to a ready-to-tweet `media_id`.
+4. Post your tweet with video attached.
+
+Here’s a sample for video uploads:
+
+```php
+$file       = 'demo-video.mp4';
+$size_bytes = filesize($file);
+$fp         = fopen($file, 'r');
+
+// INIT the upload
+
+$reply = $cb->media_upload([
+  'command'     => 'INIT',
+  'media_type'  => 'video/mp4',
+  'total_bytes' => $size_bytes
+]);
+
+$media_id = $reply->media_id_string;
+
+// APPEND data to the upload
+
+$segment_id = 0;
+
+while (! feof($fp)) {
+  $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+
+  $reply = $cb->media_upload([
+    'command'       => 'APPEND',
+    'media_id'      => $media_id,
+    'segment_index' => $segment_id,
+    'media'         => $chunk
+  ]);
+
+  $segment_id++;
+}
+
+fclose($fp);
+
+// FINALIZE the upload
+
+$reply = $cb->media_upload([
+  'command'       => 'FINALIZE',
+  'media_id'      => $media_id
+]);
+
+var_dump($reply);
+
+if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
+  die();
+}
+
+// Now use the media_id in a tweet
+$reply = $cb->statuses_update([
+  'status'    => 'Twitter now accepts video uploads.',
+  'media_ids' => $media_id
+]);
+
+```
+
+**Find more information about [accepted video formats](https://dev.twitter.com/rest/public/uploading-media#videorecs) in the Twitter Developer docs.**
+
+:warning: When uploading a video in multiple chunks, you may run into an error `The validation of media ids failed.` even though the `media_id` is correct. This is known. Please check back in the [Twitter community forums](https://twittercommunity.com/tags/video).
+
+
+Twitter Streaming API
+---------------------
+
+The Streaming APIs give developers low latency access to Twitter’s global stream of
+Tweet data. A proper implementation of a streaming client will be pushed messages
+indicating Tweets and other events have occurred, without any of the overhead
+associated with polling a REST endpoint.
+
+To consume one of the available Twitter streams, follow these **two steps:**
+
+1. Set up a callback function that gets called for every new streaming message that arrives.
+
+   Codebird also calls this function once per second, to allow you to work on any due tasks, and to give you the chance to cancel the stream even if no new messages appear.
+
+2. After creating the callback, tell Codebird about it using a [callable](http://php.net/manual/en/language.types.callable.php). Then start consuming the stream.
+
+```php
+// First, create a callback function:
+
+function some_callback($message)
+{
+  // gets called for every new streamed message
+  // gets called with $message = NULL once per second
+
+  if ($message !== null) {
+    print_r($message);
+    flush();
+  }
+
+  // return false to continue streaming
+  // return true to close the stream
+
+  // close streaming after 1 minute for this simple sample
+  // don't rely on globals in your code!
+  if (time() - $GLOBALS['time_start'] >= 60) {
+    return true;
+  }
+
+  return false;
+}
+
+// set the streaming callback in Codebird
+$cb->setStreamingCallback('some_callback');
+
+// any callable is accepted:
+// $cb->setStreamingCallback(['MyClass', 'some_callback']);
+
+// for canceling, see callback function body
+// not considered good practice in real world!
+$GLOBALS['time_start'] = time();
+
+// Second, start consuming the stream:
+$reply = $cb->user();
+
+// See the *Mapping API methods to Codebird function calls* section for method names.
+// $reply = $cb->statuses_filter('track=Windows');
+```
+
+Find more information on the [Streaming API](https://dev.twitter.com/streaming/overview)
+in the developer documentation website.
+
+
+Twitter Collections API
+-----------------------
+
+Collections are a type of timeline that you control and can be hand curated
+and/or programmed using an API.
+
+Pay close attention to the differences in how collections are presented —
+often they will be decomposed, efficient objects with information about users,
+Tweets, and timelines grouped, simplified, and stripped of unnecessary repetition.
+
+Never care about the OAuth signing specialities and the JSON POST body
+for POST collections/entries/curate.json. Codebird takes off the work for you
+and will always send the correct Content-Type automatically.
+
+Find out more about the [Collections API](https://dev.twitter.com/rest/collections/about) in the Twitter API docs.
+
+Here’s a sample for adding a tweet using that API method:
+
+```php
+$reply = $cb->collections_entries_curate([
+  'id' => 'custom-672852634622144512',
+  'changes' => [
+  ['op' => 'add', 'tweet_id' => '672727928262828032']
+  ]
+]);
+
+var_dump($reply);
+```
+
+TON (Twitter Object Nest) API
+-----------------------------
+
+The [TON (Twitter Object Nest) API](https://dev.twitter.com/rest/ton) allows implementers to upload media and various assets to Twitter.
+The TON API supports non-resumable and resumable upload methods based on the size of the file.
+For files less than 64MB, non-resumable may be used. For files greater than or equal to 64MB,
+resumable must be used. Resumable uploads require chunk sizes of less than 64MB.
+
+For accessing the TON API, please adapt the following code samples for uploading:
+
+### Single-chunk upload
+
+```php
+// single-chunk upload
+
+$reply = $cb->ton_bucket_BUCKET([
+  'bucket' => 'ta_partner',
+  'Content-Type' => 'image/jpeg',
+  'media' => $file
+]);
+
+var_dump($reply);
+
+// use the Location header now...
+echo $reply->Location;
+```
+
+As you see from that sample, Codebird rewrites the special TON API headers into the reply,
+so you can easily access them.  This also applies to the `X-TON-Min-Chunk-Size` and
+`X-Ton-Max-Chunk-Size` for chunked uploads:
+
+### Multi-chunk upload
+
+```php
+// multi-chunk upload
+$file       = 'demo-video.mp4';
+$size_bytes = filesize($file);
+$fp         = fopen($file, 'r');
+
+// INIT the upload
+
+$reply = $cb->__call(
+  'ton/bucket/BUCKET?resumable=true',
+  [[ // note the double square braces when using __call
+    'bucket' => 'ta_partner',
+    'Content-Type' => 'video/mp4',
+    'X-Ton-Content-Type' => 'video/mp4',
+    'X-Ton-Content-Length' => $size_bytes
+  ]]
+);
+
+$target = $reply->Location;
+// something like: '/1.1/ton/bucket/ta_partner/SzFxGfAg_Zj.mp4?resumable=true&resumeId=28401873'
+$match = [];
+
+// match the location parts
+preg_match('/ton\/bucket\/.+\/(.+)\?resumable=true&resumeId=(\d+)/', $target, $match);
+list ($target, $file, $resumeId) = $match;
+
+// APPEND data to the upload
+
+$segment_id = 0;
+
+while (! feof($fp)) {
+  $chunk = fread($fp, 1048576); // 1MB per chunk for this sample
+
+  // special way to call Codebird for the upload chunks
+  $reply = $cb->__call(
+    'ton/bucket/BUCKET/FILE?resumable=true&resumeId=RESUMEID',
+    [[ // note the double square braces when using __call
+      'bucket' => 'ta_partner',
+      'file' => $file, // you get real filename from INIT, see above
+      'Content-Type' => 'image/jpeg',
+      'Content-Range' => 'bytes '
+        . ($segment_id * 1048576) . '-' . strlen($chunk) . '/' . $size_bytes,
+      'resumeId' => $resumeId,
+      'media' => $chunk
+    ]]
+  );
+
+  $segment_id++;
+}
+
+fclose($fp);
+```
+
+Twitter Ads API
+---------------
+
+The [Twitter Ads API](https://dev.twitter.com/ads/overview) allows partners to
+integrate with the Twitter advertising platform in their own advertising solutions.
+Selected partners have the ability to create custom tools to manage and execute
+Twitter Ad campaigns.
+
+When accessing the Ads API or Ads Sandbox API, access it by prefixing your call
+with `ads_`. Watch out for the usual replacements for in-url parameters,
+particularly `:account_id`.
+
+**Tip:** For accessing the Ads Sandbox API, use the `ads_sandbox_` prefix,
+like shown further down.
+
+Here is an example for calling the Twitter Ads API:
+
+```php
+$reply = $cb->ads_accounts_ACCOUNT_ID_cards_appDownload([
+  'account_id' => '123456789',
+  'name' => 'Test',
+  'app_country_code' => 'DE'
+]);
+```
+
+### Multiple-method API calls
+
+In the Twitter Ads API, there are multiple methods that can be reached by
+HTTP `GET`, `POST`, `PUT` and/or `DELETE`. While Codebird does its best to guess
+which HTTP verb you’ll want to use, it’s the safest bet to give a hint yourself,
+like this:
+
+```php
+$reply = $cb->ads_sandbox_accounts_ACCOUNT_ID_cards_imageConversation_CARD_ID([
+  'httpmethod' => 'DELETE',
+  'account_id' => '123456789',
+  'card_id' => '2468013579'
+]);
+```
+
+Codebird will remove the `httpmethod` parameter from the parameters list automatically,
+and set the corresponding HTTP verb.
+
+
+How Do I…?
+----------
+
+### …use multiple Codebird instances?
 
 By default, Codebird works with just one instance. This programming paradigma is
 called a *singleton*.
@@ -413,8 +666,6 @@ Please note that your OAuth consumer key and secret is shared within
 multiple Codebird instances, while the OAuth request and access tokens with their
 secrets are *not* shared.
 
-How Do I…?
-----------
 
 ### …access a user’s profile image?
 
@@ -447,11 +698,11 @@ Take a look at the returned data as follows:
 ```
 stdClass Object
 (
-    [oauth_token] => 14648265-rPn8EJwfB**********************
-    [oauth_token_secret] => agvf3L3**************************
-    [user_id] => 14648265
-    [screen_name] => jublonet
-    [httpstatus] => 200
+  [oauth_token] => 14648265-rPn8EJwfB**********************
+  [oauth_token_secret] => agvf3L3**************************
+  [user_id] => 14648265
+  [screen_name] => jublonet
+  [httpstatus] => 200
 )
 ```
 
@@ -489,9 +740,9 @@ $nextCursor = $result1->next_cursor_str;
 
 3. If ```$nextCursor``` is not 0, use this cursor to request the next result page:
 ```php
-    if ($nextCursor > 0) {
-        $result2 = $cb->followers_list('cursor=' . $nextCursor);
-    }
+  if ($nextCursor > 0) {
+    $result2 = $cb->followers_list('cursor=' . $nextCursor);
+  }
 ```
 
 To navigate back instead of forth, use the field ```$resultX->previous_cursor_str```
@@ -508,11 +759,11 @@ Remember that your application needs to be whitelisted to be able to use xAuth.
 
 Here’s an example:
 ```php
-$reply = $cb->oauth_accessToken(array(
-    'x_auth_username' => 'username',
-    'x_auth_password' => '4h3_p4$$w0rd',
-    'x_auth_mode' => 'client_auth'
-));
+$reply = $cb->oauth_accessToken([
+  'x_auth_username' => 'username',
+  'x_auth_password' => '4h3_p4$$w0rd',
+  'x_auth_mode' => 'client_auth'
+]);
 ```
 
 Are you getting a strange error message?  If the user is enrolled in
@@ -539,8 +790,8 @@ on twitter.com and use that to complete signing in to the application.
 ### …know what cacert.pem is for?
 
 Connections to the Twitter API are done over a secured SSL connection.
-Since 2.4.0, codebird-php checks if the Twitter API server has a valid
-SSL certificate. Valid certificates have a correct signature-chain.
+Codebird-php checks if the Twitter API server has a valid SSL certificate.
+Valid certificates have a correct signature-chain.
 The cacert.pem file contains a list of all public certificates for root
 certificate authorities. You can find more information about this file
 at http://curl.haxx.se/docs/caextract.html.

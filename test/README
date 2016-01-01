@@ -1,0 +1,17 @@
+The following methods are not covered by unit tests yet:
+
+_getMultipartRequestFromParams
+_checkForFiles
+_buildMultipart
+_buildBinaryBody
+_fetchRemoteFile
+
+_callApi
+_callApiCurl
+_callApiNoCurl
+_callApiPreparationsGet
+_callApiPreparationsPost
+_callApiPreparations
+
+_callApiStreaming
+_deliverStreamingMessage
