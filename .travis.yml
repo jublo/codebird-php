@@ -1,0 +1,48 @@
+# The Travis setup:
+# - run testsuite for every PHP version
+# - run lint for every PHP version
+
+language: php
+sudo: false
+
+php:
+  - "7.0"
+  - "5.6"
+  - "5.5"
+  - hhvm
+  - nightly
+
+sudo: false
+
+before_script:
+  - export PATH=~/.composer/vendor/bin/:$PATH
+  - composer install --no-interaction
+  - pip install --user codecov
+
+script:
+  - ant clean
+  - set -e;
+    if [ $TRAVIS_PHP_VERSION == "hhvm" ] ; then
+    ant phpunit-hhvm ;
+    else
+    ant phpunit ;
+    fi
+
+after_script:
+  - if [ -f vendor/bin/coveralls ] ; then php vendor/bin/coveralls -v || true ; fi
+  - codecov
+  - if [ -f php.log ] ; then cat php.log ; fi
+
+matrix:
+  allow_failures:
+    - php: hhvm
+    - php: nightly
+  fast_finish: true
+cache:
+  directories:
+    - $HOME/.composer/cache/
+    - $HOME/runkit
+# trigger Buildtime Trend Service to parse Travis CI log
+notifications:
+  webhooks:
+    - https://buildtimetrend.herokuapp.com/travis
