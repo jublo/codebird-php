@@ -1,12 +1,12 @@
 {
     "name": "jublonet/codebird-php",
-    "description" : "A Twitter library in PHP.",
+    "description" : "Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.",
     "keywords": [
         "Twitter",
         "API",
         "networking"
     ],
-    "homepage": "http://www.jublo.net/projects/codebird/php",
+    "homepage": "https://www.jublo.net/projects/codebird/php",
     "license": "GPL-3.0+",
     "authors": [
         {

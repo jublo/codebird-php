@@ -8,8 +8,8 @@ require_once ('test/codebirdm.php');
  *
  * @package   codebird-test
  * @author    Jublo Solutions <support@jublo.net>
- * @copyright 2010-2015 Jublo Solutions <support@jublo.net>
- * @license   http://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
+ * @copyright 2010-2016 Jublo Solutions <support@jublo.net>
+ * @license   https://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
  * @link      https://github.com/jublonet/codebird-php
  */
 
@@ -38,10 +38,10 @@ class Curl_Test extends \PHPUnit_Framework_TestCase
   public function testGetCurlInitialization()
   {
     $cb = $this->getCB();
-    $id = $cb->call('_getCurlInitialization', ['http://test']);
+    $id = $cb->call('_getCurlInitialization', ['https://test']);
     $this->assertEquals(
       [
-        'url' => 'http://test',
+        'url' => 'https://test',
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_FOLLOWLOCATION => 0,
         CURLOPT_HEADER => 1,

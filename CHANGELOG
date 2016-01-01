@@ -1,22 +1,22 @@
 codebird-php - changelog
 ========================
 
-3.0.0-rc.1 (2015-12-28)
-- #107 Decoding issue for big ints on 32-bit servers
-+ #32 Add support for streaming API
+3.0.0 (2016-01-01)
++ Add unit testing suite
++ #32 Support Twitter Streaming API
++ #144 Support Twitter Collections API
++ #145 Support Twitter TON (Object Nest) API
++ #120 Support Twitter Ads API
 + #117 Drop cURL workarounds added for PHP 5.3
 + Update cacert.pem
 + #121 Allow for multiple parameters in templated methods
   by replacing preg_match with preg_match_all
 + #134 Add support for compressed remote images
 + #129 Allow to change remote media download timeout
-+ #144 Support Collections API
-+ #145 Support TON API
-+ #120 Support Ads API
 + Support WebP media format
 + Fixes for non-multipart media uploads, see #141
 + Return rate-limiting info as object, when return format = object
-+ Add unit testing suite
+- #107 Decoding issue for big ints on 32-bit servers
 - #147 Undefined index when checking for possible media files
 
 2.7.2 (2015-09-23)
