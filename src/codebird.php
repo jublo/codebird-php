@@ -640,6 +640,7 @@ class Codebird
    * @param bool $use_curl Request uses cURL or not
    *
    * @return void
+   * @throws \Exception
    */
   public function setUseCurl($use_curl)
   {
@@ -718,6 +719,7 @@ class Codebird
    * @param int optional $type Proxy type, defaults to HTTP
    *
    * @return void
+   * @throws \Exception
    */
   public function setProxy($host, $port, $type = CURLPROXY_HTTP)
   {
@@ -757,6 +759,7 @@ class Codebird
    * @param callable $callback The streaming callback
    *
    * @return void
+   * @throws \Exception
    */
   public function setStreamingCallback($callback)
   {
@@ -960,6 +963,7 @@ class Codebird
    * @param array byref $apiparams The parameters to send along
    *
    * @return string[] (string method, string method_template)
+   * @throws \Exception
    */
   protected function _mapFnInlineParams($method, &$apiparams)
   {
@@ -1002,6 +1006,7 @@ class Codebird
    * @param optional string $type        'authenticate' or 'authorize', to avoid duplicate code
    *
    * @return string The OAuth authenticate/authorize URL
+   * @throws \Exception
    */
   public function oauth_authenticate($force_login = NULL, $screen_name = NULL, $type = 'authenticate')
   {
@@ -1198,6 +1203,7 @@ class Codebird
    * Gets the OAuth bearer token, using cURL
    *
    * @return string The OAuth bearer token
+   * @throws \Exception
    */
 
   protected function _oauth2TokenCurl()
@@ -1237,6 +1243,7 @@ class Codebird
    * Gets the OAuth bearer token, without cURL
    *
    * @return string The OAuth bearer token
+   * @throws \Exception
    */
 
   protected function _oauth2TokenNoCurl()
@@ -1370,6 +1377,7 @@ class Codebird
    * @param int $validation_result The curl error number
    *
    * @return void
+   * @throws \Exception
    */
   protected function _validateSslCertificate($validation_result)
   {
@@ -1435,6 +1443,7 @@ class Codebird
    * @param string $data The data to calculate the hash from
    *
    * @return string The hash
+   * @throws \Exception
    */
   protected function _sha1($data)
   {
@@ -1463,6 +1472,7 @@ class Codebird
    * @param int optional $length The length of the string to generate
    *
    * @return string The random string
+   * @throws \Exception
    */
   protected function _nonce($length = 8)
   {
@@ -1508,6 +1518,7 @@ class Codebird
    * @param array  optional $params       The API call parameters, associative
    *
    * @return string Authorization HTTP header
+   * @throws \Exception
    */
   protected function _sign($httpmethod, $method, $params = [])
   {
@@ -1691,6 +1702,7 @@ class Codebird
    * @param array  $params          The parameters to send along
    *
    * @return string request
+   * @throws \Exception
    */
   protected function _getMultipartRequestFromParams($method_template, $border, $params)
   {
@@ -1805,6 +1817,7 @@ class Codebird
    * @param string $url The URL to download from
    *
    * @return mixed The file contents or FALSE
+   * @throws \Exception
    */
   protected function _fetchRemoteFile($url)
   {
@@ -1955,6 +1968,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApi($httpmethod, $method, $method_template, $params = [], $multipart = false, $app_only_auth = false)
@@ -1987,6 +2001,7 @@ class Codebird
    * @param bool   optional $app_only_auth Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApiCurl(
@@ -2047,6 +2062,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApiNoCurl(
@@ -2221,6 +2237,7 @@ class Codebird
    * Get Bearer authorization string
    *
    * @return string authorization
+   * @throws \Exception
    */
   protected function _getBearerAuthorization()
   {
@@ -2282,6 +2299,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return void
+   * @throws \Exception
    */
 
   protected function _callApiStreaming(
