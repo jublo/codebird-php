@@ -1826,6 +1826,7 @@ class Codebird
       if ($result !== false) {
         return $result;
       }
+      throw new \Exception('Downloading a remote media file failed.');
       return false;
     }
     // no cURL
