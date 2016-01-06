@@ -17,8 +17,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/master.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=master)
-[![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/master.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
+[![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/develop.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=develop)
+[![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/develop.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
 
 ### Requirements
 

@@ -1,6 +1,8 @@
 codebird-php - changelog
 ========================
 
+3.1.0 (not yet released)
+
 3.0.0 (2016-01-01)
 + Add unit testing suite
 + #32 Support Twitter Streaming API
