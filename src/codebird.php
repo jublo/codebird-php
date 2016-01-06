@@ -1836,7 +1836,9 @@ class Codebird
       // process compressed images
       $this->_curl_setopt($connection, CURLOPT_ENCODING, 'gzip,deflate,sdch');
       $result = $this->_curl_exec($connection);
-      if ($result !== false) {
+      if ($result !== false
+        && $this->_curl_getinfo($connection, CURLINFO_HTTP_CODE) === 200
+      ) {
         return $result;
       }
       throw new \Exception('Downloading a remote media file failed.');
@@ -1853,10 +1855,13 @@ class Codebird
         'verify_peer'  => false
       ]
     ];
-    list($result) = $this->_getNoCurlInitialization($url, $contextOptions);
-    if ($result !== false) {
+    list($result, $headers) = $this->_getNoCurlInitialization($url, $contextOptions);
+    if ($result !== false
+      && preg_match('/^HTTP\/\d\.\d 200 OK$/', $headers[0])
+    ) {
       return $result;
     }
+    throw new \Exception('Downloading a remote media file failed.');
     return false;
   }
 
