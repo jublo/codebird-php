@@ -721,16 +721,14 @@ class Codebird
    */
   public function setProxy($host, $port, $type = CURLPROXY_HTTP)
   {
-    $types = [
-      CURLPROXY_HTTP, CURLPROXY_SOCKS4, CURLPROXY_SOCKS5
+    static $types_str = [
+      'HTTP', 'SOCKS4', 'SOCKS5', 'SOCKS4A', 'SOCKS5_HOSTNAME'
     ];
-    // PHP 7.0+, keep this as long as PHP 5.6 is supported
-    if (defined('CURLPROXY_SOCKS4A')) {
-      $types[] = CURLPROXY_SOCKS4A;
-    }
-    // PHP 7.0+, keep this as long as PHP 5.6 is supported
-    if (defined('CURLPROXY_SOCKS5_HOSTNAME')) {
-      $types[] = CURLPROXY_SOCKS5_HOSTNAME;
+    $types = [];
+    foreach ($types_str as $type_str) {
+      if (defined('CURLPROXY_' . $type_str)) {
+        $types[] = constant('CURLPROXY_' . $type_str);
+      }
     }
     if (! in_array($type, $types)) {
       throw new \Exception('Invalid proxy type specified.');
