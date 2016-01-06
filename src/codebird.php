@@ -725,8 +725,13 @@ class Codebird
       CURLPROXY_HTTP, CURLPROXY_SOCKS4, CURLPROXY_SOCKS5,
       CURLPROXY_SOCKS5_HOSTNAME
     ];
+    // PHP 7.0+, keep this as long as PHP 5.6 is supported
     if (defined('CURLPROXY_SOCKS4A')) {
       $types[] = CURLPROXY_SOCKS4A;
+    }
+    // PHP 7.0+, keep this as long as PHP 5.6 is supported
+    if (defined('CURLPROXY_SOCKS5_HOSTNAME')) {
+      $types[] = CURLPROXY_SOCKS5_HOSTNAME;
     }
     if (! in_array($type, $types)) {
       throw new \Exception('Invalid proxy type specified.');
