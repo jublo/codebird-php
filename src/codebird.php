@@ -722,8 +722,7 @@ class Codebird
   public function setProxy($host, $port, $type = CURLPROXY_HTTP)
   {
     $types = [
-      CURLPROXY_HTTP, CURLPROXY_SOCKS4, CURLPROXY_SOCKS5,
-      CURLPROXY_SOCKS5_HOSTNAME
+      CURLPROXY_HTTP, CURLPROXY_SOCKS4, CURLPROXY_SOCKS5
     ];
     // PHP 7.0+, keep this as long as PHP 5.6 is supported
     if (defined('CURLPROXY_SOCKS4A')) {
