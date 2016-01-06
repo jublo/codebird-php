@@ -713,15 +713,25 @@ class Codebird
   /**
    * Sets the proxy
    *
-   * @param string $host Proxy host
-   * @param int    $port Proxy port
+   * @param string       $host Proxy host
+   * @param int          $port Proxy port
+   * @param int optional $type Proxy type, defaults to HTTP
    *
    * @return void
    */
-  public function setProxy($host, $port)
+  public function setProxy($host, $port, $type = CURLPROXY_HTTP)
   {
     $this->_proxy['host'] = $host;
     $this->_proxy['port'] = (int) $port;
+
+    static $types = [
+      CURLPROXY_HTTP, CURLPROXY_SOCKS4, CURLPROXY_SOCKS5,
+      CURLPROXY_SOCKS4A, CURLPROXY_SOCKS5_HOSTNAME
+    ];
+    if (! in_array($type, $types)) {
+      throw new \Exception('Invalid proxy type specified.');
+    }
+    $this->_proxy['type'] = $type;
   }
 
   /**
@@ -1053,7 +1063,7 @@ class Codebird
     );
 
     if ($this->_hasProxy()) {
-      $this->_curl_setopt($connection, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      $this->_curl_setopt($connection, CURLOPT_PROXYTYPE, $this->_getProxyType());
       $this->_curl_setopt($connection, CURLOPT_PROXY, $this->_getProxyHost());
       $this->_curl_setopt($connection, CURLOPT_PROXYPORT, $this->_getProxyPort());
 
@@ -1157,6 +1167,16 @@ class Codebird
   protected function _getProxyAuthentication()
   {
     return $this->_getProxyData('authentication');
+  }
+
+  /**
+   * Gets the proxy type
+   *
+   * @return string The proxy type
+   */
+  protected function _getProxyType()
+  {
+    return $this->_getProxyData('type');
   }
 
   /**

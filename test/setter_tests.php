@@ -150,6 +150,23 @@ class Setter_Test extends \PHPUnit_Framework_TestCase
     $cb->setProxy('127.0.0.1', '8888');
     $this->assertEquals('127.0.0.1', $cb->get('_proxy')['host']);
     $this->assertEquals('8888', $cb->get('_proxy')['port']);
+    $this->assertEquals(CURLPROXY_HTTP, $cb->get('_proxy')['type']);
+
+    $cb->setProxy('127.0.0.1', '8888', CURLPROXY_SOCKS5);
+    $this->assertEquals('127.0.0.1', $cb->get('_proxy')['host']);
+    $this->assertEquals('8888', $cb->get('_proxy')['port']);
+    $this->assertEquals(CURLPROXY_SOCKS5, $cb->get('_proxy')['type']);
+  }
+
+  /**
+   * Tests setProxy
+    * @expectedException \Exception
+    * @expectedExceptionMessage Invalid proxy type specified.
+   */
+  public function testSetProxy2()
+  {
+    $cb = new CodebirdT();
+    $cb->setProxy('127.0.0.1', '8888', 1);
   }
 
   /**

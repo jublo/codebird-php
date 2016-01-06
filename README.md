@@ -840,3 +840,10 @@ You may also use an authenticated proxy. Use the following call:
 $cb->setProxy('<host>', '<port>');
 $cb->setProxyAuthentication('<username>:<password>');
 ```
+
+By default, a HTTP proxy is assumed. To use a different proxy type,
+use the corresponding [`CURLPROXY_*` constants](http://php.net/curl_setopt), like this:
+
+```php
+$cb->setProxy('<host>', '<port>', CURLPROXY_SOCKS5);
+```
