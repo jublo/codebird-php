@@ -49,7 +49,7 @@ class Setter_Test extends \PHPUnit_Framework_TestCase
     $cb = new CodebirdT();
     $version = $cb->getVersion();
     $this->assertEquals($version, $cb->getStatic('_version'));
-    $this->assertRegexp('/^[1-9]\d*\.\d+\.\d+(-(([a-z]+\.[1-9]\d*))|dev)?$/', $version);
+    $this->assertRegexp('/^[1-9]\d*\.\d+\.\d+(-([a-z]+\.[1-9]\d*|dev))?$/', $version);
   }
 
   /**
