@@ -417,6 +417,7 @@ class Codebird
       'statuses/filter',
       'statuses/lookup',
       'statuses/retweet/:id',
+      'statuses/unretweet/:id',
       'statuses/update',
       'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
