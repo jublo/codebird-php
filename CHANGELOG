@@ -4,7 +4,8 @@ codebird-php - changelog
 3.1.0 (not yet released)
 + #143 Add support for proxy types
 + #152 Throw Exception on failed remote media download
-+ Add POST statuses/unretweet/:id
++ Add REST API POST statuses/unretweet/:id
++ Add Ads API GET insights/keywords/search
 
 3.0.0 (2016-01-01)
 + Add unit testing suite
