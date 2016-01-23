@@ -168,11 +168,11 @@ print_r($reply);
 Tweeting is as easy as this:
 
 ```php
-$reply = $cb->statuses_update('status=Whohoo, I just tweeted!');
+$reply = $cb->statuses_update('status=Whohoo, I just Tweeted!');
 ```
 
 :warning: *Make sure to urlencode any parameter values that contain
-query-reserved characters, like tweeting the `&` sign:*
+query-reserved characters, like Tweeting the `&` sign:*
 
 ```php
 $reply = $cb->statuses_update('status=' . urlencode('Fish & chips'));
@@ -205,7 +205,7 @@ $params = [
 ];
 $reply = $cb->users_show($params);
 ```
-This is the [resulting tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
+This is the [resulting Tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
 sent with the code above.
 
 ### Requests with app-only auth
@@ -314,7 +314,7 @@ to ```statuses/update```, like this:
 // convert media ids to string list
 $media_ids = implode(',', $media_ids);
 
-// send tweet with these medias
+// send Tweet with these medias
 $reply = $cb->statuses_update([
   'status' => 'These are some of my relatives.',
   'media_ids' => $media_ids
@@ -323,7 +323,7 @@ print_r($reply);
 );
 ```
 
-Here is a [sample tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
+Here is a [sample Tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
 sent with the code above.
 
 More [documentation for uploading media](https://dev.twitter.com/rest/public/uploading-media) is available on the Twitter Developer site.
@@ -353,8 +353,8 @@ You need to perform at least 3 calls to obtain your `media_id` for the video:
 
 1. Send an `INIT` event to get a `media_id` draft.
 2. Upload your chunks with `APPEND` events, each one up to 5MB in size.
-3. Send a `FINALIZE` event to convert the draft to a ready-to-tweet `media_id`.
-4. Post your tweet with video attached.
+3. Send a `FINALIZE` event to convert the draft to a ready-to-Tweet `media_id`.
+4. Post your Tweet with video attached.
 
 Here’s a sample for video uploads:
 
@@ -405,7 +405,7 @@ if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
   die();
 }
 
-// Now use the media_id in a tweet
+// Now use the media_id in a Tweet
 $reply = $cb->statuses_update([
   'status'    => 'Twitter now accepts video uploads.',
   'media_ids' => $media_id
@@ -496,7 +496,7 @@ and will always send the correct Content-Type automatically.
 
 Find out more about the [Collections API](https://dev.twitter.com/rest/collections/about) in the Twitter API docs.
 
-Here’s a sample for adding a tweet using that API method:
+Here’s a sample for adding a Tweet using that API method:
 
 ```php
 $reply = $cb->collections_entries_curate([
@@ -706,7 +706,7 @@ stdClass Object
 )
 ```
 
-If you need to get more details, such as the user’s latest tweet,
+If you need to get more details, such as the user’s latest Tweet,
 you should fetch the complete User Entity.  The simplest way to get the
 user entity of the currently authenticated user is to use the
 ```account/verify_credentials``` API method.  In Codebird, it works like this:
@@ -868,7 +868,7 @@ $screen_name = $original_tweet->user->screen_name;
 
 // looks like this: https://twitter.com/LarryMcTweet/status/684483801687392256
 $url = "https://twitter.com/$screen_name/status/$id";
-$text = 'I’d like to quote a tweet.'; // maximum length = 140 minus 24 (link length) minus 1 space
+$text = 'I’d like to quote a Tweet.'; // maximum length = 140 minus 24 (link length) minus 1 space
 
 $reply = $cb->statuses_update([
   'status' => "$text $url"
