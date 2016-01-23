@@ -847,3 +847,30 @@ use the corresponding [`CURLPROXY_*` constants](http://php.net/curl_setopt), lik
 ```php
 $cb->setProxy('<host>', '<port>', CURLPROXY_SOCKS5);
 ```
+
+### …quote a Tweet?
+
+Quoting a Tweet is different from a Retweet because you may add your own text.
+The original Tweet will appear below your quote.
+To quote a Tweet, add a link to the original Tweet to your quote, like in this sample:
+
+```php
+$original_tweet = [
+  'id_str' => '684483801687392256',
+  'user' => [
+    'screen_name' => 'LarryMcTweet'
+  ]
+];
+$original_tweet = (object) $original_tweet; // sample, get real Tweet from API
+
+$id = $original_tweet->id_str; // use the `id_str` field because of long numbers
+$screen_name = $original_tweet->user->screen_name;
+
+// looks like this: https://twitter.com/LarryMcTweet/status/684483801687392256
+$url = "https://twitter.com/$screen_name/status/$id";
+$text = 'I’d like to quote a tweet.'; // maximum length = 140 minus 24 (link length) minus 1 space
+
+$reply = $cb->statuses_update([
+  'status' => "$text $url"
+]);
+```
