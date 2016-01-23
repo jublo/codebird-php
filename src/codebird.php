@@ -996,6 +996,24 @@ class Codebird
     return [$method, $method_template];
   }
 
+  /**
+   * Avoids any JSON_BIGINT_AS_STRING errors
+   *
+   * @param string       $data       JSON data to decode
+   * @param int optional $need_array Decode as array, otherwise as object
+   *
+   * @return array|object The decoded object
+   */
+  protected function _json_decode($data, $need_array = false)
+  {
+    if (!(defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)) {
+      return json_decode($data, $need_array, 512, JSON_BIGINT_AS_STRING);
+    }
+    $max_int_length = strlen((string) PHP_INT_MAX) - 1;
+    $json_without_bigints = preg_replace('/:\s*(-?\d{'.$max_int_length.',})/', ': "$1"', $data);
+    $obj = json_decode($json_without_bigints, $need_array);
+    return $obj;
+  }
 
   /**
    * Uncommon API methods
@@ -1336,7 +1354,7 @@ class Codebird
         break;
       case CODEBIRD_RETURNFORMAT_JSON:
         if ($httpstatus === 200) {
-          $parsed = json_decode($reply, false, 512, JSON_BIGINT_AS_STRING);
+          $parsed = $this->_json_decode($reply);
           self::setBearerToken($parsed->access_token);
         }
         break;
@@ -2232,7 +2250,7 @@ class Codebird
         $reply->rate       = $rate;
         break;
       case CODEBIRD_RETURNFORMAT_JSON:
-        $reply             = json_decode($reply);
+        $reply             = $this->_json_decode($reply);
         $reply->httpstatus = $httpstatus;
         $reply->rate       = $rate;
         $reply             = json_encode($reply);
@@ -2566,7 +2584,7 @@ class Codebird
           return new \stdClass;
       }
     }
-    if (! $parsed = json_decode($reply, $need_array, 512, JSON_BIGINT_AS_STRING)) {
+    if (! $parsed = $this->_json_decode($reply, $need_array)) {
       if ($reply) {
         // assume query format
         $reply = explode('&', $reply);
