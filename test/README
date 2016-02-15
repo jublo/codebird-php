@@ -4,7 +4,6 @@ _getMultipartRequestFromParams
 _checkForFiles
 _buildMultipart
 _buildBinaryBody
-_fetchRemoteFile
 
 _callApi
 _callApiCurl

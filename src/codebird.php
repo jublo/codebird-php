@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   3.0.0
+ * @version   3.1.0
  * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2016 Jublo Solutions <support@jublo.net>
  * @license   https://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
@@ -143,6 +143,7 @@ class Codebird
       'ads/iab_categories',
       'ads/insights/accounts/:account_id',
       'ads/insights/accounts/:account_id/available_audiences',
+      'ads/insights/keywords/search',
       'ads/line_items/placements',
       'ads/sandbox/accounts',
       'ads/sandbox/accounts/:account_id',
@@ -198,6 +199,7 @@ class Codebird
       'ads/sandbox/iab_categories',
       'ads/sandbox/insights/accounts/:account_id',
       'ads/sandbox/insights/accounts/:account_id/available_audiences',
+      'ads/sandbox/insights/keywords/search',
       'ads/sandbox/line_items/placements',
       'ads/sandbox/stats/accounts/:account_id',
       'ads/sandbox/stats/accounts/:account_id/campaigns',
@@ -417,6 +419,7 @@ class Codebird
       'statuses/filter',
       'statuses/lookup',
       'statuses/retweet/:id',
+      'statuses/unretweet/:id',
       'statuses/update',
       'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
@@ -505,7 +508,7 @@ class Codebird
   /**
    * The current Codebird version
    */
-  protected static $_version = '3.0.0';
+  protected static $_version = '3.1.0';
 
   /**
    * The Request or access token. Used to sign requests
@@ -640,6 +643,7 @@ class Codebird
    * @param bool $use_curl Request uses cURL or not
    *
    * @return void
+   * @throws \Exception
    */
   public function setUseCurl($use_curl)
   {
@@ -713,15 +717,31 @@ class Codebird
   /**
    * Sets the proxy
    *
-   * @param string $host Proxy host
-   * @param int    $port Proxy port
+   * @param string       $host Proxy host
+   * @param int          $port Proxy port
+   * @param int optional $type Proxy type, defaults to HTTP
    *
    * @return void
+   * @throws \Exception
    */
-  public function setProxy($host, $port)
+  public function setProxy($host, $port, $type = CURLPROXY_HTTP)
   {
+    static $types_str = [
+      'HTTP', 'SOCKS4', 'SOCKS5', 'SOCKS4A', 'SOCKS5_HOSTNAME'
+    ];
+    $types = [];
+    foreach ($types_str as $type_str) {
+      if (defined('CURLPROXY_' . $type_str)) {
+        $types[] = constant('CURLPROXY_' . $type_str);
+      }
+    }
+    if (! in_array($type, $types)) {
+      throw new \Exception('Invalid proxy type specified.');
+    }
+
     $this->_proxy['host'] = $host;
     $this->_proxy['port'] = (int) $port;
+    $this->_proxy['type'] = $type;
   }
 
   /**
@@ -742,6 +762,7 @@ class Codebird
    * @param callable $callback The streaming callback
    *
    * @return void
+   * @throws \Exception
    */
   public function setStreamingCallback($callback)
   {
@@ -945,6 +966,7 @@ class Codebird
    * @param array byref $apiparams The parameters to send along
    *
    * @return string[] (string method, string method_template)
+   * @throws \Exception
    */
   protected function _mapFnInlineParams($method, &$apiparams)
   {
@@ -974,6 +996,24 @@ class Codebird
     return [$method, $method_template];
   }
 
+  /**
+   * Avoids any JSON_BIGINT_AS_STRING errors
+   *
+   * @param string       $data       JSON data to decode
+   * @param int optional $need_array Decode as array, otherwise as object
+   *
+   * @return array|object The decoded object
+   */
+  protected function _json_decode($data, $need_array = false)
+  {
+    if (!(defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)) {
+      return json_decode($data, $need_array, 512, JSON_BIGINT_AS_STRING);
+    }
+    $max_int_length = strlen((string) PHP_INT_MAX) - 1;
+    $json_without_bigints = preg_replace('/:\s*(-?\d{'.$max_int_length.',})/', ': "$1"', $data);
+    $obj = json_decode($json_without_bigints, $need_array);
+    return $obj;
+  }
 
   /**
    * Uncommon API methods
@@ -987,6 +1027,7 @@ class Codebird
    * @param optional string $type        'authenticate' or 'authorize', to avoid duplicate code
    *
    * @return string The OAuth authenticate/authorize URL
+   * @throws \Exception
    */
   public function oauth_authenticate($force_login = NULL, $screen_name = NULL, $type = 'authenticate')
   {
@@ -1053,7 +1094,7 @@ class Codebird
     );
 
     if ($this->_hasProxy()) {
-      $this->_curl_setopt($connection, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      $this->_curl_setopt($connection, CURLOPT_PROXYTYPE, $this->_getProxyType());
       $this->_curl_setopt($connection, CURLOPT_PROXY, $this->_getProxyHost());
       $this->_curl_setopt($connection, CURLOPT_PROXYPORT, $this->_getProxyPort());
 
@@ -1160,6 +1201,16 @@ class Codebird
   }
 
   /**
+   * Gets the proxy type
+   *
+   * @return string The proxy type
+   */
+  protected function _getProxyType()
+  {
+    return $this->_getProxyData('type');
+  }
+
+  /**
    * Gets data from the proxy configuration
    *
    * @param string $name
@@ -1173,6 +1224,7 @@ class Codebird
    * Gets the OAuth bearer token, using cURL
    *
    * @return string The OAuth bearer token
+   * @throws \Exception
    */
 
   protected function _oauth2TokenCurl()
@@ -1212,6 +1264,7 @@ class Codebird
    * Gets the OAuth bearer token, without cURL
    *
    * @return string The OAuth bearer token
+   * @throws \Exception
    */
 
   protected function _oauth2TokenNoCurl()
@@ -1301,7 +1354,7 @@ class Codebird
         break;
       case CODEBIRD_RETURNFORMAT_JSON:
         if ($httpstatus === 200) {
-          $parsed = json_decode($reply, false, 512, JSON_BIGINT_AS_STRING);
+          $parsed = $this->_json_decode($reply);
           self::setBearerToken($parsed->access_token);
         }
         break;
@@ -1345,6 +1398,7 @@ class Codebird
    * @param int $validation_result The curl error number
    *
    * @return void
+   * @throws \Exception
    */
   protected function _validateSslCertificate($validation_result)
   {
@@ -1410,6 +1464,7 @@ class Codebird
    * @param string $data The data to calculate the hash from
    *
    * @return string The hash
+   * @throws \Exception
    */
   protected function _sha1($data)
   {
@@ -1438,6 +1493,7 @@ class Codebird
    * @param int optional $length The length of the string to generate
    *
    * @return string The random string
+   * @throws \Exception
    */
   protected function _nonce($length = 8)
   {
@@ -1483,6 +1539,7 @@ class Codebird
    * @param array  optional $params       The API call parameters, associative
    *
    * @return string Authorization HTTP header
+   * @throws \Exception
    */
   protected function _sign($httpmethod, $method, $params = [])
   {
@@ -1666,6 +1723,7 @@ class Codebird
    * @param array  $params          The parameters to send along
    *
    * @return string request
+   * @throws \Exception
    */
   protected function _getMultipartRequestFromParams($method_template, $border, $params)
   {
@@ -1780,6 +1838,7 @@ class Codebird
    * @param string $url The URL to download from
    *
    * @return mixed The file contents or FALSE
+   * @throws \Exception
    */
   protected function _fetchRemoteFile($url)
   {
@@ -1798,9 +1857,12 @@ class Codebird
       // process compressed images
       $this->_curl_setopt($connection, CURLOPT_ENCODING, 'gzip,deflate,sdch');
       $result = $this->_curl_exec($connection);
-      if ($result !== false) {
+      if ($result !== false
+        && $this->_curl_getinfo($connection, CURLINFO_HTTP_CODE) === 200
+      ) {
         return $result;
       }
+      throw new \Exception('Downloading a remote media file failed.');
       return false;
     }
     // no cURL
@@ -1814,10 +1876,13 @@ class Codebird
         'verify_peer'  => false
       ]
     ];
-    list($result) = $this->_getNoCurlInitialization($url, $contextOptions);
-    if ($result !== false) {
+    list($result, $headers) = $this->_getNoCurlInitialization($url, $contextOptions);
+    if ($result !== false
+      && preg_match('/^HTTP\/\d\.\d 200 OK$/', $headers[0])
+    ) {
       return $result;
     }
+    throw new \Exception('Downloading a remote media file failed.');
     return false;
   }
 
@@ -1929,6 +1994,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApi($httpmethod, $method, $method_template, $params = [], $multipart = false, $app_only_auth = false)
@@ -1961,6 +2027,7 @@ class Codebird
    * @param bool   optional $app_only_auth Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApiCurl(
@@ -2021,6 +2088,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return string The API reply, encoded in the set return_format
+   * @throws \Exception
    */
 
   protected function _callApiNoCurl(
@@ -2182,7 +2250,7 @@ class Codebird
         $reply->rate       = $rate;
         break;
       case CODEBIRD_RETURNFORMAT_JSON:
-        $reply             = json_decode($reply);
+        $reply             = $this->_json_decode($reply);
         $reply->httpstatus = $httpstatus;
         $reply->rate       = $rate;
         $reply             = json_encode($reply);
@@ -2195,6 +2263,7 @@ class Codebird
    * Get Bearer authorization string
    *
    * @return string authorization
+   * @throws \Exception
    */
   protected function _getBearerAuthorization()
   {
@@ -2256,6 +2325,7 @@ class Codebird
    * @param bool   optional $app_only_auth   Whether to use app-only bearer authentication
    *
    * @return void
+   * @throws \Exception
    */
 
   protected function _callApiStreaming(
@@ -2514,7 +2584,7 @@ class Codebird
           return new \stdClass;
       }
     }
-    if (! $parsed = json_decode($reply, $need_array, 512, JSON_BIGINT_AS_STRING)) {
+    if (! $parsed = $this->_json_decode($reply, $need_array)) {
       if ($reply) {
         // assume query format
         $reply = explode('&', $reply);

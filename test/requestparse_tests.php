@@ -190,4 +190,23 @@ class Requestparse_Test extends \PHPUnit_Framework_TestCase
     $this->assertArrayNotHasKey('resumeId', $apiparams);
     $this->assertEquals(['test' => 1], $apiparams);
   }
+
+  /**
+   * Tests _json_decode
+   */
+  public function testJsonDecode()
+  {
+    $json  = '{"id": 123456789123456789, "id_str": "123456789123456789"}';
+    $array = [
+      'id' => 123456789123456789,
+      'id_str' => '123456789123456789'
+    ];
+    $object = (object) $array;
+
+    $cb = $this->getCB();
+    $result = $cb->call('_json_decode', [$json]);
+    $this->assertEquals($object, $result);
+    $result = $cb->call('_json_decode', [$json, true]);
+    $this->assertEquals($array, $result);
+  }
 }
