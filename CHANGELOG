@@ -7,6 +7,7 @@ codebird-php - changelog
 + Add REST API POST statuses/unretweet/:id
 + Add Ads API GET insights/keywords/search
 + #151 Avoid JSON_BIGINT_AS_STRING errors
+- Fix typo in changelog
 
 3.0.0 (2016-01-01)
 + Add unit testing suite

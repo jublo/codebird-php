@@ -320,7 +320,6 @@ $reply = $cb->statuses_update([
   'media_ids' => $media_ids
 ]);
 print_r($reply);
-);
 ```
 
 Here is a [sample Tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
