@@ -68,8 +68,8 @@ class Codebird
    */
   protected static $_endpoints = [
     'ads'          => [
-      'production' => 'https://ads-api.twitter.com/0/',
-      'sandbox'    => 'https://ads-api-sandbox.twitter.com/0/'
+      'production' => 'https://ads-api.twitter.com/1/',
+      'sandbox'    => 'https://ads-api-sandbox.twitter.com/1/'
     ],
     'media'        => 'https://upload.twitter.com/1.1/',
     'oauth'        => 'https://api.twitter.com/',
@@ -229,18 +229,7 @@ class Codebird
       'ads/sandbox/targeting_criteria/tv_markets',
       'ads/sandbox/targeting_criteria/tv_shows',
       'ads/stats/accounts/:account_id',
-      'ads/stats/accounts/:account_id/campaigns',
-      'ads/stats/accounts/:account_id/campaigns/:id',
-      'ads/stats/accounts/:account_id/funding_instruments',
-      'ads/stats/accounts/:account_id/funding_instruments/:id',
-      'ads/stats/accounts/:account_id/line_items',
-      'ads/stats/accounts/:account_id/line_items/:id',
-      'ads/stats/accounts/:account_id/promoted_accounts',
-      'ads/stats/accounts/:account_id/promoted_accounts/:id',
-      'ads/stats/accounts/:account_id/promoted_tweets',
-      'ads/stats/accounts/:account_id/promoted_tweets/:id',
-      'ads/stats/accounts/:account_id/reach/campaigns',
-      'ads/targeting_criteria/app_store_categories',
+      'ads/stats/jobs/accounts/:account_id',
       'ads/targeting_criteria/behavior_taxonomies',
       'ads/targeting_criteria/behaviors',
       'ads/targeting_criteria/devices',
@@ -353,6 +342,7 @@ class Codebird
       'ads/accounts/:account_id/tweet',
       'ads/accounts/:account_id/videos',
       'ads/accounts/:account_id/web_event_tags',
+      'ads/stats/jobs/accounts/:account_id',
       'ads/batch/accounts/:account_id/campaigns',
       'ads/batch/accounts/:account_id/line_items',
       'ads/batch/accounts/:account_id/tailored_audiences',
@@ -2195,8 +2185,8 @@ class Codebird
     } elseif ($this->_detectBinaryBody($method_template)) {
       // transform parametric headers to real headers
       foreach ([
-          'Content-Type', 'X-TON-Content-Type',
-          'X-TON-Content-Length', 'Content-Range'
+          'Content-Type', 'X-TON-Content-Type', 'X-TON-Expires',
+          'X-TON-Content-Length', 'Content-Range', 'Content-Length'
         ] as $key) {
         if (isset($params[$key])) {
           $request_headers[] = $key . ': ' . $params[$key];
@@ -2546,9 +2536,9 @@ class Codebird
    */
   protected function _parseApiReplyPrefillHeaders($headers, $reply)
   {
-    if ($reply === '' && (isset($headers['Location']))) {
+    if ($reply === '' && (isset($headers['Location']) || isset($headers['location']))) {
       $reply = [
-        'Location' => $headers['Location']
+        'Location' => isset($headers['Location']) ? $headers['Location'] : $headers['location']
       ];
       if (isset($headers['X-TON-Min-Chunk-Size'])) {
         $reply['X-TON-Min-Chunk-Size'] = $headers['X-TON-Min-Chunk-Size'];
