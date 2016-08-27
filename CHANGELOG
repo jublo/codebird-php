@@ -6,6 +6,7 @@ codebird-php - changelog
 + Update to Twitter Ads API Version 1
 + Add Ads API POST tailored_audience_memberships method
 + Add Ads Sandbox API POST accounts method
++ Add Ads Sandbox API POST accounts/:account_id/features method
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
