@@ -358,6 +358,7 @@ class Codebird
       'ads/batch/accounts/:account_id/line_items',
       'ads/batch/accounts/:account_id/tailored_audiences',
       'ads/batch/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/accounts',
       'ads/sandbox/accounts/:account_id/account_media',
       'ads/sandbox/accounts/:account_id/app_lists',
       'ads/sandbox/accounts/:account_id/campaigns',

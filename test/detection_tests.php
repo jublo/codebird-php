@@ -60,8 +60,10 @@ class Detection_Test extends \PHPUnit_Framework_TestCase
 
     // normal detection
     $params = [];
+    $post = ['httpmethod' => 'POST'];
     $this->assertEquals('GET', $cb->call('_detectMethod', 'search/tweets', $params));
     $this->assertEquals('POST', $cb->call('_detectMethod', 'statuses/update', $params));
+    $this->assertEquals('POST', $cb->call('_detectMethod', 'ads/sandbox/accounts', $post));
     $this->assertEquals(
       'PUT',
       $cb->call(
