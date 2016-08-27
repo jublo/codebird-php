@@ -382,6 +382,8 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/tailored_audiences',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/tailored_audience_memberships',
+      'ads/tailored_audience_memberships',
       'blocks/create',
       'blocks/destroy',
       'collections/create',
