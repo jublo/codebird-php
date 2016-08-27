@@ -401,6 +401,7 @@ class Codebird
       'lists/subscribers/create',
       'lists/subscribers/destroy',
       'lists/update',
+      'media/metadata/create',
       'media/upload',
       'mutes/users/create',
       'mutes/users/destroy',
@@ -1906,6 +1907,7 @@ class Codebird
    */
   protected function _detectMedia($method) {
     $medias = [
+      'media/metadata/create',
       'media/upload'
     ];
     return in_array($method, $medias);
@@ -1926,7 +1928,8 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/campaigns',
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
-      'collections/entries/curate'
+      'collections/entries/curate',
+      'media/metadata/create'
     ];
     return in_array($method, $json_bodies);
   }
