@@ -404,6 +404,9 @@ if ($reply->httpstatus < 200 || $reply->httpstatus > 299) {
   die();
 }
 
+// if you have a field `processing_info` in the reply,
+// use the STATUS command to check if the video has finished processing.
+
 // Now use the media_id in a Tweet
 $reply = $cb->statuses_update([
   'status'    => 'Twitter now accepts video uploads.',
