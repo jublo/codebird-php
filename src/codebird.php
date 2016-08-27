@@ -370,6 +370,7 @@ class Codebird
       'ads/sandbox/accounts/:account_id/cards/video_conversation',
       'ads/sandbox/accounts/:account_id/cards/website',
       'ads/sandbox/accounts/:account_id/features',
+      'ads/sandbox/accounts/:account_id/funding_instruments',
       'ads/sandbox/accounts/:account_id/line_items',
       'ads/sandbox/accounts/:account_id/media_creatives',
       'ads/sandbox/accounts/:account_id/promoted_accounts',
@@ -1653,7 +1654,8 @@ class Codebird
           'ads/sandbox/accounts/:account_id/promoted_tweets'
         ],
         'type' => [
-          'ads/sandbox/accounts/:account_id/features'
+          'ads/sandbox/accounts/:account_id/features',
+          'ads/sandbox/accounts/:account_id/funding_instruments'
         ],
         'user_id' => [
           'ads/accounts/:account_id/promoted_accounts',
