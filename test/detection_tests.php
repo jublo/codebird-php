@@ -245,6 +245,11 @@ class Detection_Test extends \PHPUnit_Framework_TestCase
       'media/upload'
     );
     $this->assertEquals(
+      'https://publish.twitter.com/oembed',
+      $cb->call('_getEndpoint', ['statuses/oembed', 'statuses/oembed']),
+      'statuses/oembed'
+    );
+    $this->assertEquals(
       'https://stream.twitter.com/1.1/statuses/filter.json',
       $cb->call('_getEndpoint', ['statuses/filter', 'statuses/filter']),
       'statuses/filter'

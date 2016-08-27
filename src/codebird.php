@@ -6,7 +6,7 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   3.1.0
+ * @version   3.2.0-dev
  * @author    Jublo Solutions <support@jublo.net>
  * @copyright 2010-2016 Jublo Solutions <support@jublo.net>
  * @license   https://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
@@ -72,6 +72,7 @@ class Codebird
       'sandbox'    => 'https://ads-api-sandbox.twitter.com/0/'
     ],
     'media'        => 'https://upload.twitter.com/1.1/',
+    'publish'      => 'https://publish.twitter.com/',
     'oauth'        => 'https://api.twitter.com/',
     'rest'         => 'https://api.twitter.com/1.1/',
     'streaming'    => [
@@ -392,6 +393,7 @@ class Codebird
       'collections/update',
       'direct_messages/destroy',
       'direct_messages/new',
+      'dm/new',
       'favorites/create',
       'favorites/destroy',
       'friendships/create',
@@ -508,7 +510,7 @@ class Codebird
   /**
    * The current Codebird version
    */
-  protected static $_version = '3.1.0';
+  protected static $_version = '3.2.0-dev';
 
   /**
    * The Request or access token. Used to sign requests
@@ -1971,6 +1973,8 @@ class Codebird
       $url = self::$_endpoints['oauth'] . $method;
     } elseif ($this->_detectMedia($method_template)) {
       $url = self::$_endpoints['media'] . $method . '.json';
+    } elseif ($method_template === 'statuses/oembed') {
+      $url = self::$_endpoints['publish'] . 'oembed';
     } elseif ($variant = $this->_detectStreaming($method_template)) {
       $url = self::$_endpoints['streaming'][$variant] . $method . '.json';
     } elseif ($this->_detectBinaryBody($method_template)) {
