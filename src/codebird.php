@@ -352,6 +352,7 @@ class Codebird
       'ads/accounts/:account_id/promoted_tweets',
       'ads/accounts/:account_id/tailored_audience_changes',
       'ads/accounts/:account_id/tailored_audiences',
+      'ads/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/accounts/:account_id/targeting_criteria',
       'ads/accounts/:account_id/tweet',
       'ads/accounts/:account_id/videos',
@@ -379,6 +380,7 @@ class Codebird
       'ads/sandbox/accounts/:account_id/promoted_tweets',
       'ads/sandbox/accounts/:account_id/tailored_audience_changes',
       'ads/sandbox/accounts/:account_id/tailored_audiences',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/sandbox/accounts/:account_id/targeting_criteria',
       'ads/sandbox/accounts/:account_id/tweet',
       'ads/sandbox/accounts/:account_id/videos',
@@ -1642,6 +1644,10 @@ class Codebird
           'ads/sandbox/accounts/:account_id/cards/website',
           'ads/sandbox/accounts/:account_id/tailored_audiences',
           'ads/sandbox/accounts/:account_id/web_event_tags'
+        ],
+        'permission_level' => [
+          'ads/accounts/:account_id/tailored_audiences/:id/permissions',
+          'ads/sandbox/accounts/:account_id/tailored_audiences/:id/permissions'
         ],
         'tailored_audience_id' => [
           'ads/accounts/:account_id/tailored_audience_changes',
