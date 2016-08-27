@@ -8,6 +8,8 @@ codebird-php - changelog
 + Add Ads Sandbox API POST accounts method
 + Add Ads Sandbox API POST accounts/:account_id/features method
 + Add Ads Sandbox API POST accounts/:account_id/funding_instruments method
++ Update more Ads API methods
+- Fix Ads API batch methods to send JSON body
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types

@@ -189,6 +189,7 @@ class Detection_Test extends \PHPUnit_Framework_TestCase
     $cb = $this->getCB();
     $this->assertFalse($cb->call('_detectJsonBody', ['statuses/update']));
     $this->assertTrue($cb->call('_detectJsonBody', ['collections/entries/curate']));
+    $this->assertTrue($cb->call('_detectJsonBody', ['ads/batch/accounts/:account_id/targeting_criteria']));
   }
 
   /**

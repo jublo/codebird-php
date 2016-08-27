@@ -1928,6 +1928,12 @@ class Codebird
    */
   protected function _detectJsonBody($method) {
     $json_bodies = [
+      'ads/batch/accounts/:account_id/campaigns',
+      'ads/batch/accounts/:account_id/line_items',
+      'ads/batch/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/batch/accounts/:account_id/campaigns',
+      'ads/sandbox/batch/accounts/:account_id/line_items',
+      'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
       'collections/entries/curate'
     ];
     return in_array($method, $json_bodies);
