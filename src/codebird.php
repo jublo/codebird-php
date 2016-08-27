@@ -1677,6 +1677,14 @@ class Codebird
       }
     }
 
+    // async media/upload calls may request a status by GET
+    if ($method === 'media/upload'
+      && isset($params['command'])
+      && $params['command'] === 'STATUS'
+    ) {
+      return 'GET';
+    }
+
     // prefer POST and PUT if parameters are set
     if (count($params) > 0) {
       if (in_array($method, $apimethods['POST'])) {

@@ -78,6 +78,11 @@ class Detection_Test extends \PHPUnit_Framework_TestCase
     $params = ['test' => 12];
     $this->assertEquals('POST', $cb->call('_detectMethod', 'account/settings', $params));
 
+    $params = [];
+    $this->assertEquals('POST', $cb->call('_detectMethod', 'media/upload', $params));
+    $params = ['command' => 'STATUS'];
+    $this->assertEquals('GET', $cb->call('_detectMethod', 'media/upload', $params));
+
     $httpmethods_by_param = [
       'POST' => [
         'campaign_id' => [

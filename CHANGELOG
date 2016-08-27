@@ -11,6 +11,7 @@ codebird-php - changelog
 + Update more Ads API methods
 - Fix Ads API batch methods to send JSON body
 + Update Ads API Analytics methods (stats)
++ #177 Add async media/upload calls status by GET
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
