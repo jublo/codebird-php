@@ -2217,8 +2217,12 @@ class Codebird
     } elseif ($this->_detectBinaryBody($method_template)) {
       // transform parametric headers to real headers
       foreach ([
-          'Content-Type', 'X-TON-Content-Type',
-          'X-TON-Content-Length', 'Content-Range'
+          'Content-Length',
+          'Content-Range',
+          'Content-Type',
+          'X-TON-Content-Type',
+          'X-TON-Content-Length',
+          'X-TON-Expires'
         ] as $key) {
         if (isset($params[$key])) {
           $request_headers[] = $key . ': ' . $params[$key];
@@ -2568,9 +2572,9 @@ class Codebird
    */
   protected function _parseApiReplyPrefillHeaders($headers, $reply)
   {
-    if ($reply === '' && (isset($headers['Location']))) {
+    if ($reply === '' && (isset($headers['Location']) || isset($headers['Location']))) {
       $reply = [
-        'Location' => $headers['Location']
+        'Location' => isset($headers['Location']) ? $headers['Location'] : $headers['location']
       ];
       if (isset($headers['X-TON-Min-Chunk-Size'])) {
         $reply['X-TON-Min-Chunk-Size'] = $headers['X-TON-Min-Chunk-Size'];
