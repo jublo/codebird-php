@@ -13,6 +13,7 @@ codebird-php - changelog
 + Update Ads API Analytics methods (stats)
 + #177 Add async media/upload calls status by GET
 + Add POST media/metadata/create method
+- Fix TON API upload - add additional header parsing
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
