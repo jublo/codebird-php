@@ -2572,7 +2572,7 @@ class Codebird
    */
   protected function _parseApiReplyPrefillHeaders($headers, $reply)
   {
-    if ($reply === '' && (isset($headers['Location']) || isset($headers['Location']))) {
+    if ($reply === '' && (isset($headers['Location']) || isset($headers['location']))) {
       $reply = [
         'Location' => isset($headers['Location']) ? $headers['Location'] : $headers['location']
       ];
