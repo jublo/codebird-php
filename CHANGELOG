@@ -14,6 +14,7 @@ codebird-php - changelog
 + #177 Add async media/upload calls status by GET
 + Add POST media/metadata/create method
 - Fix TON API upload - add additional header parsing
++ Add custom Codebird Exception classes
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
