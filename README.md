@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/develop.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=develop)
 [![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/develop.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
+[![API Testing](https://img.shields.io/badge/test%20this%20API%20on-RapidAPI.com-blue.svg)](https://rapidapi.com/package/Twitter/functions?utm_source=GithubTwitter&utm_medium=button)
 
 ### Requirements
 
