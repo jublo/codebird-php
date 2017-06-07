@@ -17,6 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cd81a521d334648b9958327621a3070)](https://www.codacy.com/app/jublonet/codebird-php?utm_source=github.com&utm_medium=referral&utm_content=jublonet/codebird-php&utm_campaign=badger)
 [![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/develop.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=develop)
 [![Travis Status](https://img.shields.io/travis/jublonet/codebird-php/develop.svg)](https://travis-ci.org/jublonet/codebird-php/branches)
 
