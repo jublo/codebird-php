@@ -430,6 +430,7 @@ class Codebird
       'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
       'ton/bucket/:bucket?resumable=true',
+      'tweets/search/30day/:env',
       'users/lookup',
       'users/report_spam'
     ],
@@ -1943,7 +1944,8 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
       'collections/entries/curate',
-      'media/metadata/create'
+      'media/metadata/create',
+      'tweets/search/30day/:env'
     ];
     return in_array($method, $json_bodies);
   }
