@@ -430,6 +430,7 @@ class Codebird
       'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
       'ton/bucket/:bucket?resumable=true',
+      'tweets/search/30day/:env',
       'users/lookup',
       'users/report_spam'
     ],
@@ -1930,11 +1931,11 @@ class Codebird
   /**
    * Detects if API call should use JSON body
    *
-   * @param string $method The API method to call
+   * @param string $method_template The API method to call
    *
    * @return bool Whether the method is defined as accepting JSON body
    */
-  protected function _detectJsonBody($method) {
+  protected function _detectJsonBody($method_template) {
     $json_bodies = [
       'ads/batch/accounts/:account_id/campaigns',
       'ads/batch/accounts/:account_id/line_items',
@@ -1943,9 +1944,10 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
       'collections/entries/curate',
-      'media/metadata/create'
+      'media/metadata/create',
+      'tweets/search/30day/:env'
     ];
-    return in_array($method, $json_bodies);
+    return in_array($method_template, $json_bodies);
   }
 
   /**
@@ -2224,7 +2226,7 @@ class Codebird
       $multipart_boundary = substr($params, 2, $first_newline - 2);
       $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
         . $multipart_boundary;
-    } elseif ($this->_detectJsonBody($method)) {
+    } elseif ($this->_detectJsonBody($method_template)) {
       $authorization = $this->_sign($httpmethod, $url, []);
       $params = json_encode($params);
       $request_headers[] = 'Content-Type: application/json';
