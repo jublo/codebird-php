@@ -288,6 +288,7 @@ class Codebird
       'lists/subscribers',
       'lists/subscribers/show',
       'lists/subscriptions',
+      'media/user/features',
       'mutes/users/ids',
       'mutes/users/list',
       'oauth/authenticate',
@@ -1924,10 +1925,24 @@ class Codebird
   protected function _detectMedia($method) {
     $medias = [
       'media/metadata/create',
-      'media/upload',
-      'media/library/add'
+      'media/upload'
     ];
     return in_array($method, $medias);
+  }
+
+  /**
+   * Detects if API call should use promedia endpoint
+   *
+   * @param string $method The API method to call
+   *
+   * @return bool Whether the method is defined in promedia API
+   */
+  protected function _detectProMedia($method) {
+    $pro_medias = [
+      'media/library/add',
+      'media/user/features'
+    ];
+    return in_array($method, $pro_medias);
   }
 
   /**
@@ -1948,6 +1963,7 @@ class Codebird
       'collections/entries/curate',
       'media/metadata/create',
       'media/library/add',
+      'media/user/features',
       'tweets/search/30day/:env'
     ];
     return in_array($method_template, $json_bodies);
@@ -2008,6 +2024,8 @@ class Codebird
     $url = self::$_endpoints['rest'] . $method . '.json';
     if (substr($method_template, 0, 5) === 'oauth') {
       $url = self::$_endpoints['oauth'] . $method;
+    } elseif ($this->_detectProMedia($method_template)) {
+      $url = self::$_endpoints['rest'] . $method . '.json';
     } elseif ($this->_detectMedia($method_template)) {
       $url = self::$_endpoints['media'] . $method . '.json';
     } elseif ($method_template === 'statuses/oembed') {
@@ -2661,7 +2679,7 @@ class Codebird
  * Catch errors when authtoken is expired
  */
 class CodebirdAuthException extends \Exception {
-	
+
 }
 
 
@@ -2669,14 +2687,14 @@ class CodebirdAuthException extends \Exception {
  * Catch error when credentials are not set correclty
  */
 class CodebirdCredentialsException extends \Exception {
-	
+
 }
 
 /**
  * Catch errors r elated to bad endpoi ts
  */
 class CodebirdEndpointException extends \Exception {
-	
+
 }
 
 /*
@@ -2684,6 +2702,5 @@ class CodebirdEndpointException extends \Exception {
  */
 
 class CodebirdMediaException extends \Exception {
-	
-}
 
+}
