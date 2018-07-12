@@ -71,6 +71,7 @@ class Codebird
       'production' => 'https://ads-api.twitter.com/2/',
       'sandbox'    => 'https://ads-api-sandbox.twitter.com/2/'
     ],
+    'promedia'        => 'https://api.twitter.com/1.1/',
     'media'        => 'https://upload.twitter.com/1.1/',
     'publish'      => 'https://publish.twitter.com/',
     'oauth'        => 'https://api.twitter.com/',
@@ -288,7 +289,6 @@ class Codebird
       'lists/subscribers',
       'lists/subscribers/show',
       'lists/subscriptions',
-      'media/user/features',
       'mutes/users/ids',
       'mutes/users/list',
       'oauth/authenticate',
@@ -1925,24 +1925,23 @@ class Codebird
   protected function _detectMedia($method) {
     $medias = [
       'media/metadata/create',
-      'media/upload'
+      'media/upload',
     ];
     return in_array($method, $medias);
   }
 
   /**
-   * Detects if API call should use promedia endpoint
+   * Detects if API call should use pro media endpoint
    *
    * @param string $method The API method to call
    *
-   * @return bool Whether the method is defined in promedia API
+   * @return bool Whether the method is defined in media API
    */
   protected function _detectProMedia($method) {
-    $pro_medias = [
-      'media/library/add',
-      'media/user/features'
+    $medias = [
+      'media/library/add'
     ];
-    return in_array($method, $pro_medias);
+    return in_array($method, $medias);
   }
 
   /**
@@ -1963,7 +1962,6 @@ class Codebird
       'collections/entries/curate',
       'media/metadata/create',
       'media/library/add',
-      'media/user/features',
       'tweets/search/30day/:env'
     ];
     return in_array($method_template, $json_bodies);
@@ -2025,7 +2023,7 @@ class Codebird
     if (substr($method_template, 0, 5) === 'oauth') {
       $url = self::$_endpoints['oauth'] . $method;
     } elseif ($this->_detectProMedia($method_template)) {
-      $url = self::$_endpoints['rest'] . $method . '.json';
+      $url = self::$_endpoints['promedia'] . $method . '.json';
     } elseif ($this->_detectMedia($method_template)) {
       $url = self::$_endpoints['media'] . $method . '.json';
     } elseif ($method_template === 'statuses/oembed') {
