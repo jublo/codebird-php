@@ -90,6 +90,14 @@ class Codebird
     'GET' => [
       'account/settings',
       'account/verify_credentials',
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/subscriptions/list',
+      'account_activity/all/:env_name/webhooks',
+      'account_activity/all/webhooks',
+      'account_activity/subscriptions/count',
+      'account_activity/webhooks',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
+      'account_activity/webhooks/:webhook_id/subscriptions/all/list',
       'ads/accounts',
       'ads/accounts/:account_id',
       'ads/accounts/:account_id/account_media',
@@ -333,6 +341,10 @@ class Codebird
       'account/update_profile_background_image',
       'account/update_profile_banner',
       'account/update_profile_image',
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/webhooks',
+      'account_activity/webhooks',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
       'ads/accounts/:account_id/account_media',
       'ads/accounts/:account_id/app_lists',
       'ads/accounts/:account_id/campaigns',
@@ -446,6 +458,8 @@ class Codebird
       'users/report_spam'
     ],
     'PUT' => [
+      'account_activity/all/:env_name/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id',
       'ads/accounts/:account_id/campaigns/:campaign_id',
       'ads/accounts/:account_id/cards/app_download/:card_id',
       'ads/accounts/:account_id/cards/image_app_download/:card_id',
@@ -480,6 +494,10 @@ class Codebird
       'ton/bucket/:bucket/:file?resumable=true&resumeId=:resumeId'
     ],
     'DELETE' => [
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
       'ads/accounts/:account_id/campaigns/:campaign_id',
       'ads/accounts/:account_id/cards/app_download/:card_id',
       'ads/accounts/:account_id/cards/image_app_download/:card_id',
