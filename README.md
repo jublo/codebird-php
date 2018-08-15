@@ -248,7 +248,7 @@ The library returns the response HTTP status code, so you can detect rate limits
 I suggest you to check if the ```$reply->httpstatus``` property is ```400```
 and check with the Twitter API to find out if you are currently being
 rate-limited.
-See the [Rate Limiting FAQ](https://dev.twitter.com/rest/public/rate-limiting)
+See the [Rate Limiting FAQ](https://developer.twitter.com/en/docs/basics/rate-limiting)
 for more information.
 
 Unless your return format is JSON, you will receive rate-limiting details
@@ -333,7 +333,7 @@ print_r($reply);
 Here is a [sample Tweet](https://twitter.com/LarryMcTweet/status/475276535386365952)
 sent with the code above.
 
-More [documentation for uploading media](https://dev.twitter.com/rest/public/uploading-media) is available on the Twitter Developer site.
+More [documentation for uploading media](https://developer.twitter.com/en/docs/media/upload-media/overview) is available on the Twitter Developer site.
 
 ### Remote files
 
@@ -423,7 +423,7 @@ $reply = $cb->statuses_update([
 
 ```
 
-**Find more information about [accepted video formats](https://dev.twitter.com/rest/public/uploading-media#videorecs) in the Twitter Developer docs.**
+**Find more information about [accepted media formats](https://developer.twitter.com/en/docs/media/upload-media/uploading-media/media-best-practices) in the Twitter Developer docs.**
 
 :warning: When uploading a video in multiple chunks, you may run into an error `The validation of media ids failed.` even though the `media_id` is correct. This is known. Please check back in the [Twitter community forums](https://twittercommunity.com/tags/video).
 
@@ -480,18 +480,22 @@ $cb->setStreamingCallback('some_callback');
 $GLOBALS['time_start'] = time();
 
 // Second, start consuming the stream:
-$reply = $cb->user();
+$reply = $cb->statuses_filter();
 
 // See the *Mapping API methods to Codebird function calls* section for method names.
 // $reply = $cb->statuses_filter('track=Windows');
 ```
 
-Find more information on the [Streaming API](https://dev.twitter.com/streaming/overview)
+You should be able to set a timeout for the streaming API using `setTimeout`.
+In addition, your callback will receive empty messages if no events occur,
+and you should make your function `return true;` in order to cancel the stream.
+
+Find more information on the [Streaming API](https://developer.twitter.com/en/docs/tweets/filter-realtime/overview)
 in the developer documentation website.
 
 
-Twitter Collections API
------------------------
+Twitter Collections, Direct Messages and Account Activity APIs
+--------------------------------------------------------------
 
 Collections are a type of timeline that you control and can be hand curated
 and/or programmed using an API.
@@ -501,12 +505,13 @@ often they will be decomposed, efficient objects with information about users,
 Tweets, and timelines grouped, simplified, and stripped of unnecessary repetition.
 
 Never care about the OAuth signing specialities and the JSON POST body
-for POST collections/entries/curate.json. Codebird takes off the work for you
+for POST and PUT calls to these special APIs. Codebird takes off the work for you
 and will always send the correct Content-Type automatically.
 
-Find out more about the [Collections API](https://dev.twitter.com/rest/collections/about) in the Twitter API docs.
+Find out more about the [Collections API](https://developer.twitter.com/en/docs/tweets/curate-a-collection/overview/about_collections) in the Twitter API docs.
+More information on the [Direct Messages API](https://developer.twitter.com/en/docs/direct-messages/api-features) and the [Account Activity API](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) is available there as well.
 
-Here’s a sample for adding a Tweet using that API method:
+Here’s a sample for adding a Tweet using the Collections API:
 
 ```php
 $reply = $cb->collections_entries_curate([
@@ -522,7 +527,7 @@ var_dump($reply);
 TON (Twitter Object Nest) API
 -----------------------------
 
-The [TON (Twitter Object Nest) API](https://dev.twitter.com/rest/ton) allows implementers to upload media and various assets to Twitter.
+The [TON (Twitter Object Nest) API](https://developer.twitter.com/en/docs/ads/audiences/overview/ton-upload.html) allows implementers to upload media and various assets to Twitter.
 The TON API supports non-resumable and resumable upload methods based on the size of the file.
 For files less than 64MB, non-resumable may be used. For files greater than or equal to 64MB,
 resumable must be used. Resumable uploads require chunk sizes of less than 64MB.
@@ -608,7 +613,7 @@ fclose($fp);
 Twitter Ads API
 ---------------
 
-The [Twitter Ads API](https://dev.twitter.com/ads/overview) allows partners to
+The [Twitter Ads API](https://developer.twitter.com/en/docs/ads/general/overview) allows partners to
 integrate with the Twitter advertising platform in their own advertising solutions.
 Selected partners have the ability to create custom tools to manage and execute
 Twitter Ad campaigns.
