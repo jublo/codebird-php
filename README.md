@@ -1,8 +1,8 @@
 codebird-php
 ============
-*Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.*
+*Easy access to the Twitter REST API, Direct Messages API, Account Activity API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.*
 
-Copyright (C) 2010-2016 Jublo Solutions <support@jublo.net>
+Copyright (C) 2010-2018 Jublo Limited <support@jublo.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
