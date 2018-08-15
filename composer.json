@@ -38,8 +38,8 @@
         "classmap": ["src/"]
     },
     "require-dev": {
-        "satooshi/php-coveralls": ">=0.6",
-        "phpunit/phpunit": ">=3.7",
+        "php-coveralls/php-coveralls": ">=0.6",
+        "phpunit/phpunit": ">=7.3",
         "squizlabs/php_codesniffer": "2.*"
     }
 }
