@@ -334,7 +334,6 @@ class Codebird
       'account/remove_profile_banner',
       'account/settings',
       'account/update_profile',
-      'account/update_profile_background_image',
       'account/update_profile_banner',
       'account/update_profile_image',
       'account_activity/all/:env_name/subscriptions',
@@ -446,7 +445,6 @@ class Codebird
       'statuses/retweet/:id',
       'statuses/unretweet/:id',
       'statuses/update',
-      'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
       'ton/bucket/:bucket?resumable=true',
       'tweets/search/30day/:env',
@@ -538,10 +536,8 @@ class Codebird
    */
   protected static $_possible_files = [
     // Tweets
-    'statuses/update_with_media' => ['media[]'],
     'media/upload' => ['media'],
     // Accounts
-    'account/update_profile_background_image' => ['image'],
     'account/update_profile_image' => ['image'],
     'account/update_profile_banner' => ['banner']
   ];
@@ -1760,12 +1756,10 @@ class Codebird
   {
     $multiparts = [
       // Tweets
-      'statuses/update_with_media',
       'media/upload',
 
       // Users
       // no multipart for these, for now:
-      //'account/update_profile_background_image',
       //'account/update_profile_image',
       //'account/update_profile_banner'
     ];

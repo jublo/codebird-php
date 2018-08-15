@@ -21,6 +21,8 @@ codebird-php - changelog
 - Remove sunsetting Direct Messages API
 - Remove sunsetting Streaming API
 - Remove contributor API methods
+- Remove deprecated statuses/update_with_media method
+- Remove deprecated statuses/update_profile_background_image method
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
