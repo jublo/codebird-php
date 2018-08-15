@@ -310,7 +310,6 @@ class Codebird
       'saved_searches/list',
       'saved_searches/show/:id',
       'search/tweets',
-      'site',
       'statuses/firehose',
       'statuses/home_timeline',
       'statuses/mentions_timeline',
@@ -324,7 +323,6 @@ class Codebird
       'trends/available',
       'trends/closest',
       'trends/place',
-      'user',
       'users/contributees',
       'users/contributors',
       'users/profile_banner',
@@ -2019,10 +2017,7 @@ class Codebird
       'public' => [
         'statuses/sample',
         'statuses/filter',
-        'statuses/firehose'
-      ],
-      'user' => ['user'],
-      'site' => ['site']
+      ]
     ];
     foreach ($streamings as $key => $values) {
       if (in_array($method, $values)) {
