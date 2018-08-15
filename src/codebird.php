@@ -448,6 +448,9 @@ class Codebird
       'ton/bucket/:bucket',
       'ton/bucket/:bucket?resumable=true',
       'tweets/search/30day/:env',
+      'tweets/search/30day/:env/counts',
+      'tweets/search/fullarchive/:env',
+      'tweets/search/fullarchive/:env/counts',
       'users/lookup',
       'users/report_spam'
     ],
@@ -1691,6 +1694,9 @@ class Codebird
           'ads/sandbox/accounts/:account_id/features',
           'ads/sandbox/accounts/:account_id/funding_instruments'
         ],
+        'url' => [
+          'account_activity/webhooks'
+        ],
         'user_id' => [
           'ads/accounts/:account_id/promoted_accounts',
           'ads/sandbox/accounts/:account_id/promoted_accounts'
@@ -1976,7 +1982,8 @@ class Codebird
       'direct_messages/welcome_messages/rules/new',
       'direct_messages/welcome_messages/update',
       'media/metadata/create',
-      'tweets/search/30day/:env'
+      'tweets/search/30day/:env',
+      'tweets/search/fullarchive/:env'
     ];
     return in_array($method_template, $json_bodies);
   }
