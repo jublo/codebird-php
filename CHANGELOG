@@ -15,6 +15,7 @@ codebird-php - changelog
 + Add POST media/metadata/create method
 - Fix TON API upload - add additional header parsing
 + Add custom Codebird Exception classes
++ Update cacert.pem file
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
