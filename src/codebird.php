@@ -40,6 +40,7 @@ unset($id);
  *
  * @package codebird
  * @subpackage codebird-php
+ * @method bool curl_setopt (resource $ch, int $option, mixed $value)
  */
 class Codebird
 {
