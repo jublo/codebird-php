@@ -258,7 +258,17 @@ class Codebird
       'collections/entries',
       'collections/list',
       'collections/show',
+      'custom_profiles/:id',
+      'custom_profiles/list',
+      'direct_messages/events/list',
+      'direct_messages/events/show',
+      'direct_messages/welcome_messages/list',
+      'direct_messages/welcome_messages/rules/list',
+      'direct_messages/welcome_messages/rules/show',
+      'direct_messages/welcome_messages/show',
       'favorites/list',
+      'feedback/events',
+      'feedback/show/:id',
       'followers/ids',
       'followers/list',
       'friends/ids',
@@ -391,8 +401,15 @@ class Codebird
       'collections/entries/move',
       'collections/entries/remove',
       'collections/update',
+      'custom_profiles/new',
+      'direct_messages/events/new',
+      'direct_messages/indicate_typing',
+      'direct_messages/mark_read',
+      'direct_messages/welcome_messages/new',
+      'direct_messages/welcome_messages/rules/new',
       'favorites/create',
       'favorites/destroy',
+      'feedback/create',
       'friendships/create',
       'friendships/destroy',
       'friendships/update',
@@ -459,6 +476,7 @@ class Codebird
       'ads/sandbox/accounts/:account_id/targeting_criteria',
       'ads/sandbox/accounts/:account_id/videos/:id',
       'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'direct_messages/welcome_messages/update',
       'ton/bucket/:bucket/:file?resumable=true&resumeId=:resumeId'
     ],
     'DELETE' => [
@@ -493,7 +511,11 @@ class Codebird
       'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
       'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
       'ads/sandbox/accounts/:account_id/videos/:id',
-      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id'
+      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'custom_profiles/destroy',
+      'direct_messages/events/destroy',
+      'direct_messages/welcome_messages/destroy',
+      'direct_messages/welcome_messages/rules/destroy'
     ]
   ];
 
@@ -1938,6 +1960,13 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
       'collections/entries/curate',
+      'custom_profiles/new',
+      'direct_messages/events/new',
+      'direct_messages/indicate_typing',
+      'direct_messages/mark_read',
+      'direct_messages/welcome_messages/new',
+      'direct_messages/welcome_messages/rules/new',
+      'direct_messages/welcome_messages/update',
       'media/metadata/create',
       'tweets/search/30day/:env'
     ];
