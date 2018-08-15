@@ -323,8 +323,6 @@ class Codebird
       'trends/available',
       'trends/closest',
       'trends/place',
-      'users/contributees',
-      'users/contributors',
       'users/profile_banner',
       'users/search',
       'users/show',

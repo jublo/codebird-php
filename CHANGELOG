@@ -20,6 +20,7 @@ codebird-php - changelog
 + Update cacert.pem file
 - Remove sunsetting Direct Messages API
 - Remove sunsetting Streaming API
+- Remove contributor API methods
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
