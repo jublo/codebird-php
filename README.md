@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Requirements
 
-- PHP 5.5.0 or higher
+- PHP 7.1.0 or higher
 - OpenSSL extension
 
 

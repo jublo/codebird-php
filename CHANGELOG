@@ -1,7 +1,7 @@
 codebird-php - changelog
 ========================
 
-3.2.0 (not yet released)
+4.0.0 (not yet released)
 + #161 Update oembed API method endpoint
 + Update to Twitter Ads API Version 1
 + Add Ads API POST tailored_audience_memberships method
