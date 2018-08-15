@@ -16,6 +16,7 @@ codebird-php - changelog
 - Fix TON API upload - add additional header parsing
 + Add custom Codebird Exception classes
 + Update cacert.pem file
+- Remove sunsetting Direct Messages API
 
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
