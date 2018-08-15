@@ -132,6 +132,13 @@ In this case, you don't need to set the consumer key and secret.
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
 
 
+### A word on your callback URL
+
+Twitter is very restrictive about which URLs may be used for your callback URL.
+For example, even the presence of the ‘www’ subdomain must match with the domain
+that you specified in the settings of your app at https://developer.twitter.com/en/apps.
+
+
 Mapping API methods to Codebird function calls
 ----------------------------------------------
 
