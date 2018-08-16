@@ -6,7 +6,7 @@
     "Joshua Atkins <joshua.atkins@jublo.net>",
     "J.M. <jm@jublo.net>"
   ],
-  "description": "Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.",
+  "description": "Easy access to the Twitter REST, Direct Messages, Account Activity, TON (Object Nest) and Twitter Ads API — all from one PHP library.",
   "main": "src/codebird.php",
   "moduleType": [],
   "keywords": [

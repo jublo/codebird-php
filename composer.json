@@ -1,6 +1,6 @@
 {
     "name": "jublonet/codebird-php",
-    "description" : "Easy access to the Twitter REST API, Collections API, Streaming API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.",
+    "description" : "Easy access to the Twitter REST API, Direct Messages API, Account Activity API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.",
     "keywords": [
         "Twitter",
         "API",
@@ -38,8 +38,8 @@
         "classmap": ["src/"]
     },
     "require-dev": {
-        "satooshi/php-coveralls": ">=0.6",
-        "phpunit/phpunit": ">=3.7",
+        "php-coveralls/php-coveralls": ">=0.6",
+        "phpunit/phpunit": ">=7.3",
         "squizlabs/php_codesniffer": "2.*"
     }
 }

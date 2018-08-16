@@ -6,9 +6,9 @@ namespace Codebird;
  * A Twitter library in PHP.
  *
  * @package   codebird
- * @version   3.1.0
- * @author    Jublo Solutions <support@jublo.net>
- * @copyright 2010-2016 Jublo Solutions <support@jublo.net>
+ * @version   4.0.0-beta.1
+ * @author    Jublo Limited <support@jublo.net>
+ * @copyright 2010-2018 Jublo Limited <support@jublo.net>
  * @license   https://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
  * @link      https://github.com/jublonet/codebird-php
  */
@@ -40,6 +40,7 @@ unset($id);
  *
  * @package codebird
  * @subpackage codebird-php
+ * @method bool curl_setopt (resource $ch, int $option, mixed $value)
  */
 class Codebird
 {
@@ -68,16 +69,15 @@ class Codebird
    */
   protected static $_endpoints = [
     'ads'          => [
-      'production' => 'https://ads-api.twitter.com/0/',
-      'sandbox'    => 'https://ads-api-sandbox.twitter.com/0/'
+      'production' => 'https://ads-api.twitter.com/2/',
+      'sandbox'    => 'https://ads-api-sandbox.twitter.com/2/'
     ],
     'media'        => 'https://upload.twitter.com/1.1/',
+    'publish'      => 'https://publish.twitter.com/',
     'oauth'        => 'https://api.twitter.com/',
     'rest'         => 'https://api.twitter.com/1.1/',
     'streaming'    => [
-      'public'     => 'https://stream.twitter.com/1.1/',
-      'user'       => 'https://userstream.twitter.com/1.1/',
-      'site'       => 'https://sitestream.twitter.com/1.1/'
+      'public'     => 'https://stream.twitter.com/1.1/'
     ],
     'ton'          => 'https://ton.twitter.com/1.1/'
   ];
@@ -89,6 +89,14 @@ class Codebird
     'GET' => [
       'account/settings',
       'account/verify_credentials',
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/subscriptions/list',
+      'account_activity/all/:env_name/webhooks',
+      'account_activity/all/webhooks',
+      'account_activity/subscriptions/count',
+      'account_activity/webhooks',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
+      'account_activity/webhooks/:webhook_id/subscriptions/all/list',
       'ads/accounts',
       'ads/accounts/:account_id',
       'ads/accounts/:account_id/account_media',
@@ -97,6 +105,7 @@ class Codebird
       'ads/accounts/:account_id/app_event_tags',
       'ads/accounts/:account_id/app_event_tags/:id',
       'ads/accounts/:account_id/app_lists',
+      'ads/accounts/:account_id/auction_insights',
       'ads/accounts/:account_id/authenticated_user_access',
       'ads/accounts/:account_id/campaigns',
       'ads/accounts/:account_id/campaigns/:campaign_id',
@@ -121,15 +130,20 @@ class Codebird
       'ads/accounts/:account_id/line_items/:line_item_id',
       'ads/accounts/:account_id/media_creatives',
       'ads/accounts/:account_id/media_creatives/:id',
+      'ads/accounts/:account_id/preroll_call_to_actions',
+      'ads/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/accounts/:account_id/promotable_users',
       'ads/accounts/:account_id/promoted_accounts',
       'ads/accounts/:account_id/promoted_tweets',
       'ads/accounts/:account_id/reach_estimate',
+      'ads/accounts/:account_id/recommendations',
+      'ads/accounts/:account_id/recommendations/:recommendation_id',
       'ads/accounts/:account_id/scoped_timeline',
       'ads/accounts/:account_id/tailored_audience_changes',
       'ads/accounts/:account_id/tailored_audience_changes/:id',
       'ads/accounts/:account_id/tailored_audiences',
       'ads/accounts/:account_id/tailored_audiences/:id',
+      'ads/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/accounts/:account_id/targeting_criteria',
       'ads/accounts/:account_id/targeting_criteria/:id',
       'ads/accounts/:account_id/targeting_suggestions',
@@ -140,6 +154,7 @@ class Codebird
       'ads/accounts/:account_id/web_event_tags',
       'ads/accounts/:account_id/web_event_tags/:web_event_tag_id',
       'ads/bidding_rules',
+      'ads/conversion_attribution',
       'ads/iab_categories',
       'ads/insights/accounts/:account_id',
       'ads/insights/accounts/:account_id/available_audiences',
@@ -153,6 +168,7 @@ class Codebird
       'ads/sandbox/accounts/:account_id/app_event_tags',
       'ads/sandbox/accounts/:account_id/app_event_tags/:id',
       'ads/sandbox/accounts/:account_id/app_lists',
+      'ads/sandbox/accounts/:account_id/auction_insights',
       'ads/sandbox/accounts/:account_id/authenticated_user_access',
       'ads/sandbox/accounts/:account_id/campaigns',
       'ads/sandbox/accounts/:account_id/campaigns/:campaign_id',
@@ -177,15 +193,20 @@ class Codebird
       'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
       'ads/sandbox/accounts/:account_id/media_creatives',
       'ads/sandbox/accounts/:account_id/media_creatives/:id',
+      'ads/sandbox/accounts/:account_id/preroll_call_to_actions',
+      'ads/sandbox/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/sandbox/accounts/:account_id/promotable_users',
       'ads/sandbox/accounts/:account_id/promoted_accounts',
       'ads/sandbox/accounts/:account_id/promoted_tweets',
       'ads/sandbox/accounts/:account_id/reach_estimate',
+      'ads/sandbox/accounts/:account_id/recommendations',
+      'ads/sandbox/accounts/:account_id/recommendations/:recommendation_id',
       'ads/sandbox/accounts/:account_id/scoped_timeline',
       'ads/sandbox/accounts/:account_id/tailored_audience_changes',
       'ads/sandbox/accounts/:account_id/tailored_audience_changes/:id',
       'ads/sandbox/accounts/:account_id/tailored_audiences',
       'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/sandbox/accounts/:account_id/targeting_criteria',
       'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
       'ads/sandbox/accounts/:account_id/targeting_suggestions',
@@ -196,23 +217,15 @@ class Codebird
       'ads/sandbox/accounts/:account_id/web_event_tags',
       'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
       'ads/sandbox/bidding_rules',
+      'ads/sandbox/conversion_attribution',
       'ads/sandbox/iab_categories',
       'ads/sandbox/insights/accounts/:account_id',
       'ads/sandbox/insights/accounts/:account_id/available_audiences',
       'ads/sandbox/insights/keywords/search',
       'ads/sandbox/line_items/placements',
       'ads/sandbox/stats/accounts/:account_id',
-      'ads/sandbox/stats/accounts/:account_id/campaigns',
-      'ads/sandbox/stats/accounts/:account_id/campaigns/:id',
-      'ads/sandbox/stats/accounts/:account_id/funding_instruments',
-      'ads/sandbox/stats/accounts/:account_id/funding_instruments/:id',
-      'ads/sandbox/stats/accounts/:account_id/line_items',
-      'ads/sandbox/stats/accounts/:account_id/line_items/:id',
-      'ads/sandbox/stats/accounts/:account_id/promoted_accounts',
-      'ads/sandbox/stats/accounts/:account_id/promoted_accounts/:id',
-      'ads/sandbox/stats/accounts/:account_id/promoted_tweets',
-      'ads/sandbox/stats/accounts/:account_id/promoted_tweets/:id',
       'ads/sandbox/stats/accounts/:account_id/reach/campaigns',
+      'ads/sandbox/stats/accounts/:account_id/reach/funding_instruments',
       'ads/sandbox/targeting_criteria/app_store_categories',
       'ads/sandbox/targeting_criteria/behavior_taxonomies',
       'ads/sandbox/targeting_criteria/behaviors',
@@ -229,17 +242,8 @@ class Codebird
       'ads/sandbox/targeting_criteria/tv_markets',
       'ads/sandbox/targeting_criteria/tv_shows',
       'ads/stats/accounts/:account_id',
-      'ads/stats/accounts/:account_id/campaigns',
-      'ads/stats/accounts/:account_id/campaigns/:id',
-      'ads/stats/accounts/:account_id/funding_instruments',
-      'ads/stats/accounts/:account_id/funding_instruments/:id',
-      'ads/stats/accounts/:account_id/line_items',
-      'ads/stats/accounts/:account_id/line_items/:id',
-      'ads/stats/accounts/:account_id/promoted_accounts',
-      'ads/stats/accounts/:account_id/promoted_accounts/:id',
-      'ads/stats/accounts/:account_id/promoted_tweets',
-      'ads/stats/accounts/:account_id/promoted_tweets/:id',
       'ads/stats/accounts/:account_id/reach/campaigns',
+      'ads/stats/accounts/:account_id/reach/funding_instruments',
       'ads/targeting_criteria/app_store_categories',
       'ads/targeting_criteria/behavior_taxonomies',
       'ads/targeting_criteria/behaviors',
@@ -261,16 +265,22 @@ class Codebird
       'collections/entries',
       'collections/list',
       'collections/show',
-      'direct_messages',
-      'direct_messages/sent',
-      'direct_messages/show',
+      'custom_profiles/:id',
+      'custom_profiles/list',
+      'direct_messages/events/list',
+      'direct_messages/events/show',
+      'direct_messages/welcome_messages/list',
+      'direct_messages/welcome_messages/rules/list',
+      'direct_messages/welcome_messages/rules/show',
+      'direct_messages/welcome_messages/show',
       'favorites/list',
+      'feedback/events',
+      'feedback/show/:id',
       'followers/ids',
       'followers/list',
       'friends/ids',
       'friends/list',
       'friendships/incoming',
-      'friendships/lookup',
       'friendships/lookup',
       'friendships/no_retweets/ids',
       'friendships/outgoing',
@@ -278,7 +288,6 @@ class Codebird
       'geo/id/:place_id',
       'geo/reverse_geocode',
       'geo/search',
-      'geo/similar_places',
       'help/configuration',
       'help/languages',
       'help/privacy',
@@ -300,7 +309,6 @@ class Codebird
       'saved_searches/list',
       'saved_searches/show/:id',
       'search/tweets',
-      'site',
       'statuses/firehose',
       'statuses/home_timeline',
       'statuses/mentions_timeline',
@@ -314,9 +322,6 @@ class Codebird
       'trends/available',
       'trends/closest',
       'trends/place',
-      'user',
-      'users/contributees',
-      'users/contributors',
       'users/profile_banner',
       'users/search',
       'users/show',
@@ -327,12 +332,13 @@ class Codebird
     'POST' => [
       'account/remove_profile_banner',
       'account/settings',
-      'account/update_delivery_device',
       'account/update_profile',
-      'account/update_profile_background_image',
       'account/update_profile_banner',
-      'account/update_profile_colors',
       'account/update_profile_image',
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/webhooks',
+      'account_activity/webhooks',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
       'ads/accounts/:account_id/account_media',
       'ads/accounts/:account_id/app_lists',
       'ads/accounts/:account_id/campaigns',
@@ -349,6 +355,7 @@ class Codebird
       'ads/accounts/:account_id/promoted_tweets',
       'ads/accounts/:account_id/tailored_audience_changes',
       'ads/accounts/:account_id/tailored_audiences',
+      'ads/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/accounts/:account_id/targeting_criteria',
       'ads/accounts/:account_id/tweet',
       'ads/accounts/:account_id/videos',
@@ -357,6 +364,8 @@ class Codebird
       'ads/batch/accounts/:account_id/line_items',
       'ads/batch/accounts/:account_id/tailored_audiences',
       'ads/batch/accounts/:account_id/targeting_criteria',
+      'ads/conversion_event',
+      'ads/sandbox/accounts',
       'ads/sandbox/accounts/:account_id/account_media',
       'ads/sandbox/accounts/:account_id/app_lists',
       'ads/sandbox/accounts/:account_id/campaigns',
@@ -367,12 +376,15 @@ class Codebird
       'ads/sandbox/accounts/:account_id/cards/video_app_download',
       'ads/sandbox/accounts/:account_id/cards/video_conversation',
       'ads/sandbox/accounts/:account_id/cards/website',
+      'ads/sandbox/accounts/:account_id/features',
+      'ads/sandbox/accounts/:account_id/funding_instruments',
       'ads/sandbox/accounts/:account_id/line_items',
       'ads/sandbox/accounts/:account_id/media_creatives',
       'ads/sandbox/accounts/:account_id/promoted_accounts',
       'ads/sandbox/accounts/:account_id/promoted_tweets',
       'ads/sandbox/accounts/:account_id/tailored_audience_changes',
       'ads/sandbox/accounts/:account_id/tailored_audiences',
+      'ads/sandbox/accounts/:account_id/tailored_audiences/:id/permissions',
       'ads/sandbox/accounts/:account_id/targeting_criteria',
       'ads/sandbox/accounts/:account_id/tweet',
       'ads/sandbox/accounts/:account_id/videos',
@@ -381,6 +393,11 @@ class Codebird
       'ads/sandbox/batch/accounts/:account_id/line_items',
       'ads/sandbox/batch/accounts/:account_id/tailored_audiences',
       'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/conversion_event',
+      'ads/sandbox/stats/jobs/accounts/:account_id',
+      'ads/sandbox/tailored_audience_memberships',
+      'ads/stats/jobs/accounts/:account_id',
+      'ads/tailored_audience_memberships',
       'blocks/create',
       'blocks/destroy',
       'collections/create',
@@ -390,10 +407,15 @@ class Codebird
       'collections/entries/move',
       'collections/entries/remove',
       'collections/update',
-      'direct_messages/destroy',
-      'direct_messages/new',
+      'custom_profiles/new',
+      'direct_messages/events/new',
+      'direct_messages/indicate_typing',
+      'direct_messages/mark_read',
+      'direct_messages/welcome_messages/new',
+      'direct_messages/welcome_messages/rules/new',
       'favorites/create',
       'favorites/destroy',
+      'feedback/create',
       'friendships/create',
       'friendships/destroy',
       'friendships/update',
@@ -406,6 +428,7 @@ class Codebird
       'lists/subscribers/create',
       'lists/subscribers/destroy',
       'lists/update',
+      'media/metadata/create',
       'media/upload',
       'mutes/users/create',
       'mutes/users/destroy',
@@ -421,13 +444,18 @@ class Codebird
       'statuses/retweet/:id',
       'statuses/unretweet/:id',
       'statuses/update',
-      'statuses/update_with_media', // deprecated, use media/upload
       'ton/bucket/:bucket',
       'ton/bucket/:bucket?resumable=true',
+      'tweets/search/30day/:env',
+      'tweets/search/30day/:env/counts',
+      'tweets/search/fullarchive/:env',
+      'tweets/search/fullarchive/:env/counts',
       'users/lookup',
       'users/report_spam'
     ],
     'PUT' => [
+      'account_activity/all/:env_name/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id',
       'ads/accounts/:account_id/campaigns/:campaign_id',
       'ads/accounts/:account_id/cards/app_download/:card_id',
       'ads/accounts/:account_id/cards/image_app_download/:card_id',
@@ -437,6 +465,7 @@ class Codebird
       'ads/accounts/:account_id/cards/video_conversation/:card_id',
       'ads/accounts/:account_id/cards/website/:card_id',
       'ads/accounts/:account_id/line_items/:line_item_id',
+      'ads/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/accounts/:account_id/promoted_tweets/:id',
       'ads/accounts/:account_id/tailored_audiences/global_opt_out',
       'ads/accounts/:account_id/targeting_criteria',
@@ -451,14 +480,20 @@ class Codebird
       'ads/sandbox/accounts/:account_id/cards/video_conversation/:card_id',
       'ads/sandbox/accounts/:account_id/cards/website/:card_id',
       'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
+      'ads/sandbox/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
       'ads/sandbox/accounts/:account_id/tailored_audiences/global_opt_out',
       'ads/sandbox/accounts/:account_id/targeting_criteria',
       'ads/sandbox/accounts/:account_id/videos/:id',
       'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'direct_messages/welcome_messages/update',
       'ton/bucket/:bucket/:file?resumable=true&resumeId=:resumeId'
     ],
     'DELETE' => [
+      'account_activity/all/:env_name/subscriptions',
+      'account_activity/all/:env_name/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id',
+      'account_activity/webhooks/:webhook_id/subscriptions/all',
       'ads/accounts/:account_id/campaigns/:campaign_id',
       'ads/accounts/:account_id/cards/app_download/:card_id',
       'ads/accounts/:account_id/cards/image_app_download/:card_id',
@@ -469,6 +504,7 @@ class Codebird
       'ads/accounts/:account_id/cards/website/:card_id',
       'ads/accounts/:account_id/line_items/:line_item_id',
       'ads/accounts/:account_id/media_creatives/:id',
+      'ads/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/accounts/:account_id/promoted_tweets/:id',
       'ads/accounts/:account_id/tailored_audiences/:id',
       'ads/accounts/:account_id/targeting_criteria/:id',
@@ -484,11 +520,16 @@ class Codebird
       'ads/sandbox/accounts/:account_id/cards/website/:card_id',
       'ads/sandbox/accounts/:account_id/line_items/:line_item_id',
       'ads/sandbox/accounts/:account_id/media_creatives/:id',
+      'ads/sandbox/accounts/:account_id/preroll_call_to_actions/:preroll_call_to_action_id',
       'ads/sandbox/accounts/:account_id/promoted_tweets/:id',
       'ads/sandbox/accounts/:account_id/tailored_audiences/:id',
       'ads/sandbox/accounts/:account_id/targeting_criteria/:id',
       'ads/sandbox/accounts/:account_id/videos/:id',
-      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id'
+      'ads/sandbox/accounts/:account_id/web_event_tags/:web_event_tag_id',
+      'custom_profiles/destroy',
+      'direct_messages/events/destroy',
+      'direct_messages/welcome_messages/destroy',
+      'direct_messages/welcome_messages/rules/destroy'
     ]
   ];
 
@@ -497,10 +538,8 @@ class Codebird
    */
   protected static $_possible_files = [
     // Tweets
-    'statuses/update_with_media' => ['media[]'],
     'media/upload' => ['media'],
     // Accounts
-    'account/update_profile_background_image' => ['image'],
     'account/update_profile_image' => ['image'],
     'account/update_profile_banner' => ['banner']
   ];
@@ -508,7 +547,7 @@ class Codebird
   /**
    * The current Codebird version
    */
-  protected static $_version = '3.1.0';
+  protected static $_version = '4.0.0-beta.1';
 
   /**
    * The Request or access token. Used to sign requests
@@ -1035,7 +1074,7 @@ class Codebird
       throw new \Exception('To get the ' . $type . ' URL, use the correct third parameter, or omit it.');
     }
     if ($this->_oauth_token === null) {
-      throw new \Exception('To get the ' . $type . ' URL, the OAuth token must be set.');
+      throw new CodebirdCredentialsException('To get the ' . $type . ' URL, the OAuth token must be set.');
     }
     $url = self::$_endpoints['oauth'] . 'oauth/' . $type . '?oauth_token=' . $this->_url($this->_oauth_token);
     if ($force_login) {
@@ -1230,7 +1269,7 @@ class Codebird
   protected function _oauth2TokenCurl()
   {
     if (self::$_consumer_key === null) {
-      throw new \Exception('To obtain a bearer token, the consumer key must be set.');
+      throw new CodebirdCredentialsException('To obtain a bearer token, the consumer key must be set.');
     }
     $post_fields = [
       'grant_type' => 'client_credentials'
@@ -1248,7 +1287,7 @@ class Codebird
 
     // catch request errors
     if ($result === false) {
-      throw new \Exception('Request error for bearer token: ' . $this->_curl_error($connection));
+      throw new CodebirdAuthException('Request error for bearer token: ' . $this->_curl_error($connection));
     }
 
     // certificate validation results
@@ -1270,14 +1309,14 @@ class Codebird
   protected function _oauth2TokenNoCurl()
   {
     if (self::$_consumer_key == null) {
-      throw new \Exception('To obtain a bearer token, the consumer key must be set.');
+      throw new CodebirdCredentialsException('To obtain a bearer token, the consumer key must be set.');
     }
 
     $url      = self::$_endpoints['oauth'] . 'oauth2/token';
     $hostname = parse_url($url, PHP_URL_HOST);
 
     if ($hostname === false) {
-      throw new \Exception('Incorrect API endpoint host.');
+      throw new CodebirdEndpointException('Incorrect API endpoint host.');
     }
 
     $contextOptions = [
@@ -1469,7 +1508,7 @@ class Codebird
   protected function _sha1($data)
   {
     if (self::$_consumer_secret === null) {
-      throw new \Exception('To generate a hash, the consumer secret must be set.');
+      throw new CodebirdCredentialsException('To generate a hash, the consumer secret must be set.');
     }
     if (!function_exists('hash_hmac')) {
       throw new \Exception('To generate a hash, the PHP hash extension must be available.');
@@ -1544,7 +1583,7 @@ class Codebird
   protected function _sign($httpmethod, $method, $params = [])
   {
     if (self::$_consumer_key === null) {
-      throw new \Exception('To generate a signature, the consumer key must be set.');
+      throw new CodebirdCredentialsException('To generate a signature, the consumer key must be set.');
     }
     $sign_base_params = array_map(
       [$this, '_url'],
@@ -1634,6 +1673,10 @@ class Codebird
           'ads/sandbox/accounts/:account_id/tailored_audiences',
           'ads/sandbox/accounts/:account_id/web_event_tags'
         ],
+        'permission_level' => [
+          'ads/accounts/:account_id/tailored_audiences/:id/permissions',
+          'ads/sandbox/accounts/:account_id/tailored_audiences/:id/permissions'
+        ],
         'tailored_audience_id' => [
           'ads/accounts/:account_id/tailored_audience_changes',
           'ads/sandbox/accounts/:account_id/tailored_audience_changes'
@@ -1645,6 +1688,13 @@ class Codebird
         'tweet_ids' => [
           'ads/accounts/:account_id/promoted_tweets',
           'ads/sandbox/accounts/:account_id/promoted_tweets'
+        ],
+        'type' => [
+          'ads/sandbox/accounts/:account_id/features',
+          'ads/sandbox/accounts/:account_id/funding_instruments'
+        ],
+        'url' => [
+          'account_activity/webhooks'
         ],
         'user_id' => [
           'ads/accounts/:account_id/promoted_accounts',
@@ -1672,6 +1722,14 @@ class Codebird
           return $httpmethod;
         }
       }
+    }
+
+    // async media/upload calls may request a status by GET
+    if ($method === 'media/upload'
+      && isset($params['command'])
+      && $params['command'] === 'STATUS'
+    ) {
+      return 'GET';
     }
 
     // prefer POST and PUT if parameters are set
@@ -1703,12 +1761,10 @@ class Codebird
   {
     $multiparts = [
       // Tweets
-      'statuses/update_with_media',
       'media/upload',
 
       // Users
       // no multipart for these, for now:
-      //'account/update_profile_background_image',
       //'account/update_profile_image',
       //'account/update_profile_banner'
     ];
@@ -1731,7 +1787,7 @@ class Codebird
     foreach ($params as $key => $value) {
       // is it an array?
       if (is_array($value)) {
-        throw new \Exception('Using URL-encoded parameters is not supported for uploading media.');
+        throw new CodebirdMediaException('Using URL-encoded parameters is not supported for uploading media.');
       }
       $request .=
         '--' . $border . "\r\n"
@@ -1862,7 +1918,7 @@ class Codebird
       ) {
         return $result;
       }
-      throw new \Exception('Downloading a remote media file failed.');
+      throw new CodebirdMediaException('Downloading a remote media file failed.');
       return false;
     }
     // no cURL
@@ -1882,7 +1938,7 @@ class Codebird
     ) {
       return $result;
     }
-    throw new \Exception('Downloading a remote media file failed.');
+    throw new CodebirdMediaException('Downloading a remote media file failed.');
     return false;
   }
 
@@ -1895,6 +1951,7 @@ class Codebird
    */
   protected function _detectMedia($method) {
     $medias = [
+      'media/metadata/create',
       'media/upload'
     ];
     return in_array($method, $medias);
@@ -1903,15 +1960,31 @@ class Codebird
   /**
    * Detects if API call should use JSON body
    *
-   * @param string $method The API method to call
+   * @param string $method_template The API method to call
    *
    * @return bool Whether the method is defined as accepting JSON body
    */
-  protected function _detectJsonBody($method) {
+  protected function _detectJsonBody($method_template) {
     $json_bodies = [
-      'collections/entries/curate'
+      'ads/batch/accounts/:account_id/campaigns',
+      'ads/batch/accounts/:account_id/line_items',
+      'ads/batch/accounts/:account_id/targeting_criteria',
+      'ads/sandbox/batch/accounts/:account_id/campaigns',
+      'ads/sandbox/batch/accounts/:account_id/line_items',
+      'ads/sandbox/batch/accounts/:account_id/targeting_criteria',
+      'collections/entries/curate',
+      'custom_profiles/new',
+      'direct_messages/events/new',
+      'direct_messages/indicate_typing',
+      'direct_messages/mark_read',
+      'direct_messages/welcome_messages/new',
+      'direct_messages/welcome_messages/rules/new',
+      'direct_messages/welcome_messages/update',
+      'media/metadata/create',
+      'tweets/search/30day/:env',
+      'tweets/search/fullarchive/:env'
     ];
-    return in_array($method, $json_bodies);
+    return in_array($method_template, $json_bodies);
   }
 
   /**
@@ -1941,11 +2014,8 @@ class Codebird
     $streamings = [
       'public' => [
         'statuses/sample',
-        'statuses/filter',
-        'statuses/firehose'
-      ],
-      'user' => ['user'],
-      'site' => ['site']
+        'statuses/filter'
+      ]
     ];
     foreach ($streamings as $key => $values) {
       if (in_array($method, $values)) {
@@ -1971,6 +2041,8 @@ class Codebird
       $url = self::$_endpoints['oauth'] . $method;
     } elseif ($this->_detectMedia($method_template)) {
       $url = self::$_endpoints['media'] . $method . '.json';
+    } elseif ($method_template === 'statuses/oembed') {
+      $url = self::$_endpoints['publish'] . 'oembed';
     } elseif ($variant = $this->_detectStreaming($method_template)) {
       $url = self::$_endpoints['streaming'][$variant] . $method . '.json';
     } elseif ($this->_detectBinaryBody($method_template)) {
@@ -2003,7 +2075,7 @@ class Codebird
       && $this->_oauth_token === null
       && substr($method, 0, 5) !== 'oauth'
     ) {
-        throw new \Exception('To call this API, the OAuth access token must be set.');
+        throw new CodebirdCredentialsException('To call this API, the OAuth access token must be set.');
     }
     // use separate API access for streaming API
     if ($this->_detectStreaming($method) !== false) {
@@ -2102,7 +2174,7 @@ class Codebird
 
     $hostname = parse_url($url, PHP_URL_HOST);
     if ($hostname === false) {
-      throw new \Exception('Incorrect API endpoint host.');
+      throw new CodebirdEndpointException('Incorrect API endpoint host.');
     }
 
     $request_headers[] = 'Authorization: ' . $authorization;
@@ -2188,15 +2260,19 @@ class Codebird
       $multipart_boundary = substr($params, 2, $first_newline - 2);
       $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
         . $multipart_boundary;
-    } elseif ($this->_detectJsonBody($method)) {
+    } elseif ($this->_detectJsonBody($method_template)) {
       $authorization = $this->_sign($httpmethod, $url, []);
       $params = json_encode($params);
       $request_headers[] = 'Content-Type: application/json';
     } elseif ($this->_detectBinaryBody($method_template)) {
       // transform parametric headers to real headers
       foreach ([
-          'Content-Type', 'X-TON-Content-Type',
-          'X-TON-Content-Length', 'Content-Range'
+          'Content-Length',
+          'Content-Range',
+          'Content-Type',
+          'X-TON-Content-Type',
+          'X-TON-Content-Length',
+          'X-TON-Expires'
         ] as $key) {
         if (isset($params[$key])) {
           $request_headers[] = $key . ': ' . $params[$key];
@@ -2270,7 +2346,7 @@ class Codebird
     if (self::$_consumer_key === null
       && self::$_bearer_token === null
     ) {
-      throw new \Exception('To make an app-only auth API request, consumer key or bearer token must be set.');
+      throw new CodebirdCredentialsException('To make an app-only auth API request, consumer key or bearer token must be set.');
     }
     // automatically fetch bearer token, if necessary
     if (self::$_bearer_token === null) {
@@ -2347,7 +2423,7 @@ class Codebird
     $path     = parse_url($url, PHP_URL_PATH);
     $query    = parse_url($url, PHP_URL_QUERY);
     if ($hostname === false) {
-      throw new \Exception('Incorrect API endpoint host.');
+      throw new CodebirdEndpointException('Incorrect API endpoint host.');
     }
 
     $request_headers[] = 'Authorization: ' . $authorization;
@@ -2546,9 +2622,9 @@ class Codebird
    */
   protected function _parseApiReplyPrefillHeaders($headers, $reply)
   {
-    if ($reply === '' && (isset($headers['Location']))) {
+    if ($reply === '' && (isset($headers['Location']) || isset($headers['location']))) {
       $reply = [
-        'Location' => $headers['Location']
+        'Location' => isset($headers['Location']) ? $headers['Location'] : $headers['location']
       ];
       if (isset($headers['X-TON-Min-Chunk-Size'])) {
         $reply['X-TON-Min-Chunk-Size'] = $headers['X-TON-Min-Chunk-Size'];
@@ -2609,4 +2685,36 @@ class Codebird
     }
     return $parsed;
   }
+
 }
+
+/**
+ * Catch errors when authtoken is expired
+ */
+class CodebirdAuthException extends \Exception {
+	
+}
+
+
+/**
+ * Catch error when credentials are not set correclty
+ */
+class CodebirdCredentialsException extends \Exception {
+	
+}
+
+/**
+ * Catch errors r elated to bad endpoi ts
+ */
+class CodebirdEndpointException extends \Exception {
+	
+}
+
+/*
+ * Catch errors relatedto media
+ */
+
+class CodebirdMediaException extends \Exception {
+	
+}
+

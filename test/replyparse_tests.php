@@ -7,8 +7,8 @@ require_once ('test/codebirdm.php');
  * A Twitter library in PHP.
  *
  * @package   codebird-test
- * @author    Jublo Solutions <support@jublo.net>
- * @copyright 2010-2016 Jublo Solutions <support@jublo.net>
+ * @author    Jublo Limited <support@jublo.net>
+ * @copyright 2010-2018 Jublo Limited <support@jublo.net>
  * @license   https://opensource.org/licenses/GPL-3.0 GNU General Public License 3.0
  * @link      https://github.com/jublonet/codebird-php
  */
@@ -18,7 +18,7 @@ require_once ('test/codebirdm.php');
  *
  * @package codebird-test
  */
-class Replyparse_Test extends \PHPUnit_Framework_TestCase
+class Replyparse_Test extends \PHPUnit\Framework\TestCase
 {
   /**
    * Initialise Codebird class

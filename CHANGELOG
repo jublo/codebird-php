@@ -1,6 +1,29 @@
 codebird-php - changelog
 ========================
 
+4.0.0 (not yet released)
++ #161 Update oembed API method endpoint
++ Update to Twitter Ads API Version 1
++ Add Ads API POST tailored_audience_memberships method
++ Add Ads Sandbox API POST accounts method
++ Add Ads Sandbox API POST accounts/:account_id/features method
++ Add Ads Sandbox API POST accounts/:account_id/funding_instruments method
++ Update more Ads API methods
+- Fix Ads API batch methods to send JSON body
++ Update Ads API Analytics methods (stats)
++ #177 Add async media/upload calls status by GET
++ Add POST media/metadata/create method
+- Fix TON API upload - add additional header parsing
++ Add custom Codebird Exception classes
++ Add Account Activity API methods
++ Add new Direct Messages API
++ Update cacert.pem file
+- Remove sunsetting Direct Messages API
+- Remove sunsetting Streaming API
+- Remove contributor API methods
+- Remove deprecated statuses/update_with_media method
+- Remove deprecated statuses/update_profile_background_image method
+
 3.1.0 (2016-02-15)
 + #143 Add support for proxy types
 + #152 Throw Exception on failed remote media download
