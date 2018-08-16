@@ -269,7 +269,7 @@ class Detection_Test extends \PHPUnit\Framework\TestCase
       'ton/bucket/:bucket'
     );
     $this->assertEquals(
-      'https://ads-api.twitter.com/1/accounts/1234/campaigns',
+      'https://ads-api.twitter.com/2/accounts/1234/campaigns',
       $cb->call(
         '_getEndpoint',
         ['ads/accounts/1234/campaigns', 'ads/accounts/:account_id/campaigns']
@@ -277,7 +277,7 @@ class Detection_Test extends \PHPUnit\Framework\TestCase
       'ads/accounts/:account_id/campaigns'
     );
     $this->assertEquals(
-      'https://ads-api-sandbox.twitter.com/1/accounts/1234/campaigns',
+      'https://ads-api-sandbox.twitter.com/2/accounts/1234/campaigns',
       $cb->call(
         '_getEndpoint',
         ['ads/sandbox/accounts/1234/campaigns', 'ads/sandbox/accounts/:account_id/campaigns']
