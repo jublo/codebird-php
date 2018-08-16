@@ -172,7 +172,6 @@ class Detection_Test extends \PHPUnit\Framework\TestCase
   {
     $cb = $this->getCB();
     $this->assertFalse($cb->call('_detectMultipart', ['statuses/update']));
-    $this->assertTrue($cb->call('_detectMultipart', ['statuses/update_with_media']));
     $this->assertTrue($cb->call('_detectMultipart', ['media/upload']));
   }
 
@@ -221,9 +220,6 @@ class Detection_Test extends \PHPUnit\Framework\TestCase
     $this->assertFalse($cb->call('_detectStreaming', ['statuses/update']));
     $this->assertEquals('public', $cb->call('_detectStreaming', ['statuses/sample']));
     $this->assertEquals('public', $cb->call('_detectStreaming', ['statuses/filter']));
-    $this->assertEquals('public', $cb->call('_detectStreaming', ['statuses/firehose']));
-    $this->assertEquals('user', $cb->call('_detectStreaming', ['user']));
-    $this->assertEquals('site', $cb->call('_detectStreaming', ['site']));
   }
 
   /**
@@ -266,16 +262,6 @@ class Detection_Test extends \PHPUnit\Framework\TestCase
       'https://stream.twitter.com/1.1/statuses/filter.json',
       $cb->call('_getEndpoint', ['statuses/filter', 'statuses/filter']),
       'statuses/filter'
-    );
-    $this->assertEquals(
-      'https://sitestream.twitter.com/1.1/site.json',
-      $cb->call('_getEndpoint', ['site', 'site']),
-      'site'
-    );
-    $this->assertEquals(
-      'https://userstream.twitter.com/1.1/user.json',
-      $cb->call('_getEndpoint', ['user', 'user']),
-      'user'
     );
     $this->assertEquals(
       'https://ton.twitter.com/1.1/ton/bucket/ta_partner',

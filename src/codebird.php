@@ -77,9 +77,7 @@ class Codebird
     'oauth'        => 'https://api.twitter.com/',
     'rest'         => 'https://api.twitter.com/1.1/',
     'streaming'    => [
-      'public'     => 'https://stream.twitter.com/1.1/',
-      'user'       => 'https://userstream.twitter.com/1.1/',
-      'site'       => 'https://sitestream.twitter.com/1.1/'
+      'public'     => 'https://stream.twitter.com/1.1/'
     ],
     'ton'          => 'https://ton.twitter.com/1.1/'
   ];
@@ -2016,7 +2014,7 @@ class Codebird
     $streamings = [
       'public' => [
         'statuses/sample',
-        'statuses/filter',
+        'statuses/filter'
       ]
     ];
     foreach ($streamings as $key => $values) {
