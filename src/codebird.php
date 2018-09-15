@@ -1048,10 +1048,7 @@ class Codebird
     if (!(defined('JSON_C_VERSION') && PHP_INT_SIZE > 4)) {
       return json_decode($data, $need_array, 512, JSON_BIGINT_AS_STRING);
     }
-    $max_int_length = strlen((string) PHP_INT_MAX) - 1;
-    $json_without_bigints = preg_replace('/:\s*(-?\d{'.$max_int_length.',})/', ': "$1"', $data);
-    $obj = json_decode($json_without_bigints, $need_array);
-    return $obj;
+    return json_decode($data, $need_array);
   }
 
   /**
