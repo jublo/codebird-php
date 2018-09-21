@@ -1,6 +1,6 @@
-codebird-php
-============
-*Easy access to the Twitter REST API, Direct Messages API, Account Activity API, TON (Object Nest) API and Twitter Ads API — all from one PHP library.*
+# codebird-php
+
+_Easy access to the Twitter REST API, Direct Messages API, Account Activity API, TON (Object Nest) API and Twitter Ads API — all from one PHP library._
 
 Copyright (C) 2010-2018 Jublo Limited <support@jublo.net>
 
@@ -11,11 +11,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cd81a521d334648b9958327621a3070)](https://www.codacy.com/app/jublonet/codebird-php?utm_source=github.com&utm_medium=referral&utm_content=jublonet/codebird-php&utm_campaign=badger)
 [![Coverage Status](https://img.shields.io/coveralls/jublonet/codebird-php/develop.svg)](https://coveralls.io/github/jublonet/codebird-php?branch=develop)
@@ -26,17 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - PHP 7.1.0 or higher
 - OpenSSL extension
 
-
-Summary
--------
+## Summary
 
 Use Codebird to connect to the Twitter **REST API, Streaming API, Collections API, TON (Object Nest) API**
 and **Twitter Ads API** from your PHP code — all using just one library.
 Codebird supports full 3-way OAuth as well as application-only auth.
 
-
-Authentication
---------------
+## Authentication
 
 To authenticate your API requests on behalf of a certain Twitter user
 (following OAuth 1.0a), take a look at these steps:
@@ -49,6 +45,7 @@ $cb = \Codebird\Codebird::getInstance();
 ```
 
 You may either set the OAuth token and secret, if you already have them:
+
 ```php
 $cb->setToken('YOURTOKEN', 'YOURTOKENSECRET');
 ```
@@ -107,11 +104,20 @@ creating a new Codebird object), just call the `logout()` method.
 $cb->logout();
 ```
 
+Codebird also supports calling the oauth/invalidate_token method directly:
+
+```
+$reply = $cb->oauth_invalidateToken([
+    'access_token'        => '1234',
+    'access_token_secret' => '5678'
+]);
+```
+
 ### Application-only auth
 
 Some API methods also support authenticating on a per-application level.
 This is useful for getting data that are not directly related to a specific
-Twitter user, but generic to the Twitter ecosystem (such as ```search/tweets```).
+Twitter user, but generic to the Twitter ecosystem (such as `search/tweets`).
 
 To obtain an app-only bearer token, call the appropriate API:
 
@@ -122,15 +128,16 @@ $bearer_token = $reply->access_token;
 
 I strongly recommend that you store the obtained bearer token in your database.
 There is no need to re-obtain the token with each page load, as it becomes invalid
-only when you call the ```oauth2/invalidate_token``` method.
+only when you call the `oauth2/invalidate_token` method.
 
 If you already have your token, tell Codebird to use it:
+
 ```php
 \Codebird\Codebird::setBearerToken('YOURBEARERTOKEN');
 ```
+
 In this case, you don't need to set the consumer key and secret.
 For sending an API request with app-only auth, see the ‘Usage examples’ section.
-
 
 ### A word on your callback URL
 
@@ -138,31 +145,29 @@ Twitter is very restrictive about which URLs may be used for your callback URL.
 For example, even the presence of the ‘www’ subdomain must match with the domain
 that you specified in the settings of your app at https://developer.twitter.com/en/apps.
 
-
-Mapping API methods to Codebird function calls
-----------------------------------------------
+## Mapping API methods to Codebird function calls
 
 As you can see from the last example, there is a general way how Twitter’s API methods
 map to Codebird function calls. The general rules are:
 
 1. For each slash in a Twitter API method, use an underscore in the Codebird function.
 
-  Example: ```statuses/update``` maps to ```Codebird::statuses_update()```.
+Example: `statuses/update` maps to `Codebird::statuses_update()`.
 
 2. For each underscore in a Twitter API method, use camelCase in the Codebird function.
 
-  Example: ```statuses/home_timeline``` maps to ```Codebird::statuses_homeTimeline()```.
+Example: `statuses/home_timeline` maps to `Codebird::statuses_homeTimeline()`.
 
 3. For each parameter template in method, use UPPERCASE in the Codebird function.
-  Also don’t forget to include the parameter in your parameter list.
+   Also don’t forget to include the parameter in your parameter list.
 
-  Examples:
-  - ```statuses/show/:id``` maps to ```Codebird::statuses_show_ID('id=12345')```.
-  - ```users/profile_image/:screen_name``` maps to
-    `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
+Examples:
 
-Usage examples
---------------
+- `statuses/show/:id` maps to `Codebird::statuses_show_ID('id=12345')`.
+- `users/profile_image/:screen_name` maps to
+  `Codebird::users_profileImage_SCREEN_NAME('screen_name=jublonet')`.
+
+## Usage examples
 
 When you have an access token, calling the API is simple:
 
@@ -179,8 +184,8 @@ Tweeting is as easy as this:
 $reply = $cb->statuses_update('status=Whohoo, I just Tweeted!');
 ```
 
-:warning: *Make sure to urlencode any parameter values that contain
-query-reserved characters, like Tweeting the `&` sign:*
+:warning: _Make sure to urlencode any parameter values that contain
+query-reserved characters, like Tweeting the `&` sign:_
 
 ```php
 $reply = $cb->statuses_update('status=' . urlencode('Fish & chips'));
@@ -213,6 +218,7 @@ $params = [
 ];
 $reply = $cb->users_show($params);
 ```
+
 This is the [resulting Tweet](https://twitter.com/LarryMcTweet/status/482239971399835648)
 sent with the code above.
 
@@ -227,38 +233,35 @@ $reply = $cb->search_tweets('q=Twitter', true);
 
 Bear in mind that not all API methods support application-only auth.
 
-
-HTTP methods (GET, POST, DELETE etc.)
--------------------------------------
+## HTTP methods (GET, POST, DELETE etc.)
 
 Never care about which HTTP method (verb) to use when calling a Twitter API.
 Codebird is intelligent enough to find out on its own.
 
-Response codes
---------------
+## Response codes
 
 The HTTP response code that the API gave is included in any return values.
-You can find it within the return object’s ```httpstatus``` property.
+You can find it within the return object’s `httpstatus` property.
 
 ### Dealing with rate-limits
 
 Basically, Codebird leaves it up to you to handle Twitter’s rate limit.
 The library returns the response HTTP status code, so you can detect rate limits.
 
-I suggest you to check if the ```$reply->httpstatus``` property is ```400```
+I suggest you to check if the `$reply->httpstatus` property is `400`
 and check with the Twitter API to find out if you are currently being
 rate-limited.
 See the [Rate Limiting FAQ](https://developer.twitter.com/en/docs/basics/rate-limiting)
 for more information.
 
 Unless your return format is JSON, you will receive rate-limiting details
-in the returned data’s ```$reply->rate``` property,
+in the returned data’s `$reply->rate` property,
 if the Twitter API responds with rate-limiting HTTP headers.
 
-Return formats
---------------
+## Return formats
+
 The default return format for API calls is a PHP object.
-For API methods returning multiple data (like ```statuses/home_timeline```),
+For API methods returning multiple data (like `statuses/home_timeline`),
 you should cast the reply to array, like this:
 
 ```php
@@ -279,10 +282,10 @@ To get a JSON string, set the corresponding return format:
 $cb->setReturnFormat(CODEBIRD_RETURNFORMAT_JSON);
 ```
 
-Uploading images and videos
----------------------------
+## Uploading images and videos
 
 Twitter will accept the following media types, all of which are supported by Codebird:
+
 - PNG
 - JPEG
 - BMP
@@ -316,7 +319,7 @@ foreach ($media_files as $file) {
 Uploading **videos** requires you to send the data in chunks. See the next section on this.
 
 **Second,** you attach the collected media ids for all images to your call
-to ```statuses/update```, like this:
+to `statuses/update`, like this:
 
 ```php
 // convert media ids to string list
@@ -338,13 +341,14 @@ More [documentation for uploading media](https://developer.twitter.com/en/docs/m
 ### Remote files
 
 Remote files received from `http` and `https` servers are supported, too:
+
 ```php
 $reply = $cb->media_upload(array(
   'media' => 'http://www.bing.com/az/hprichbg/rb/BilbaoGuggenheim_EN-US11232447099_1366x768.jpg'
 ));
 ```
 
-:warning: *URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603*
+:warning: _URLs containing Unicode characters should be normalised. A sample normalisation function can be found at http://stackoverflow.com/a/6059053/1816603_
 
 To circumvent download issues when remote servers are slow to respond,
 you may customise the remote download timeout, like this:
@@ -420,16 +424,13 @@ $reply = $cb->statuses_update([
   'status'    => 'Twitter now accepts video uploads.',
   'media_ids' => $media_id
 ]);
-
 ```
 
 **Find more information about [accepted media formats](https://developer.twitter.com/en/docs/media/upload-media/uploading-media/media-best-practices) in the Twitter Developer docs.**
 
 :warning: When uploading a video in multiple chunks, you may run into an error `The validation of media ids failed.` even though the `media_id` is correct. This is known. Please check back in the [Twitter community forums](https://twittercommunity.com/tags/video).
 
-
-Twitter Streaming API
----------------------
+## Twitter Streaming API
 
 The Streaming APIs give developers low latency access to Twitter’s global stream of
 Tweet data. A proper implementation of a streaming client will be pushed messages
@@ -493,9 +494,7 @@ and you should make your function `return true;` in order to cancel the stream.
 Find more information on the [Streaming API](https://developer.twitter.com/en/docs/tweets/filter-realtime/overview)
 in the developer documentation website.
 
-
-Twitter Collections, Direct Messages and Account Activity APIs
---------------------------------------------------------------
+## Twitter Collections, Direct Messages and Account Activity APIs
 
 Collections are a type of timeline that you control and can be hand curated
 and/or programmed using an API.
@@ -524,8 +523,7 @@ $reply = $cb->collections_entries_curate([
 var_dump($reply);
 ```
 
-TON (Twitter Object Nest) API
------------------------------
+## TON (Twitter Object Nest) API
 
 The [TON (Twitter Object Nest) API](https://developer.twitter.com/en/docs/ads/audiences/overview/ton-upload.html) allows implementers to upload media and various assets to Twitter.
 The TON API supports non-resumable and resumable upload methods based on the size of the file.
@@ -552,7 +550,7 @@ echo $reply->Location;
 ```
 
 As you see from that sample, Codebird rewrites the special TON API headers into the reply,
-so you can easily access them.  This also applies to the `X-TON-Min-Chunk-Size` and
+so you can easily access them. This also applies to the `X-TON-Min-Chunk-Size` and
 `X-Ton-Max-Chunk-Size` for chunked uploads:
 
 ### Multi-chunk upload
@@ -610,8 +608,7 @@ while (! feof($fp)) {
 fclose($fp);
 ```
 
-Twitter Ads API
----------------
+## Twitter Ads API
 
 The [Twitter Ads API](https://developer.twitter.com/en/docs/ads/general/overview) allows partners to
 integrate with the Twitter advertising platform in their own advertising solutions.
@@ -653,14 +650,12 @@ $reply = $cb->ads_sandbox_accounts_ACCOUNT_ID_cards_imageConversation_CARD_ID([
 Codebird will remove the `httpmethod` parameter from the parameters list automatically,
 and set the corresponding HTTP verb.
 
-
-How Do I…?
-----------
+## How Do I…?
 
 ### …use multiple Codebird instances?
 
 By default, Codebird works with just one instance. This programming paradigma is
-called a *singleton*.
+called a _singleton_.
 
 Getting the main Codebird object is done like this:
 
@@ -679,31 +674,28 @@ $cb2 = new \Codebird\Codebird;
 
 Please note that your OAuth consumer key and secret is shared within
 multiple Codebird instances, while the OAuth request and access tokens with their
-secrets are *not* shared.
-
+secrets are _not_ shared.
 
 ### …access a user’s profile image?
 
 First retrieve the user object using
 
-```$reply = $cb->users_show("screen_name=$username");```
+`$reply = $cb->users_show("screen_name=$username");`
 
+with `$username` being the username of the account you wish to retrieve the profile image from.
 
-with ```$username``` being the username of the account you wish to retrieve the profile image from.
-
-Then get the value from the index ```profile_image_url``` or ```profile_image_url_https``` of the user object previously retrieved.
-
+Then get the value from the index `profile_image_url` or `profile_image_url_https` of the user object previously retrieved.
 
 For example:
 
-```$reply['profile_image_url']``` will then return the profile image url without https.
+`$reply['profile_image_url']` will then return the profile image url without https.
 
 ### …get user ID, screen name and more details about the current user?
 
 When the user returns from the authentication screen, you need to trade
 the obtained request token for an access token, using the OAuth verifier.
 As discussed in the section ‘Usage example,’ you use a call to
-```oauth/access_token``` to do that.
+`oauth/access_token` to do that.
 
 The API reply to this method call tells you details about the user that just logged in.
 These details contain the **user ID** and the **screen name.**
@@ -722,9 +714,9 @@ stdClass Object
 ```
 
 If you need to get more details, such as the user’s latest Tweet,
-you should fetch the complete User Entity.  The simplest way to get the
+you should fetch the complete User Entity. The simplest way to get the
 user entity of the currently authenticated user is to use the
-```account/verify_credentials``` API method.  In Codebird, it works like this:
+`account/verify_credentials` API method. In Codebird, it works like this:
 
 ```php
 $reply = $cb->account_verifyCredentials();
@@ -732,7 +724,7 @@ print_r($reply);
 ```
 
 I suggest to cache the User Entity after obtaining it, as the
-```account/verify_credentials``` method is rate-limited by 15 calls per 15 minutes.
+`account/verify_credentials` method is rate-limited by 15 calls per 15 minutes.
 
 ### …walk through cursored results?
 
@@ -744,27 +736,30 @@ forwards through these pages.
 Here is how you can walk through cursored results with Codebird.
 
 1. Get the first result set of a cursored method:
+
 ```php
 $result1 = $cb->followers_list();
 ```
 
-2. To navigate forth, take the ```next_cursor_str```:
+2. To navigate forth, take the `next_cursor_str`:
+
 ```php
 $nextCursor = $result1->next_cursor_str;
 ```
 
-3. If ```$nextCursor``` is not 0, use this cursor to request the next result page:
+3. If `$nextCursor` is not 0, use this cursor to request the next result page:
+
 ```php
   if ($nextCursor > 0) {
     $result2 = $cb->followers_list('cursor=' . $nextCursor);
   }
 ```
 
-To navigate back instead of forth, use the field ```$resultX->previous_cursor_str```
-instead of ```next_cursor_str```.
+To navigate back instead of forth, use the field `$resultX->previous_cursor_str`
+instead of `next_cursor_str`.
 
-It might make sense to use the cursors in a loop.  Watch out, though,
-not to send more than the allowed number of requests to ```followers/list```
+It might make sense to use the cursors in a loop. Watch out, though,
+not to send more than the allowed number of requests to `followers/list`
 per rate-limit timeframe, or else you will hit your rate-limit.
 
 ### …use xAuth with Codebird?
@@ -773,6 +768,7 @@ Codebird supports xAuth just like every other authentication used at Twitter.
 Remember that your application needs to be whitelisted to be able to use xAuth.
 
 Here’s an example:
+
 ```php
 $reply = $cb->oauth_accessToken([
   'x_auth_username' => 'username',
@@ -781,9 +777,9 @@ $reply = $cb->oauth_accessToken([
 ]);
 ```
 
-Are you getting a strange error message?  If the user is enrolled in
+Are you getting a strange error message? If the user is enrolled in
 login verification, the server will return a HTTP 401 error with a custom body.
-If you are using the ```send_error_codes``` parameter, you will receive the
+If you are using the `send_error_codes` parameter, you will receive the
 following error message in the response body:
 
 ```xml
@@ -794,6 +790,7 @@ following error message in the response body:
 ```
 
 Otherwise, the response body will contain a plaintext response:
+
 ```
 User must verify login
 ```
@@ -833,7 +830,7 @@ Codebird automatically detects whether you have the PHP cURL extension enabled.
 If not, the library will try to connect to Twitter via socket.
 For this to work, the PHP setting `allow_url_fopen` must be enabled.
 
-You may also manually disable cURL.  Use the following call:
+You may also manually disable cURL. Use the following call:
 
 ```php
 $cb->setUseCurl(false);

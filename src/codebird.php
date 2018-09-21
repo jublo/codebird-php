@@ -433,6 +433,7 @@ class Codebird
       'mutes/users/create',
       'mutes/users/destroy',
       'oauth/access_token',
+      'oauth/invalidate_token',
       'oauth/request_token',
       'oauth2/invalidate_token',
       'oauth2/token',
@@ -670,6 +671,11 @@ class Codebird
    */
   public function logout()
   {
+    $this->oauth_invalidateToken([
+      'access_token'        => $this->_oauth_token,
+      'access_token_secret' => $this->_oauth_token_secret
+    ]);
+
     $this->_oauth_token =
     $this->_oauth_token_secret = null;
 
@@ -2034,7 +2040,9 @@ class Codebird
   protected function _getEndpoint($method, $method_template)
   {
     $url = self::$_endpoints['rest'] . $method . '.json';
-    if (substr($method_template, 0, 5) === 'oauth') {
+    if (substr($method_template, 0, 22) === 'oauth/invalidate_token') {
+      $url = self::$_endpoints['rest'] . $method . '.json';
+    } elseif (substr($method_template, 0, 5) === 'oauth') {
       $url = self::$_endpoints['oauth'] . $method;
     } elseif ($this->_detectMedia($method_template)) {
       $url = self::$_endpoints['media'] . $method . '.json';
