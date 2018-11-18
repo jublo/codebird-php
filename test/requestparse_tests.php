@@ -97,6 +97,22 @@ class Requestparse_Test extends \PHPUnit\Framework\TestCase
     ], $result);
     // check that inline parameter was removed from array
     $this->assertArrayNotHasKey('account_id', $apiparams);
+
+    $apiparams = [
+      'test' => 1,
+      'env_name' => 'testenv'
+    ];
+    $result = $cb->call(
+        '_mapFnToApiMethod',
+        'accountActivity_all_ENV_NAME_webhooks',
+        $apiparams
+      );
+    $this->assertEquals([
+      'account_activity/all/testenv/webhooks',
+      'account_activity/all/:env_name/webhooks'
+    ], $result);
+    // check that inline parameter was removed from array
+    $this->assertArrayNotHasKey('env_name', $apiparams);
   }
 
   /**
