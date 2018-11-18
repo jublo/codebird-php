@@ -69,8 +69,8 @@ class Codebird
    */
   protected static $_endpoints = [
     'ads'          => [
-      'production' => 'https://ads-api.twitter.com/2/',
-      'sandbox'    => 'https://ads-api-sandbox.twitter.com/2/'
+      'production' => 'https://ads-api.twitter.com/4/',
+      'sandbox'    => 'https://ads-api-sandbox.twitter.com/4/'
     ],
     'media'        => 'https://upload.twitter.com/1.1/',
     'publish'      => 'https://publish.twitter.com/',
