@@ -991,7 +991,7 @@ class Codebird
   protected function _mapFnRestoreParamUnderscores($method)
   {
     $params = [
-      'screen_name', 'place_id',
+      'screen_name', 'place_id', 'env_name',
       'account_id', 'campaign_id', 'card_id', 'line_item_id',
       'tweet_id', 'web_event_tag_id'
     ];
