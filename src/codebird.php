@@ -288,7 +288,6 @@ class Codebird
       'geo/id/:place_id',
       'geo/reverse_geocode',
       'geo/search',
-      'help/configuration',
       'help/languages',
       'help/privacy',
       'help/tos',
