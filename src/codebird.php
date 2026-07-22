@@ -1165,11 +1165,12 @@ class Codebird
       'User-Agent: codebird-php/' . $this->getVersion() . ' +https://github.com/jublonet/codebird-php'
     ];
 
-    $httpOptions['ssl'] = [
-      'verify_peer'  => true,
-      'cafile'       => __DIR__ . '/cacert.pem',
-      'verify_depth' => 5,
-      'peer_name'    => $hostname
+    $sslOptions = [
+      'verify_peer'      => true,
+      'verify_peer_name' => true,
+      'cafile'           => __DIR__ . '/cacert.pem',
+      'verify_depth'     => 5,
+      'peer_name'        => $hostname
     ];
 
     if ($this->_hasProxy()) {
@@ -1187,6 +1188,11 @@ class Codebird
       $contextOptions,
       ['http' => $httpOptions]
     );
+
+    // 'ssl' must stay a top-level context key (stream_context_create() ignores
+    // it if nested under 'http') and isn't caller-overridable, so it's assigned
+    // directly rather than merged
+    $options['ssl'] = $sslOptions;
 
     // concatenate $options['http']['header']
     $options['http']['header'] = implode("\r\n", $options['http']['header']);
@@ -1905,7 +1911,7 @@ class Codebird
       $connection = $this->_getCurlInitialization($url);
       $this->_curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
       $this->_curl_setopt($connection, CURLOPT_HEADER, 0);
-      // no SSL validation for downloading media
+      // enforce SSL validation for downloading media
       $this->_curl_setopt($connection, CURLOPT_SSL_VERIFYPEER, 1);
       $this->_curl_setopt($connection, CURLOPT_SSL_VERIFYHOST, 2);
       $this->_curl_setopt($connection, CURLOPT_TIMEOUT_MS, $this->_timeouts['remote']);
@@ -1924,17 +1930,15 @@ class Codebird
       return false;
     }
     // no cURL
+    $hostname = parse_url($url, PHP_URL_HOST);
     $contextOptions = [
       'http' => [
         'method'           => 'GET',
         'protocol_version' => '1.1',
         'timeout'          => $this->_timeouts['remote']
-      ],
-      'ssl' => [
-        'verify_peer'  => false
       ]
     ];
-    list($result, $headers) = $this->_getNoCurlInitialization($url, $contextOptions);
+    list($result, $headers) = $this->_getNoCurlInitialization($url, $contextOptions, $hostname);
     if ($result !== false
       && preg_match('/^HTTP\/\d\.\d 200 OK$/', $headers[0])
     ) {
