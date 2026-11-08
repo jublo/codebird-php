@@ -1,5 +1,13 @@
 # codebird-php
 
+> [!WARNING]
+> **This project is no longer maintained.** Codebird was written for the Twitter API v1.1,
+> which X has retired or put behind paid tiers since 2023. Most methods here no longer work,
+> and no fixes or releases are planned. For new projects, use a library that targets the
+> current [X API v2](https://docs.x.com/x-api/introduction).
+>
+> Thanks to everyone who used and contributed to Codebird from 2010 on.
+
 _Easy access to the Twitter REST API, Direct Messages API, Account Activity API, TON (Object Nest) API and Twitter Ads API — all from one PHP library._
 
 Copyright (C) 2010-2018 Jublo Limited <support@jublo.net>
